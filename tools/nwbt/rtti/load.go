@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"nw-buddy/tools/formats/azcs"
 	"nw-buddy/tools/rtti/nwt"
+	"nw-buddy/tools/utils/maps"
 	"nw-buddy/tools/utils/str"
 	"reflect"
 	"strconv"
@@ -126,16 +127,16 @@ func loadInto(el *azcs.Element, v any) error {
 	return nil
 }
 
-var crcCache = make(map[string]uint32)
+var crcCache = maps.NewSyncMap[string, uint32]()
 
 func nameToCrc(name string) uint32 {
 	name = strings.ToLower(name)
-	if crc, ok := crcCache[name]; ok {
-		return crc
+	if v, ok := crcCache.Load(name); ok {
+		return v
 	}
-	crc := str.Crc32(name)
-	crcCache[name] = crc
-	return crc
+	result := str.Crc32(name)
+	crcCache.Store(name, result)
+	return result
 }
 
 func loadIntoXml(el *azcs.XmlElement, v any) error {

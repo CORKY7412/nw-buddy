@@ -50,7 +50,9 @@ enum ChunkType : u16 {
 	Timestamp,
 	GlobalAnimationHeaderCAF,
 	GlobalAnimationHeaderAIM,
-	BspTreeData
+	BspTreeData,
+
+  CgfHeap = 12299
 };
 
 struct Vec3 {
@@ -161,7 +163,7 @@ struct ChunkMesh<auto Version> {
     u32 subsetChunkId;
     u32 vertAnimId;
     StreamChunkIdList streamChunk[16];
-    u32 phsicsDataChunkId[4];
+    u32 physicsDataChunkId[4];
     Vec3 bboxMin;
     Vec3 bboxMax;
     float texMappingDensity;
@@ -202,7 +204,7 @@ struct ChunkDataStream<auto Version> {
   }
 };
 
-struct NewChunk {
+struct ChunkHeap {
   u32 flags;
   u32 index;
   u32 offset;
@@ -241,8 +243,8 @@ struct ChunkHeader {
   else if (chunkType == ChunkType::DataStream) {
     ChunkDataStream<version> data @offset;
   }
-  else if (chunkType == 12299) {
-    NewChunk data @offset;
+  else if (chunkType == ChunkType::CgfHeap) {
+    ChunkHeap data @offset;
   }
   else {
     u8 data[size] @offset;

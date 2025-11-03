@@ -18,6 +18,9 @@ func (d *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject func(node *
 		if strings.Contains(chunk.Name, "$lod") {
 			continue
 		}
+		if strings.Contains(chunk.Name, "$physics") {
+			continue
+		}
 
 		node, nodeIndex := nodeMap.lookup(chunk.ChunkHeader.Id)
 		if !mat4.IsIdentity(chunk.Transform) {
