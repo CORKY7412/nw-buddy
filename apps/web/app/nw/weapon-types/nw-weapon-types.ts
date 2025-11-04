@@ -302,6 +302,23 @@ export const NW_WEAPON_TYPES: Array<NwWeaponType> = [
   //   IconPath: 'assets/icons/weapons/voidgauntlet.png',
   //   IconPathSmall: 'assets/icons/weapons/voidgauntletsmall.png',
   // },
+  {
+    WeaponTypeID: 'Dagger',
+    WeaponTag: 'Dagger',
+    ProgressionId: 'DaggerAbilityTable',
+    StatsRef: 'DaggerT5',
+    DamageType: 'Corruption',
+    DamageTablePrefix: 'Dagger_',
+
+    UIName: 'ui_dagger',
+    MasteryName: 'ui_dagger_mastery',
+    Tree1Name: 'ui_dagger_tree1',
+    Tree2Name: 'ui_dagger_tree2',
+    GroupName: 'GauntletVoid_GroupName',
+    CategoryName: 'ui_twohanded_weapons',
+    IconPath: null,
+    IconPathSmall: null,
+  },
 ]
 
 export const NW_DAMAGE_TYPE_ICONS = new CaseInsensitiveMap(

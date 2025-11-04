@@ -259,6 +259,9 @@ export const DATASHEETS = {
     BowAbilityTable: <DataSheetUri<AbilityData>>{
       uri: "datatables/weaponabilities/javelindata_ability_bow.json",
     },
+    DaggerAbilityTable: <DataSheetUri<AbilityData>>{
+      uri: "datatables/weaponabilities/javelindata_ability_dagger.json",
+    },
     EquipmentSetBonusesAbilityTable: <DataSheetUri<AbilityData>>{
       uri: "datatables/equipmentsetbonuses/javelindata_ability_equipmentsetbonusesinfix.json",
     },
@@ -722,6 +725,36 @@ export const DATASHEETS = {
     'NPC_03976.datasheet': <DataSheetUri<ConversationStateData>>{
       uri: "datatables/questdata/conversationstatedata_npc_03976.json",
     },
+    'NPC_04288.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04288.json",
+    },
+    'NPC_04289.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04289.json",
+    },
+    'NPC_04290.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04290.json",
+    },
+    'NPC_04291.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04291.json",
+    },
+    'NPC_04292.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04292.json",
+    },
+    'NPC_04293.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04293.json",
+    },
+    'NPC_04294.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04294.json",
+    },
+    'NPC_04295.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04295.json",
+    },
+    'NPC_04296.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04296.json",
+    },
+    'NPC_04297.datasheet': <DataSheetUri<ConversationStateData>>{
+      uri: "datatables/questdata/conversationstatedata_npc_04297.json",
+    },
     'NPC_04627.datasheet': <DataSheetUri<ConversationStateData>>{
       uri: "datatables/questdata/conversationstatedata_npc_04627.json",
     },
@@ -1134,6 +1167,36 @@ export const DATASHEETS = {
     },
     'NPC_03976.datasheet': <DataSheetUri<ConversationTopicData>>{
       uri: "datatables/questdata/conversationtopicdata_npc_03976.json",
+    },
+    'NPC_04288.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04288.json",
+    },
+    'NPC_04289.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04289.json",
+    },
+    'NPC_04290.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04290.json",
+    },
+    'NPC_04291.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04291.json",
+    },
+    'NPC_04292.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04292.json",
+    },
+    'NPC_04293.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04293.json",
+    },
+    'NPC_04294.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04294.json",
+    },
+    'NPC_04295.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04295.json",
+    },
+    'NPC_04296.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04296.json",
+    },
+    'NPC_04297.datasheet': <DataSheetUri<ConversationTopicData>>{
+      uri: "datatables/questdata/conversationtopicdata_npc_04297.json",
     },
     'NPC_04627.datasheet': <DataSheetUri<ConversationTopicData>>{
       uri: "datatables/questdata/conversationtopicdata_npc_04627.json",
@@ -1963,17 +2026,8 @@ export const DATASHEETS = {
     Gorilla_H_DamageTable: <DataSheetUri<DamageData>>{
       uri: "datatables/charactertables/gorilla_datatables/javelindata_damagetable_gorilla_h.json",
     },
-    GourdspewerDamageTable: <DataSheetUri<DamageData>>{
-      uri: "datatables/charactertables/halloween_datatables/javelindata_damagetable_gourdspewer.json",
-    },
     GruntDamageTable: <DataSheetUri<DamageData>>{
       uri: "datatables/charactertables/grunt_datatables/javelindata_damagetable_grunt.json",
-    },
-    HalloweenBossDamageTable: <DataSheetUri<DamageData>>{
-      uri: "datatables/charactertables/halloween_datatables/javelindata_damagetable_halloweenboss.json",
-    },
-    HalloweenPlaguerDamageTable: <DataSheetUri<DamageData>>{
-      uri: "datatables/charactertables/halloween_datatables/javelindata_damagetable_halloweenplaguer.json",
     },
     HercyneBoarDamageTable: <DataSheetUri<DamageData>>{
       uri: "datatables/charactertables/hercyne_datatables/javelindata_damagetable_hercyneboar.json",
@@ -2247,9 +2301,6 @@ export const DATASHEETS = {
     },
     PriestLesserDamnedHoundDamageTable: <DataSheetUri<DamageData>>{
       uri: "datatables/charactertables/wolf_datatables/javelindata_damagetable_priest_lesser_damned_hound.json",
-    },
-    Pumpklin_DamageTable: <DataSheetUri<DamageData>>{
-      uri: "datatables/charactertables/halloween_datatables/javelindata_damagetable_pumpklin.json",
     },
     RatHercyneRatDamageTable: <DataSheetUri<DamageData>>{
       uri: "datatables/charactertables/rat_datatables/javelindata_damagetable_rat_hercynerat.json",
@@ -3311,6 +3362,36 @@ export const DATASHEETS = {
     'NPC_03976.datasheet': <DataSheetUri<NPCData>>{
       uri: "datatables/questdata/npcdata_npc_03976.json",
     },
+    'NPC_04288.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04288.json",
+    },
+    'NPC_04289.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04289.json",
+    },
+    'NPC_04290.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04290.json",
+    },
+    'NPC_04291.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04291.json",
+    },
+    'NPC_04292.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04292.json",
+    },
+    'NPC_04293.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04293.json",
+    },
+    'NPC_04294.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04294.json",
+    },
+    'NPC_04295.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04295.json",
+    },
+    'NPC_04296.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04296.json",
+    },
+    'NPC_04297.datasheet': <DataSheetUri<NPCData>>{
+      uri: "datatables/questdata/npcdata_npc_04297.json",
+    },
     'NPC_04627.datasheet': <DataSheetUri<NPCData>>{
       uri: "datatables/questdata/npcdata_npc_04627.json",
     },
@@ -3852,6 +3933,45 @@ export const DATASHEETS = {
     ObjectiveTasksDataManager_C99G: <DataSheetUri<ObjectiveTasks>>{
       uri: "datatables/quests/console/c99g_msq_shattered/javelindata_c99g_objectivetasks.json",
     },
+    'Quest_02789.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02789.json",
+    },
+    'Quest_02790.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02790.json",
+    },
+    'Quest_02791.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02791.json",
+    },
+    'Quest_02792.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02792.json",
+    },
+    'Quest_02793.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02793.json",
+    },
+    'Quest_02794.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02794.json",
+    },
+    'Quest_02795.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02795.json",
+    },
+    'Quest_02796.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02796.json",
+    },
+    'Quest_02797.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02797.json",
+    },
+    'Quest_02798.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02798.json",
+    },
+    'Quest_02799.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02799.json",
+    },
+    'Quest_02801.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02801.json",
+    },
+    'Quest_02802.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_02802.json",
+    },
     'Quest_03189.datasheet': <DataSheetUri<ObjectiveTasks>>{
       uri: "datatables/questdata/objectivetasks_quest_03189.json",
     },
@@ -3890,6 +4010,30 @@ export const DATASHEETS = {
     },
     'Quest_08016.datasheet': <DataSheetUri<ObjectiveTasks>>{
       uri: "datatables/questdata/objectivetasks_quest_08016.json",
+    },
+    'Quest_18000.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18000.json",
+    },
+    'Quest_18001.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18001.json",
+    },
+    'Quest_18002.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18002.json",
+    },
+    'Quest_18003.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18003.json",
+    },
+    'Quest_18004.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18004.json",
+    },
+    'Quest_18005.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18005.json",
+    },
+    'Quest_18006.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18006.json",
+    },
+    'Quest_18007.datasheet': <DataSheetUri<ObjectiveTasks>>{
+      uri: "datatables/questdata/objectivetasks_quest_18007.json",
     },
     'Quest_18008.datasheet': <DataSheetUri<ObjectiveTasks>>{
       uri: "datatables/questdata/objectivetasks_quest_18008.json",
@@ -4118,6 +4262,45 @@ export const DATASHEETS = {
     ObjectivesDataManager_C99G: <DataSheetUri<Objectives>>{
       uri: "datatables/quests/console/c99g_msq_shattered/javelindata_c99g_objectives.json",
     },
+    'Quest_02789.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02789.json",
+    },
+    'Quest_02790.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02790.json",
+    },
+    'Quest_02791.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02791.json",
+    },
+    'Quest_02792.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02792.json",
+    },
+    'Quest_02793.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02793.json",
+    },
+    'Quest_02794.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02794.json",
+    },
+    'Quest_02795.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02795.json",
+    },
+    'Quest_02796.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02796.json",
+    },
+    'Quest_02797.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02797.json",
+    },
+    'Quest_02798.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02798.json",
+    },
+    'Quest_02799.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02799.json",
+    },
+    'Quest_02801.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02801.json",
+    },
+    'Quest_02802.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_02802.json",
+    },
     'Quest_03189.datasheet': <DataSheetUri<Objectives>>{
       uri: "datatables/questdata/objectives_quest_03189.json",
     },
@@ -4156,6 +4339,30 @@ export const DATASHEETS = {
     },
     'Quest_08016.datasheet': <DataSheetUri<Objectives>>{
       uri: "datatables/questdata/objectives_quest_08016.json",
+    },
+    'Quest_18000.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18000.json",
+    },
+    'Quest_18001.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18001.json",
+    },
+    'Quest_18002.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18002.json",
+    },
+    'Quest_18003.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18003.json",
+    },
+    'Quest_18004.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18004.json",
+    },
+    'Quest_18005.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18005.json",
+    },
+    'Quest_18006.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18006.json",
+    },
+    'Quest_18007.datasheet': <DataSheetUri<Objectives>>{
+      uri: "datatables/questdata/objectives_quest_18007.json",
     },
     'Quest_18008.datasheet': <DataSheetUri<Objectives>>{
       uri: "datatables/questdata/objectives_quest_18008.json",
@@ -4851,6 +5058,9 @@ export const DATASHEETS = {
     SpellDataTable_Conqueror: <DataSheetUri<SpellData>>{
       uri: "datatables/javelindata_spelltable_conquerorsitems.json",
     },
+    SpellDataTable_Dagger: <DataSheetUri<SpellData>>{
+      uri: "datatables/javelindata_spelltable_dagger.json",
+    },
     SpellDataTable_FireMagic: <DataSheetUri<SpellData>>{
       uri: "datatables/javelindata_spelltable_firemagic.json",
     },
@@ -4954,6 +5164,9 @@ export const DATASHEETS = {
     },
     StatusEffects_ConquerorsItems: <DataSheetUri<StatusEffectData>>{
       uri: "datatables/javelindata_statuseffects_conquerersitems.json",
+    },
+    StatusEffects_Dagger: <DataSheetUri<StatusEffectData>>{
+      uri: "datatables/javelindata_statuseffects_dagger.json",
     },
     StatusEffects_DifficultyScaling: <DataSheetUri<StatusEffectData>>{
       uri: "datatables/javelindata_statuseffects_difficultyscaling.json",

@@ -1,10 +1,10 @@
 export interface AITargetingData {
-  CreatureType: unknown
-  IgnoreStealthDecoyThreat: unknown
-  InCombatAudioRadiusOffset: unknown
-  InCombatVisionDistanceOffset: unknown
-  OutOfCombatAudioRadiusOffset: unknown
-  OutOfCombatVisionDistanceOffset: unknown
+  CreatureType: string
+  IgnoreStealthDecoyThreat: boolean
+  InCombatAudioRadiusOffset: number
+  InCombatVisionDistanceOffset: number
+  OutOfCombatAudioRadiusOffset: number
+  OutOfCombatVisionDistanceOffset: number
 }
 
 export interface AbilityData {
@@ -272,7 +272,7 @@ export interface AbilityData {
   TargetStatusEffectDurationList: string[]
   TargetStatusEffectDurationMod: number
   TargetStatusEffectDurationMult: number
-  TargetStatusEffectPotency: string
+  TargetStatusEffectPotency: number
   TargetStatusEffectPotencyCats: string
   TargetStatusEffectPotencyComparison: string
   TargetStatusEffectPotencyList: string
@@ -1640,7 +1640,7 @@ export interface DamageData {
   ImpactRating: number | string
   IsAbility: boolean
   IsEmote: boolean
-  IsRanged: number | string | boolean
+  IsRanged: boolean | string | number
   IsSiege: boolean
   IsTaunt: boolean
   LOSCheckVerticalAngleOffset: number
@@ -1667,7 +1667,7 @@ export interface DamageData {
   ThirstDmg: number
   ThreatMultiplier: number
   Unblockable: boolean
-  UseAttackerPosForReaction: number | string | boolean
+  UseAttackerPosForReaction: boolean | string | number
   WeaponCategory: string
   stunBreakoutIncrementer: number
 }
@@ -2232,7 +2232,7 @@ export interface FlexibleMissionBoardData {
 export interface GameEventData {
   AchievementId: string
   AffinityRewards: string
-  AzothReward: string | number
+  AzothReward: number | string
   AzothRewardChance: number
   AzothSalt: number
   AzothSaltChance: number
@@ -3395,13 +3395,11 @@ export interface LootBucketData {
   Item416: string
   Item417: string
   Item418: string
-  Item419: string
   Item42: string
   Item421: string
   Item422: string
   Item423: string
   Item424: string
-  Item425: string
   Item426: string
   Item427: string
   Item428: string
@@ -3502,7 +3500,6 @@ export interface LootBucketData {
   Item514: string
   Item515: string
   Item516: string
-  Item517: string
   Item518: string
   Item519: string
   Item52: string
@@ -3542,6 +3539,11 @@ export interface LootBucketData {
   Item550: string
   Item551: string
   Item552: string
+  Item553: string
+  Item554: string
+  Item555: string
+  Item556: string
+  Item557: string
   Item56: string
   Item57: string
   Item58: string
@@ -3925,13 +3927,11 @@ export interface LootBucketData {
   LootBucket416: string
   LootBucket417: string
   LootBucket418: string
-  LootBucket419: string
   LootBucket42: string
   LootBucket421: string
   LootBucket422: string
   LootBucket423: string
   LootBucket424: string
-  LootBucket425: string
   LootBucket426: string
   LootBucket427: string
   LootBucket428: string
@@ -4032,7 +4032,6 @@ export interface LootBucketData {
   LootBucket514: string
   LootBucket515: string
   LootBucket516: string
-  LootBucket517: string
   LootBucket518: string
   LootBucket519: string
   LootBucket52: string
@@ -4072,6 +4071,11 @@ export interface LootBucketData {
   LootBucket550: string
   LootBucket551: string
   LootBucket552: string
+  LootBucket553: string
+  LootBucket554: string
+  LootBucket555: string
+  LootBucket556: string
+  LootBucket557: string
   LootBucket56: string
   LootBucket57: string
   LootBucket58: string
@@ -4449,13 +4453,11 @@ export interface LootBucketData {
   MatchOne416: unknown
   MatchOne417: unknown
   MatchOne418: unknown
-  MatchOne419: unknown
   MatchOne42: boolean
   MatchOne421: unknown
   MatchOne422: unknown
   MatchOne423: unknown
   MatchOne424: unknown
-  MatchOne425: unknown
   MatchOne426: unknown
   MatchOne427: unknown
   MatchOne428: unknown
@@ -4556,7 +4558,6 @@ export interface LootBucketData {
   MatchOne514: unknown
   MatchOne515: unknown
   MatchOne516: unknown
-  MatchOne517: unknown
   MatchOne518: unknown
   MatchOne519: unknown
   MatchOne52: unknown
@@ -4596,6 +4597,11 @@ export interface LootBucketData {
   MatchOne550: unknown
   MatchOne551: unknown
   MatchOne552: unknown
+  MatchOne553: boolean
+  MatchOne554: boolean
+  MatchOne555: boolean
+  MatchOne556: boolean
+  MatchOne557: unknown
   MatchOne56: unknown
   MatchOne57: unknown
   MatchOne58: unknown
@@ -4819,7 +4825,7 @@ export interface LootBucketData {
   Quantity267: number
   Quantity268: number
   Quantity269: number
-  Quantity27: number | string
+  Quantity27: string | number
   Quantity270: number
   Quantity271: number
   Quantity272: string
@@ -4830,7 +4836,7 @@ export interface LootBucketData {
   Quantity277: number
   Quantity278: number
   Quantity279: number
-  Quantity28: number | string
+  Quantity28: string | number
   Quantity280: number
   Quantity281: number
   Quantity282: number
@@ -4841,7 +4847,7 @@ export interface LootBucketData {
   Quantity287: number
   Quantity288: number
   Quantity289: number
-  Quantity29: number | string
+  Quantity29: string | number
   Quantity290: number
   Quantity291: number
   Quantity292: number
@@ -4853,7 +4859,7 @@ export interface LootBucketData {
   Quantity298: number
   Quantity299: number
   Quantity3: number
-  Quantity30: number | string
+  Quantity30: string | number
   Quantity300: number
   Quantity301: number
   Quantity302: number
@@ -4875,7 +4881,7 @@ export interface LootBucketData {
   Quantity317: number
   Quantity318: number
   Quantity319: number
-  Quantity32: number | string
+  Quantity32: string | number
   Quantity320: number
   Quantity321: number
   Quantity322: number
@@ -4981,13 +4987,11 @@ export interface LootBucketData {
   Quantity416: number
   Quantity417: number
   Quantity418: number
-  Quantity419: number
   Quantity42: number
   Quantity421: number
   Quantity422: number
   Quantity423: number
   Quantity424: number
-  Quantity425: number
   Quantity426: number
   Quantity427: number
   Quantity428: number
@@ -5003,7 +5007,7 @@ export interface LootBucketData {
   Quantity437: number
   Quantity438: number
   Quantity439: number
-  Quantity44: string | number
+  Quantity44: number | string
   Quantity440: number
   Quantity441: number
   Quantity442: number
@@ -5088,7 +5092,6 @@ export interface LootBucketData {
   Quantity514: number
   Quantity515: number
   Quantity516: number
-  Quantity517: number
   Quantity518: string
   Quantity519: number
   Quantity52: number
@@ -5128,6 +5131,11 @@ export interface LootBucketData {
   Quantity550: number
   Quantity551: number
   Quantity552: number
+  Quantity553: number
+  Quantity554: number
+  Quantity555: number
+  Quantity556: number
+  Quantity557: number
   Quantity56: number
   Quantity57: number
   Quantity58: number
@@ -5506,13 +5514,11 @@ export interface LootBucketData {
   Tags416: string[]
   Tags417: string[]
   Tags418: string[]
-  Tags419: string[]
   Tags42: string[]
   Tags421: string[]
   Tags422: string[]
   Tags423: string[]
   Tags424: string[]
-  Tags425: string[]
   Tags426: string[]
   Tags427: string[]
   Tags428: string[]
@@ -5613,7 +5619,6 @@ export interface LootBucketData {
   Tags514: string[]
   Tags515: string[]
   Tags516: string[]
-  Tags517: string[]
   Tags518: string[]
   Tags519: string[]
   Tags52: string[]
@@ -5653,6 +5658,11 @@ export interface LootBucketData {
   Tags550: string[]
   Tags551: string[]
   Tags552: string[]
+  Tags553: string[]
+  Tags554: string[]
+  Tags555: string[]
+  Tags556: string[]
+  Tags557: string[]
   Tags56: string[]
   Tags57: string[]
   Tags58: string[]
@@ -6716,7 +6726,7 @@ export interface ObjectiveTasks {
   DiegeticTaskPinZPosOverride: number
   Duration: number
   EnforceLocationRequirement: boolean
-  FailOnCondition: string | number | boolean
+  FailOnCondition: number | string | boolean
   GameModeID: string
   GameModeMustBeMutated: string
   GridLayout: string
@@ -6753,7 +6763,7 @@ export interface ObjectiveTasks {
   SS_VariantName: string
   ShouldCheckPoints: boolean
   ShowDiegeticTaskPin: boolean
-  StayActive: string | number
+  StayActive: number | string
   SubTask1: string
   SubTask10: string
   SubTask11: string
@@ -7917,13 +7927,13 @@ export interface SpellData {
   SpawnAngle: number
   SpawnBeamCasterJoint: string
   SpawnRate: number
-  SpawnSecondaryOnCollision: boolean | string
+  SpawnSecondaryOnCollision: string | boolean
   SpawnSecondaryOnElapsed: boolean
   SpawnSecondaryOnPassthrough: boolean
   SpellID: string
   SpellPrefabPath: string
   SpellTypes: string
-  StatusEffectDurations: number | string
+  StatusEffectDurations: string | number
   StatusEffects: string[]
   StatusEffectsOnTargetBlockingThisSpell: string[]
   StickWhenAttached: boolean
@@ -8039,7 +8049,7 @@ export interface StatusEffectData {
   DMGStandard: number
   DMGStrike: number
   DMGThrust: number
-  DMGVitalsCategory: number | string
+  DMGVitalsCategory: string | number
   DMGVitalsCategory_Tooltip: number
   DamageSkipsDeathsDoor: boolean
   DamageSplitTaken: number
@@ -8082,7 +8092,7 @@ export interface StatusEffectData {
   EXPSmelting: number
   EXPStonecutting: number
   EXPWeaving: number
-  EXPWoodworking: string | number
+  EXPWoodworking: number | string
   EffectCategories: StatusEffectCategory[]
   EffectDurationMods: string[]
   EffectDurationMods_Tooltip: number
@@ -8132,13 +8142,13 @@ export interface StatusEffectData {
   IgnoreFxScriptWhenPotencyIsZero: string | number | boolean
   IgnoreInvulnerable: boolean
   InheritDuration: boolean
-  InheritTotalDuration: string | boolean | number
+  InheritTotalDuration: boolean | string | number
   InitialStackSize: number
   IsClientPredicted: boolean
   IsNegative: boolean
   IsServerOnly: boolean
   IsTrueDamage: boolean
-  ItemClassWeightMods: string | number
+  ItemClassWeightMods: number | string
   ItemLootVolumeMods: string
   JumpModScalar: number
   JumpModType: string
@@ -8237,7 +8247,7 @@ export interface StatusEffectData {
   RemoveStatusEffectCategories: string[]
   RemoveStatusEffects: string[]
   RemoveUnappliedStacks: boolean
-  RemoveWhenEnteringGameModeRequiringTeleport: string | number
+  RemoveWhenEnteringGameModeRequiringTeleport: number | string
   RequireReaction: boolean
   RequiredWorldTags: string
   RespecAttributes: number
@@ -8266,7 +8276,7 @@ export interface StatusEffectData {
   SourceRuneChargeOnTick: number
   SpawnSlice: string
   SprintSpeedMod: number
-  StackDuration: number | string | boolean
+  StackDuration: boolean | number | string
   StackMax: number
   Stamina: number
   StaminaDamageModifier: number
@@ -8383,7 +8393,7 @@ export interface TerritoryDefinition {
   IsFFA: boolean
   IsPOI: boolean
   IsTerritory: boolean
-  LevelRange: string | number
+  LevelRange: number | string
   LootTags: string[]
   MapIcon: string
   MaxStructureLimit: number
@@ -9688,6 +9698,7 @@ export type CraftingCategory =
   | 'PerkCharms'
   | 'PrismaticTools'
   | 'RaidEquipment'
+  | 'ReekwaterUplevelCommon'
   | 'RefinedResources'
   | 'RuneResinRecipes'
   | 'RuneglassFamily'
@@ -9946,6 +9957,7 @@ export type ItemClass =
   | 'Cloth'
   | 'Consumable'
   | 'Currency'
+  | 'Dagger'
   | 'Drink'
   | 'DungeonItem'
   | 'Dye'
@@ -10293,7 +10305,6 @@ export type LootTag =
   | 'FTUE_Rolfe'
   | 'FTUE_TempestPriest'
   | 'FTUE_Touarc'
-  | 'Fae'
   | 'Fallen'
   | 'Fangsnap'
   | 'Farlet'
@@ -10777,11 +10788,9 @@ export type MannequinTag =
   | 'Drums'
   | 'DummyWeapon'
   | 'Earth'
-  | 'Fae'
   | 'Fire'
   | 'FishingPole'
   | 'Flail'
-  | 'Gourdspewer'
   | 'GreatAxe'
   | 'GreatSword'
   | 'Greataxe'
@@ -10806,7 +10815,6 @@ export type MannequinTag =
   | 'Pick'
   | 'Pistol'
   | 'Pitchfork'
-  | 'Plaguer'
   | 'Prong'
   | 'Rake'
   | 'Rapier'
@@ -10888,6 +10896,7 @@ export type ProgressionCategory =
   | 'Cooking_PostCap'
   | 'Covenant'
   | 'CovenantTokens'
+  | 'DaggerAbilityTable'
   | 'DungeonBrimstoneSands00DifficultyExp23'
   | 'DungeonCutlass00DifficultyExp23'
   | 'DungeonEbonscale00DifficultyExp23'
@@ -10980,6 +10989,7 @@ export type StatusEffectCategory =
   | 'Affliction'
   | 'AfflictionResistance'
   | 'AllyDamageSplit'
+  | 'Ambush'
   | 'Anointed'
   | 'ArmorFortify'
   | 'ArmorRend'
@@ -11036,6 +11046,8 @@ export type StatusEffectCategory =
   | 'CritDmgReduction'
   | 'Curse'
   | 'DMG'
+  | 'DaggerBuff'
+  | 'DaggerCC'
   | 'Damage'
   | 'DeathFog'
   | 'DeathTracker'
@@ -11079,6 +11091,7 @@ export type StatusEffectCategory =
   | 'FoodUtility'
   | 'Fortify'
   | 'Freeze'
+  | 'FrenziedSlashesPerk'
   | 'Frost'
   | 'FrostBuff'
   | 'FrostBurn'
@@ -11194,6 +11207,7 @@ export type StatusEffectCategory =
   | 'StanceDefense'
   | 'StanceOffense'
   | 'StealNoConsumTracker'
+  | 'Stealth'
   | 'StoneForm'
   | 'StoppingPower'
   | 'Stun'
@@ -12080,6 +12094,7 @@ export type VitalsCategory =
   | 'BearElemental_Named_14AC11b_ELITE'
   | 'BearElemental_Named_DG_Restless_00'
   | 'BearElemental_Named_ELITE_05WC10'
+  | 'BearElemental_Named_ELITE_05WC10_Invulnerable'
   | 'BearElemental_T4'
   | 'Bear_Black'
   | 'Bear_Black_08QP06a'
@@ -15590,7 +15605,6 @@ export type VitalsCategory =
   | 'FTUE_Sailor_z1'
   | 'FTUE_Sailor_z2'
   | 'FTUE_Sailor_z3'
-  | 'Fae'
   | 'Forged'
   | 'Fox'
   | 'Gargoyle_Brute'
@@ -15781,6 +15795,7 @@ export type VitalsCategory =
   | 'Ghost_Shackled_Named_04'
   | 'Ghost_Shackled_Named_05'
   | 'Ghost_Shackled_Named_06_EGGreatAxe'
+  | 'Ghost_Shackled_Named_ELITE_RW'
   | 'Ghost_Shipwrecked'
   | 'Ghost_Shipwrecked_10WS03'
   | 'Ghost_Shipwrecked_10WS07'
@@ -15925,10 +15940,6 @@ export type VitalsCategory =
   | 'Goat_Mountain_42'
   | 'Goat_Mountain_Named_00'
   | 'Gorilla_Boss_DG_FirstLight_01'
-  | 'Gourdspewer_Halloween_2022'
-  | 'Gourdspewer_VineLeg_Minion_Halloween_2022'
-  | 'HalloweenBoss'
-  | 'Halloween_2022_Plaguer'
   | 'Haunted'
   | 'Hercyne'
   | 'Hercyne_Boar'
@@ -16469,7 +16480,12 @@ export type VitalsCategory =
   | 'Primal_Lion_Desert'
   | 'Primal_Lion_Desert_Cub'
   | 'Primal_Lion_Named_10WS01'
-  | 'Pumpklin_Halloween_2022'
+  | 'RW_Siege_Pool_BlightedWall'
+  | 'RW_Siege_Pool_Named_Shaman'
+  | 'RW_Siege_Pool_Named_Spriggan'
+  | 'RW_Siege_Pool_Named_Tendril'
+  | 'RW_Siege_Pool_Rat'
+  | 'RW_Siege_Pool_Unstable_Swamp_Fiend'
   | 'Rabbit'
   | 'Rabbit_Corrupted_40'
   | 'Rabbit_Corrupted_40_Event'
@@ -17129,6 +17145,7 @@ export type VitalsCategory =
   | 'Swamp_Dryad_Archer_Named_DG_Edengrove_01'
   | 'Swamp_Dryad_Beast'
   | 'Swamp_Dryad_Beast_Arena_Boss'
+  | 'Swamp_Dryad_Beast_Arena_Boss_v2'
   | 'Swamp_Dryad_Beast_DG_Edengrove_00'
   | 'Swamp_Dryad_Beast_Named_05WC06_WaveEvent'
   | 'Swamp_Dryad_Beast_Named_DG_Edengrove_00'
@@ -17841,6 +17858,7 @@ export type VitalsCategory =
   | 'Undead_Pirate_Brute_61'
   | 'Undead_Pirate_Brute_62'
   | 'Undead_Pirate_Brute_64_ELITE'
+  | 'Undead_Pirate_Brute_70_ELITE_RW'
   | 'Undead_Pirate_Brute_DG_Cutlass_00'
   | 'Undead_Pirate_Brute_Named_05WC05c'
   | 'Undead_Pirate_Brute_Named_05WC07'
@@ -17852,6 +17870,8 @@ export type VitalsCategory =
   | 'Undead_Pirate_Brute_Named_12MB10'
   | 'Undead_Pirate_Brute_Named_ELITE_10WS09_00'
   | 'Undead_Pirate_Brute_Named_ELITE_10WS09_01'
+  | 'Undead_Pirate_Brute_Named_ELITE_RW_01'
+  | 'Undead_Pirate_Brute_Named_ELITE_RW_02'
   | 'Undead_Pistoleer'
   | 'Undead_Pistoleer_08QP05a'
   | 'Undead_Pistoleer_08QP05b'
@@ -17919,6 +17939,7 @@ export type VitalsCategory =
   | 'Undead_Shaman_Named'
   | 'Undead_Shaman_Named_04NW10'
   | 'Undead_Shaman_Named_10WS03'
+  | 'Undead_Shaman_Named_ELITE_RW'
   | 'Undead_Siren'
   | 'Undead_Siren_Ball_Lightning'
   | 'Undead_Siren_DG_Cutlass_00'
@@ -18558,7 +18579,6 @@ export type VitalsFamily =
   | 'AncientGuardian'
   | 'AngryEarth'
   | 'Corrupted'
-  | 'Fae'
   | 'Human'
   | 'Lost'
   | 'Structure'
@@ -18568,6 +18588,7 @@ export type WeaponTag =
   | 'Axe'
   | 'Blunderbuss'
   | 'Bow'
+  | 'Dagger'
   | 'Fire'
   | 'Flail'
   | 'GreatAxe'
