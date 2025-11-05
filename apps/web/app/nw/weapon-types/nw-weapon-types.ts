@@ -316,8 +316,8 @@ export const NW_WEAPON_TYPES: Array<NwWeaponType> = [
     Tree2Name: 'ui_dagger_tree2',
     GroupName: 'GauntletVoid_GroupName',
     CategoryName: 'ui_twohanded_weapons',
-    IconPath: null,
-    IconPathSmall: null,
+    IconPath: 'assets/icons/weapons/2hdaggers.png',
+    IconPathSmall: 'assets/icons/weapons/2hdaggers.png',
   },
 ]
 

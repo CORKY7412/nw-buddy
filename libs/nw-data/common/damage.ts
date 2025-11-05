@@ -77,7 +77,10 @@ export interface WeaponScalingInfo {
   scaling: number
   tier: string
 }
-export function getWeaponScalingTiers(scaling: Record<AttributeRef, number>, tiers: WeaponTiersData[]): WeaponScalingInfo[] {
+export function getWeaponScalingTiers(
+  scaling: Record<AttributeRef, number>,
+  tiers: WeaponTiersData[],
+): WeaponScalingInfo[] {
   const result: WeaponScalingInfo[] = []
   if (!scaling) {
     return result
@@ -94,7 +97,7 @@ export function getWeaponScalingTiers(scaling: Record<AttributeRef, number>, tie
     result.push({
       key,
       scaling: value,
-      tier: tier.Tier
+      tier: tier.Tier,
     })
   }
   return result
@@ -177,7 +180,7 @@ export function getDamageForTooltip({
 }: {
   playerLevel: number
   gearScore: number
-  item: MasterItemDefinitions,
+  item: MasterItemDefinitions
   weapon: WeaponItemDefinitions
   weaponScale?: Record<AttributeRef, number>
   attrSums: Record<AttributeRef, number>
@@ -740,6 +743,7 @@ const WEAPON_EFFECT_TO_TAG: Record<string, WeaponTag> = {
   VoidGauntlet: 'VoidGauntlet',
   Warhammer: 'Warhammer',
   Flail: 'Flail',
+  Dagger: 'Dagger',
 }
 
 export function getWeaponTagFromWeapon(item: WeaponItemDefinitions | null): WeaponTag | null {
