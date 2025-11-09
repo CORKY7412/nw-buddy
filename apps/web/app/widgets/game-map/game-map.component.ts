@@ -439,7 +439,7 @@ export class GameMapComponent {
             id: sourceId,
             type: 'raster',
             source: sourceId,
-          })
+          }, 'hills')
         }
         this.map.getLayer(sourceId).visibility = 'visible'
       })

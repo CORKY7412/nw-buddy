@@ -15,24 +15,19 @@ func (ctx *Scanner) Scan(file nwfs.File) {
 	switch path.Ext(file.Path()) {
 	case ".distribution":
 		for item := range ctx.ScanDistributionFile(file) {
-			if item.Variant != nil {
-				ctx.addSpawn(*item.Variant, mapId)
-			}
-			if item.Gatherable != nil {
-				ctx.addSpawn(*item.Gatherable, mapId)
-			}
+			ctx.addSpawn(item, mapId, "")
 		}
 	case ".dynamicslice":
 		if strings.HasPrefix(file.Path(), "slices/pois/zones") || strings.HasPrefix(file.Path(), "slices/pois/territories") {
 			for item := range ctx.ScanTerritories(file) {
-				ctx.addSpawn(item, mapId)
+				ctx.addSpawn(&item, mapId, "")
 			}
 			break
 		}
 		if strings.Contains(file.Path(), "slices/characters") || strings.Contains(file.Path(), "slices/dungeon") {
 			for item := range ctx.ScanVitals(file) {
 				item.Position = nwt.AzVec3{} // zero out the position
-				ctx.addSpawn(item, mapId)
+				ctx.addSpawn(&item, mapId, "")
 			}
 			break
 		}
@@ -40,10 +35,8 @@ func (ctx *Scanner) Scan(file nwfs.File) {
 			count := 0
 			for entry := range ctx.ScanSlice(file) {
 				count += 1
-				entry.Position[0] += nwt.AzFloat32(tile.OffsetX)
-				entry.Position[1] += nwt.AzFloat32(tile.OffsetY)
-				entry.CatacombTile = tile.BaseName
-				ctx.addSpawn(entry, "nw_catacomb_00")
+				entry.Move(nwt.AzFloat32(tile.OffsetX), nwt.AzFloat32(tile.OffsetY))
+				ctx.addSpawn(entry, "nw_catacomb_00", tile.BaseName)
 			}
 			slog.Debug("catacomb file", "tile", tile.BaseName, "count", count)
 			break
@@ -51,7 +44,7 @@ func (ctx *Scanner) Scan(file nwfs.File) {
 	case ".json":
 		if path.Ext(strings.TrimSuffix(file.Path(), ".json")) == ".capitals" {
 			for item := range ctx.ScanCapitalFile(file) {
-				ctx.addSpawn(item, mapId)
+				ctx.addSpawn(item, mapId, "")
 			}
 		} else {
 			slog.Debug("skipping json file", "path", file.Path())
@@ -59,115 +52,56 @@ func (ctx *Scanner) Scan(file nwfs.File) {
 	}
 }
 
-func (ctx *Scanner) addSpawn(spawn any, mapId string) {
+func (ctx *Scanner) addSpawn(spawn Spawn, mapId string, catacombTile string) {
 	ctx.mu.Lock()
 	defer ctx.mu.Unlock()
 
 	switch v := spawn.(type) {
-	case GatherableEntry:
+	case *GatherableEntry:
 		v.MapID = mapId
-		ctx.results.Gatherables = append(ctx.results.Gatherables, v)
-	case VariantEntry:
+		v.TileID = catacombTile
+		ctx.results.Gatherables = append(ctx.results.Gatherables, *v)
+	case *VariantEntry:
 		v.MapID = mapId
-		ctx.results.Variants = append(ctx.results.Variants, v)
-	case TerritoryEntry:
-		ctx.results.Territories = append(ctx.results.Territories, v)
-	case VitalsEntry:
+		v.TileID = catacombTile
+		ctx.results.Variants = append(ctx.results.Variants, *v)
+	case *TerritoryEntry:
 		v.MapID = mapId
-		ctx.results.Vitals = append(ctx.results.Vitals, v)
-	case SpawnNode:
-		if v.GatherableID != "" && v.VariantID == "" {
-			ctx.results.Gatherables = append(ctx.results.Gatherables, GatherableEntry{
-				MapID:        mapId,
-				GatherableID: v.GatherableID,
-				Encounter:    v.Encounter,
-				Position:     v.Position,
-				Trace:        v.Trace,
-			})
-		}
-		if v.VariantID != "" {
-			ctx.results.Variants = append(ctx.results.Variants, VariantEntry{
-				MapID:     mapId,
-				Encounter: v.Encounter,
-				VariantID: v.VariantID,
-				Position:  v.Position,
-				Trace:     v.Trace,
-			})
-		}
-		if v.VitalsID != "" {
-			ctx.results.Vitals = append(ctx.results.Vitals, VitalsEntry{
-				Encounter:    v.Encounter,
-				MapID:        mapId,
-				CatacombTile: v.CatacombTile,
-				VitalsID:     v.VitalsID,
-				CategoryID:   v.CategoryID,
-				GatherableID: v.GatherableID,
-				NpcID:        v.NpcID,
-				Level:        v.Level,
-				DamageTable:  v.DamageTable,
-				ModelFile:    v.ModelFile,
-				AdbFile:      v.AdbFile,
-				MtlFile:      v.MtlFile,
-				UseZoneLevel: v.TerritoryLevel,
-				Position:     v.Position,
-				Trace:        v.Trace,
-				Tags:         v.Tags,
-				Luck:         v.LuckConstraint,
-				Tod:          v.TodConstraint,
-			})
-		}
-		if v.NpcID != "" {
-			ctx.results.Npcs = append(ctx.results.Npcs, NpcEntry{
-				MapID:    mapId,
-				NpcID:    v.NpcID,
-				Position: v.Position,
-				Trace:    v.Trace,
-			})
-		}
-		if len(v.LoreIDs) > 0 {
-			for _, loreId := range v.LoreIDs {
-				ctx.results.Lorenotes = append(ctx.results.Lorenotes, LorenoteEntry{
-					MapID:    mapId,
-					LoreID:   loreId,
-					Position: v.Position,
-					Trace:    v.Trace,
-				})
-			}
-		}
-		if v.HouseType != "" {
-			ctx.results.Houses = append(ctx.results.Houses, HouseEntry{
-				MapID:    mapId,
-				HouseID:  v.HouseType,
-				Position: v.Position,
-				Trace:    v.Trace,
-			})
-		}
-		if v.StructureType != "" {
-			ctx.results.Structures = append(ctx.results.Structures, StructureEntry{
-				MapID:    mapId,
-				TypeID:   v.StructureType,
-				Position: v.Position,
-				Name:     v.Name,
-				Trace:    v.Trace,
-			})
-		}
-		if v.StationID != "" {
-			ctx.results.Stations = append(ctx.results.Stations, StationEntry{
-				MapID:     mapId,
-				StationID: v.StationID,
-				Position:  v.Position,
-				Name:      v.Name,
-				Trace:     v.Trace,
-			})
-		}
-		if v.PoiConfig != "" {
-			ctx.results.ZoneConfigs = append(ctx.results.ZoneConfigs, ZoneConfigEntry{
-				Config:   v.PoiConfig,
-				Shape:    v.PoiConfigShape,
-				Position: v.Position,
-				Trace:    v.Trace,
-			})
-		}
+		v.TileID = catacombTile
+		ctx.results.Territories = append(ctx.results.Territories, *v)
+	case *EncounterEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Encounter = append(ctx.results.Encounter, *v)
+	case *VitalsEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Vitals = append(ctx.results.Vitals, *v)
+	case *NpcEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Npcs = append(ctx.results.Npcs, *v)
+	case *LorenoteEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Lorenotes = append(ctx.results.Lorenotes, *v)
+	case *HouseEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Houses = append(ctx.results.Houses, *v)
+	case *StructureEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Structures = append(ctx.results.Structures, *v)
+	case *StationEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.Stations = append(ctx.results.Stations, *v)
+	case *ZoneConfigEntry:
+		v.MapID = mapId
+		v.TileID = catacombTile
+		ctx.results.ZoneConfigs = append(ctx.results.ZoneConfigs, *v)
+
 	default:
 		slog.Warn("unknown spawn", "value", v)
 	}

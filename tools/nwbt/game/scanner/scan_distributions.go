@@ -8,13 +8,8 @@ import (
 	"nw-buddy/tools/rtti/nwt"
 )
 
-type DistributionOutput struct {
-	Variant    *VariantEntry
-	Gatherable *GatherableEntry
-}
-
-func (ctx *Scanner) ScanDistributionFile(file nwfs.File) iter.Seq[DistributionOutput] {
-	return func(yield func(DistributionOutput) bool) {
+func (ctx *Scanner) ScanDistributionFile(file nwfs.File) iter.Seq[Spawn] {
+	return func(yield func(Spawn) bool) {
 		rec, err := distribution.Load(file)
 		if err != nil {
 			slog.Error("distribution not loaded", "file", file.Path(), "err", err)
@@ -29,10 +24,10 @@ func (ctx *Scanner) ScanDistributionFile(file nwfs.File) iter.Seq[DistributionOu
 			x, y, _, _ := distribution.ConvertPosition(rec.Region, position)
 
 			if variantId != "" {
-				item := DistributionOutput{
-					Variant: &VariantEntry{
-						VariantID: variantId,
-						Position:  nwt.AzVec3{nwt.AzFloat32(x), nwt.AzFloat32(y), 0},
+				item := &VariantEntry{
+					VariantID: variantId,
+					spawn: spawn{
+						Position: nwt.AzVec3{nwt.AzFloat32(x), nwt.AzFloat32(y), 0},
 					},
 				}
 				if !yield(item) {
@@ -48,22 +43,29 @@ func (ctx *Scanner) ScanDistributionFile(file nwfs.File) iter.Seq[DistributionOu
 				continue
 			}
 			for spawn := range ctx.ScanSlice(sliceFile) {
-				// for spawn := range ctx.ScanFileForSpawners(sliceFile, make([]string, 0)) {
-				item := DistributionOutput{}
-				if spawn.VariantID != "" {
-					item.Variant = &VariantEntry{
-						VariantID: spawn.VariantID,
-						Position:  nwt.AzVec3{spawn.Position[0] + nwt.AzFloat32(x), spawn.Position[1] + nwt.AzFloat32(y), 0},
+				spawn.Move(nwt.AzFloat32(x), nwt.AzFloat32(y))
+				switch v := spawn.(type) {
+				case *GatherableEntry:
+					if !yield(v) {
+						return
 					}
-				}
-				if spawn.GatherableID != "" {
-					item.Gatherable = &GatherableEntry{
-						GatherableID: spawn.GatherableID,
-						Position:     nwt.AzVec3{spawn.Position[0] + nwt.AzFloat32(x), spawn.Position[1] + nwt.AzFloat32(y), 0},
+				case *VariantEntry:
+					if !yield(v) {
+						return
 					}
-				}
-				if !yield(item) {
-					return
+					// TODO: do we need this?
+					// without: Gatherables rows=495 positions=87678 size="2.5 MB"
+					// with:    Gatherables rows=498 positions=136543 size="3.8 MB"
+					// gatherable variations in datasheets have a gatherable entry ID.
+					// but some entries here have different gatherable ID.
+					if v.GatherableID != "" {
+						if !yield(&GatherableEntry{
+							spawn:        v.spawn,
+							GatherableID: v.GatherableID,
+						}) {
+							return
+						}
+					}
 				}
 			}
 		}

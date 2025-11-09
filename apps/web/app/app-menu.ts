@@ -84,6 +84,7 @@ export const APP_MENU: AppMenuGroup[] = [
       { label: 'NPCs', path: '/npcs', svgIcon: svgHeadSide },
       { label: 'Quests', path: '/quests', svgIcon: svgLocationQuestion },
       { label: 'Vitals', path: '/vitals', svgIcon: svgSkull },
+      // { label: 'Encounter', path: '/encounter', svgIcon: svgSkull },
 
       { label: 'Loot Limits', path: '/loot-limits', svgIcon: svgTime, divider: true },
       { label: 'Loot Tables', path: '/loot-tables', svgIcon: svgSack },
@@ -109,7 +110,6 @@ export const APP_MENU: AppMenuGroup[] = [
     category: 'character',
     icon: svgUser,
     items: [
-
       { label: 'Character', path: '/character', svgIcon: svgUser, exact: true },
       { label: 'Level', path: '/character/level', svgIcon: svgDiamondOutline },
       { label: 'Tradeskills', path: '/character/tradeskills', svgIcon: svgSickle },

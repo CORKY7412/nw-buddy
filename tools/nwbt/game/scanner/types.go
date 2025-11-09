@@ -33,80 +33,109 @@ type SliceData struct {
 	Trace          []any
 }
 
+type SpawnNode struct {
+	Gatherable GatherableEntry
+	Variant    VariantEntry
+	Vital      VitalsEntry
+	Npc        NpcEntry
+	Lore       LorenoteEntry
+	HouseType  HouseEntry
+	Structure  StructureEntry
+	Station    StationEntry
+	ZoneConfig ZoneConfigEntry
+	Encounter  EncounterEntry
+}
+
+type spawn struct {
+	Position  nwt.AzVec3
+	MapID     string
+	TileID    string
+	Encounter string
+}
+
+type Spawn interface {
+	Move(x, y nwt.AzFloat32)
+	GetPosition() nwt.AzVec3
+	SetPosition(p nwt.AzVec3)
+}
+
+func (it *spawn) Move(x, y nwt.AzFloat32) {
+	it.Position[0] += x
+	it.Position[1] += y
+}
+
+func (it *spawn) GetPosition() nwt.AzVec3 {
+	return it.Position
+}
+
+func (it *spawn) SetPosition(v nwt.AzVec3) {
+	it.Position = v
+}
+
+func (it *spawn) SetMap(mapId string) {
+	it.MapID = mapId
+}
+
+func (it *spawn) SetCatacombTile(tileId string) {
+	it.TileID = tileId
+}
+
 type ZoneConfigEntry struct {
-	Position nwt.AzVec3
-	Config   string
-	Shape    []nwt.AzVec2
-	Trace    []any
+	spawn
+	Config string
+	Shape  []nwt.AzVec2
 }
 
 type GatherableEntry struct {
-	Position     nwt.AzVec3
-	MapID        string
+	spawn
 	GatherableID string
-	Encounter    string
-	Trace        []any
 }
 
 type VariantEntry struct {
-	Position  nwt.AzVec3
-	MapID     string
-	VariantID string
-	Encounter string
-	Trace     []any
+	spawn
+	VariantID    string
+	GatherableID string
 }
 type NpcEntry struct {
-	Position nwt.AzVec3
-	MapID    string
-	NpcID    string
-	Trace    []any
+	spawn
+	NpcID string
 }
 
 type TerritoryEntry struct {
-	Position    nwt.AzVec3
+	spawn
 	TerritoryID string
 	Shape       []nwt.AzVec2
-	Trace       []any
 }
 
 type LorenoteEntry struct {
-	Position nwt.AzVec3
-	LoreID   string
-	MapID    string
-	Trace    []any
+	spawn
+	LoreID string
 }
 
 type HouseEntry struct {
-	Position nwt.AzVec3
-	HouseID  string
-	MapID    string
-	Trace    []any
+	spawn
+	HouseID string
 }
 
 type StationEntry struct {
-	Position  nwt.AzVec3
+	spawn
 	StationID string
-	MapID     string
 	Name      string
-	Trace     []any
 }
 
 type StructureEntry struct {
-	Position nwt.AzVec3
-	TypeID   string
-	MapID    string
-	Name     string
-	Trace    []any
+	spawn
+	TypeID string
+	Name   string
 }
 
 type VitalsEntry struct {
-	Position     nwt.AzVec3
+	spawn
+
 	VitalsID     string
 	NpcID        string
-	MapID        string
 	CategoryID   string
 	GatherableID string
-	CatacombTile string
 	Level        int
 	Encounter    string
 	DamageTable  string
@@ -115,9 +144,22 @@ type VitalsEntry struct {
 	AdbFile      string
 	Tags         []string
 	UseZoneLevel bool
-	Trace        []any
 	Luck         *float32
 	Tod          string
+}
+
+type EncounterEntry struct {
+	spawn
+	Tag         string           `json:"tag"`
+	Name        string           `json:"name"`
+	EncounterID string           `json:"encounterID"`
+	Stages      []EncounterStage `json:"stages"`
+}
+
+type EncounterStage struct {
+	Name       string           `json:"name"`
+	Stages     []EncounterStage `json:"stages"`
+	Objectives []any            `json:"objectives"`
 }
 
 type ScanResults struct {
@@ -131,4 +173,5 @@ type ScanResults struct {
 	Structures  []StructureEntry
 	Vitals      []VitalsEntry
 	ZoneConfigs []ZoneConfigEntry
+	Encounter   []EncounterEntry
 }

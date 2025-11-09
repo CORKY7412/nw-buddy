@@ -27,6 +27,7 @@ const PAGE_ROUTES: Routes = [
   { path: 'npcs', loadChildren: () => import('./pages/database/npcs').then((m) => m.ROUTES) },
   { path: 'quests', loadChildren: () => import('./pages/database/quests').then((m) => m.ROUTES) },
   { path: 'vitals', loadChildren: () => import('./pages/database/vitals').then((m) => m.ROUTES) },
+  { path: 'encounter', loadChildren: () => import('./pages/database/encounter').then((m) => m.ROUTES) },
 
   { path: 'loot-limits', loadChildren: () => import('./pages/database/loot-limits').then((m) => m.ROUTES) },
   { path: 'loot-tables', loadChildren: () => import('./pages/database/loot').then((m) => m.ROUTES) },

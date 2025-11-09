@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	"iter"
 	"log/slog"
 	"nw-buddy/tools/formats/capitals"
@@ -10,9 +9,9 @@ import (
 	"nw-buddy/tools/rtti/nwt"
 )
 
-func (ctx *Scanner) ScanCapitalFile(rootFile nwfs.File) iter.Seq[SpawnNode] {
+func (ctx *Scanner) ScanCapitalFile(rootFile nwfs.File) iter.Seq[Spawn] {
 
-	return func(yield func(SpawnNode) bool) {
+	return func(yield func(Spawn) bool) {
 		doc, err := capitals.Load(rootFile)
 		if err != nil {
 			slog.Warn("capital document not loaded", "file", rootFile.Path(), "err", err)
@@ -20,9 +19,10 @@ func (ctx *Scanner) ScanCapitalFile(rootFile nwfs.File) iter.Seq[SpawnNode] {
 		}
 		for _, capital := range doc.Capitals {
 			if capital.VariantName != "" {
-				item := SpawnNode{}
-				item.VariantID = capital.VariantName
-				item.Trace = append(item.Trace, fmt.Sprintf("Capitals.VariantName %s", rootFile.Path()))
+				item := &VariantEntry{
+					VariantID: capital.VariantName,
+					spawn:     spawn{},
+				}
 				if capital.Position != nil {
 					item.Position[0] = nwt.AzFloat32(capital.Position.X)
 					item.Position[1] = nwt.AzFloat32(capital.Position.Y)
@@ -46,8 +46,7 @@ func (ctx *Scanner) ScanCapitalFile(rootFile nwfs.File) iter.Seq[SpawnNode] {
 				}
 
 				for entry := range ctx.ScanSlice(file) {
-					// for entry := range ctx.ScanFileForSpawners(file, make([]string, 0)) {
-					entry.Position = transform.TransformPoint(entry.Position)
+					entry.SetPosition(transform.TransformPoint(entry.GetPosition()))
 					if !yield(entry) {
 						return
 					}

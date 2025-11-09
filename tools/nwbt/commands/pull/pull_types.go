@@ -172,6 +172,7 @@ func codeGenScanTypes() string {
 	types.AddReflect(reflect.TypeOf(scanner.ScannedZoneConfig{}))
 	types.AddReflect(reflect.TypeOf(SearchItem{}))
 	types.AddReflect(reflect.TypeOf(ScannedSpell{}))
+	types.AddReflect(reflect.TypeOf(scanner.ScannedEncounter{}))
 
 	w := str.NewBuilder()
 	for _, tKey := range types.SortedKeys() {

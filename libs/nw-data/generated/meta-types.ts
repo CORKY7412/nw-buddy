@@ -1,3 +1,9 @@
+export interface EncounterStage {
+  name: string
+  objectives: Array<any>
+  stages: Array<EncounterStage>
+}
+
 export interface Polygon {
   bbox: [number,number,number,number]
   coordinates: Array<Array<[number,number]>>
@@ -9,6 +15,19 @@ export interface PositionChunkRef {
   elementCount: number
   elementOffset: number
   elementSize: number
+}
+
+export interface ScannedEncounter {
+  encounterID: string
+  name: string
+  spawns: Array<ScannedEncounterSpawn>
+  stages: Array<EncounterStage>
+  tag: string
+}
+
+export interface ScannedEncounterSpawn {
+  mapID: string
+  positions: Array<[number,number]>
 }
 
 export interface ScannedGatherable {

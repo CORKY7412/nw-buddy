@@ -128,7 +128,6 @@ func CollateVitals(
 		node.Encounter = utils.AppendUniqNoZero(node.Encounter, strings.ToLower(row.Encounter))
 		node.Models = utils.AppendUniqNoZero(node.Models, modelHash)
 		node.Tables = utils.AppendUniqNoZero(node.Tables, strings.TrimPrefix(strings.ToLower(row.DamageTable), "sharedassets/springboardentitites/datatables/"))
-		node.Trace = append(node.Trace, row.Trace)
 
 		baseLevel := baseLevels[recordID]
 

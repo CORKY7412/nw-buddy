@@ -16,6 +16,7 @@ import {
   DATASHEETS,
   DataSheetUri,
   MasterItemDefinitions,
+  ScannedEncounter,
   ScannedZoneConfig,
   VariationDataGatherable,
   VitalsBaseData,
@@ -105,6 +106,12 @@ export abstract class NwDataSheets {
   )
   public stationTypesMetaMap = primaryIndex(this.stationTypesMetaAll, 'stationID')
   public stationTypesMeta = indexLookup(this.stationTypesMetaMap)
+
+  public encounterMetaAll = table(() =>
+    this.loadDatasheet<ScannedEncounter>({ uri: 'generated/encounter_metadata.json' }),
+  )
+  public encounterMetaMap = primaryIndex(this.encounterMetaAll, 'encounterID')
+  public encounterMeta = indexLookup(this.encounterMetaMap)
 
   public itemTransformsAll = table(() => this.loadDatasheets(DATASHEETS.ItemTransform))
   public itemTransformsByIdMap = primaryIndex(this.itemTransformsAll, 'FromItemId')

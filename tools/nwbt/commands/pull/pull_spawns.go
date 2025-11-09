@@ -103,6 +103,10 @@ func pullSpawns(ctx *PullContext, outDir string) {
 	size = writeJson(territories, path.Join(outDir, "territories_metadata.json"))
 	stats.Add("Territories", "rows", len(territories), "positions", count, "size", humanize.Bytes(size))
 
+	encounter, count := scanner.CollateEncounter(res.Encounter)
+	size = writeJson(encounter, path.Join(outDir, "encounter_metadata.json"))
+	stats.Add("Encounter", "rows", len(encounter), "positions", count, "size", humanize.Bytes(size))
+
 	variants, count := scanner.CollateVariants(res.Variants)
 	size = writeJson(variants.Variants, path.Join(outDir, "variations_metadata.json"))
 	stats.Add("Variants", "rows", len(variants.Variants), "positions", count, "size", humanize.Bytes(size))

@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"fmt"
 	"iter"
 	"log/slog"
 	"nw-buddy/tools/formats/vshapec"
@@ -119,36 +120,6 @@ func (ctx *Scanner) ScanSliceComponentForData(slice *nwt.SliceComponent, source 
 	return result
 }
 
-type SpawnNode struct {
-	VariantID      string
-	GatherableID   string
-	LoreIDs        []string
-	Encounter      string
-	Spawner        string
-	Name           string
-	VitalsID       string
-	NpcID          string
-	CategoryID     string
-	CatacombTile   string
-	Level          int
-	TerritoryLevel bool
-	DamageTable    string
-	ModelFile      string
-	MtlFile        string
-	AdbFile        string
-	Position       nwt.AzVec3
-	HouseType      string
-	StationID      string
-	StructureType  string
-	Tags           []string
-	Trace          []any
-	TodConstraint  string
-	LuckConstraint *float32
-
-	PoiConfig      string
-	PoiConfigShape []nwt.AzVec2
-}
-
 func findName(node *game.SliceNode) string {
 	for _, component := range node.Components {
 		switch v := component.(type) {
@@ -171,6 +142,7 @@ const (
 	ctxVariantId            = "variantId"
 	ctxGatherableId         = "gatherableId"
 	ctxVitalsTags           = "vitalsTags"
+	ctxEncounterRef         = "encounterRef"
 	ctxEncounterName        = "encounterName"
 	ctxSpawnerName          = "spawnerName"
 	ctxHotspotType          = "hotspotType"
@@ -178,8 +150,8 @@ const (
 	ctxTodConstraint        = "todConstraint"
 )
 
-func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
-	return func(yield func(SpawnNode) bool) {
+func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[Spawn] {
+	return func(yield func(Spawn) bool) {
 		if file == nil {
 			return
 		}
@@ -284,10 +256,11 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 						node.ContextProvideIfMissing(ctxMtlFile, file.Path())
 					}
 				case nwt.FtueIslandComponent:
-					result := SpawnNode{
-						Name:     string(node.Entity.Name),
+					result := &VitalsEntry{
 						VitalsID: "Player",
-						Position: mat4.PositionOf(node.Transform),
+						spawn: spawn{
+							Position: mat4.PositionOf(node.Transform),
+						},
 					}
 					if !yield(result) {
 						return
@@ -295,48 +268,54 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 				case nwt.NpcComponent:
 					npcId := string(v.M_npckey)
 					if npcId != "" {
-						result := SpawnNode{
-							Name: findName(node),
-							//Encounter: encounterType,
-							NpcID:    npcId,
-							Position: mat4.PositionOf(node.Transform),
+						result := &NpcEntry{
+							NpcID: npcId,
+							spawn: spawn{
+								Position: mat4.PositionOf(node.Transform),
+							},
 						}
 						if !yield(result) {
 							return
 						}
 					}
 				case nwt.ReadingInteractionComponent:
-					result := SpawnNode{
-						Name:     findName(node),
-						LoreIDs:  []string{string(v.M_loreid)},
-						Position: mat4.PositionOf(node.Transform),
+					result := &LorenoteEntry{
+						LoreID: string(v.M_loreid),
+						spawn: spawn{
+							Position: mat4.PositionOf(node.Transform),
+						},
 					}
 					if !yield(result) {
 						return
 					}
 				case nwt.HousingPlotComponent:
-					result := SpawnNode{
-						Name:      findName(node),
-						HouseType: string(v.M_housetypestring),
-						Position:  mat4.PositionOf(node.Transform),
+					result := &HouseEntry{
+						HouseID: string(v.M_housetypestring),
+						spawn: spawn{
+							Position: mat4.PositionOf(node.Transform),
+						},
 					}
 					if !yield(result) {
 						return
 					}
 				case nwt.AssemblyComponent:
-					result := SpawnNode{
+					result := &StationEntry{
 						Name:      findName(node),
 						StationID: string(v.M_craftingstationreference.M_craftingstationentry),
-						Position:  mat4.PositionOf(node.Transform),
+						spawn: spawn{
+							Position: mat4.PositionOf(node.Transform),
+						},
 					}
 					if !yield(result) {
 						return
 					}
 				case nwt.TradingPostComponent:
-					result := SpawnNode{
-						Name:          findName(node),
-						StructureType: "TradingPost",
-						Position:      mat4.PositionOf(node.Transform),
+					result := &StructureEntry{
+						Name:   findName(node),
+						TypeID: "TradingPost",
+						spawn: spawn{
+							Position: mat4.PositionOf(node.Transform),
+						},
 					}
 					if !yield(result) {
 						return
@@ -344,10 +323,12 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 				case nwt.StorageComponent:
 					ptr := v.BaseClass1.M_clientFacetPtr
 					if facet, ok := ptr.(nwt.StorageComponentClientFacet); ok && !bool(facet.M_showPreview) && bool(v.M_isPlayerUniqueStorage) {
-						result := SpawnNode{
-							Name:          findName(node),
-							StructureType: "Storage",
-							Position:      mat4.PositionOf(node.Transform),
+						result := &StructureEntry{
+							Name:   findName(node),
+							TypeID: "Storage",
+							spawn: spawn{
+								Position: mat4.PositionOf(node.Transform),
+							},
 						}
 						if !yield(result) {
 							return
@@ -367,20 +348,23 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 
 			vitalId := node.ContextStrGet(ctxVitalsId)
 			if vitalId != "" && hasVital {
-				result := SpawnNode{
-					VitalsID:       vitalId,
-					Position:       mat4.PositionOf(node.Transform),
-					CategoryID:     node.ContextStrGet(ctxVitalsCategoryId),
-					Level:          node.ContextIntGet(ctxVitalsLevel),
-					TerritoryLevel: node.ContextBoolGet(ctxVitalsTerritoryLevel),
-					DamageTable:    node.ContextStrGet(ctxDamageTable),
-					ModelFile:      node.ContextStrGet(ctxModelFile),
-					MtlFile:        node.ContextStrGet(ctxMtlFile),
-					AdbFile:        node.ContextStrGet(ctxAdbFile),
-					Tags:           node.ContextStrArrGet(ctxVitalsTags),
-					Encounter:      encounter,
-					TodConstraint:  node.ContextStrGet(ctxTodConstraint),
-					LuckConstraint: node.ContextFloatPtrOrNil(ctxLuckConstraint),
+				result := &VitalsEntry{
+					spawn: spawn{
+						Position: mat4.PositionOf(node.Transform),
+					},
+
+					Encounter:    encounter,
+					VitalsID:     vitalId,
+					CategoryID:   node.ContextStrGet(ctxVitalsCategoryId),
+					Level:        node.ContextIntGet(ctxVitalsLevel),
+					UseZoneLevel: node.ContextBoolGet(ctxVitalsTerritoryLevel),
+					DamageTable:  node.ContextStrGet(ctxDamageTable),
+					ModelFile:    node.ContextStrGet(ctxModelFile),
+					MtlFile:      node.ContextStrGet(ctxMtlFile),
+					AdbFile:      node.ContextStrGet(ctxAdbFile),
+					Tags:         node.ContextStrArrGet(ctxVitalsTags),
+					Tod:          node.ContextStrGet(ctxTodConstraint),
+					Luck:         node.ContextFloatPtrOrNil(ctxLuckConstraint),
 				}
 				if !yield(result) {
 					return
@@ -390,36 +374,67 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 			gatherableId := node.ContextStrGet(ctxGatherableId)
 			variantId := node.ContextStrGet(ctxVariantId)
 			if (gatherableId != "" || variantId != "") && (hasGatherable || hasVariant) {
-				result := SpawnNode{
-					GatherableID: gatherableId,
-					VariantID:    variantId,
-					Position:     mat4.PositionOf(node.Transform),
-					Encounter:    encounter,
+				if gatherableId != "" && variantId == "" {
+					result := &GatherableEntry{
+						spawn: spawn{
+							Position:  mat4.PositionOf(node.Transform),
+							Encounter: encounter,
+						},
+						GatherableID: gatherableId,
+					}
+					if !yield(result) {
+						return
+					}
 				}
-				if !yield(result) {
-					return
+				if variantId != "" {
+					result := &VariantEntry{
+						spawn: spawn{
+							Position:  mat4.PositionOf(node.Transform),
+							Encounter: encounter,
+						},
+						VariantID:    variantId,
+						GatherableID: gatherableId,
+					}
+					if !yield(result) {
+						return
+					}
 				}
 			}
 			hotspotType := node.ContextStrGet(ctxHotspotType)
 			if (hotspotType != "" || variantId != "") && (hasHotspot || hasVariant) {
-				result := SpawnNode{
-					GatherableID: hotspotType,
-					VariantID:    variantId,
-					Position:     mat4.PositionOf(node.Transform),
-					Encounter:    encounter,
+				if hotspotType != "" && variantId == "" {
+					result := &GatherableEntry{
+						spawn: spawn{
+							Position:  mat4.PositionOf(node.Transform),
+							Encounter: encounter,
+						},
+						GatherableID: hotspotType,
+					}
+					if !yield(result) {
+						return
+					}
 				}
-				if !yield(result) {
-					return
+				if variantId != "" {
+					result := &VariantEntry{
+						spawn: spawn{
+							Position:  mat4.PositionOf(node.Transform),
+							Encounter: encounter,
+						},
+						VariantID:    variantId,
+						GatherableID: hotspotType,
+					}
+					if !yield(result) {
+						return
+					}
 				}
 			}
 
 			if poiConfig != "" && len(poiConfigShapes) > 0 {
 				for _, shape := range poiConfigShapes {
-					result := SpawnNode{
-						Name:           findName(node),
-						PoiConfig:      poiConfig,
-						PoiConfigShape: transformShape(shape, node.Transform),
-						// Position:       mat4.PositionOf(node.Transform),
+					result := &ZoneConfigEntry{
+						Config: poiConfig,
+						Shape:  transformShape(shape, node.Transform),
+						spawn:  spawn{},
 					}
 					if !yield(result) {
 						return
@@ -506,12 +521,29 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[SpawnNode] {
 					}
 					node.Transform = tmpTm
 				case nwt.EncounterManagerComponent:
+					fileName := utils.ReplaceExt(path.Base(node.File.Path()), "")
+					encounter := scanEncounterManagerObject(node, node.Entity, v)
+					encounter.Position = mat4.PositionOf(node.Transform)
+					encounter.Tag = game.ParseEncounterName(string(node.Entity.Name))
+					asset := ctx.Catalog.FindByFile(node.File.Path())
+					if asset != nil {
+						// assume there is only one encounter manager per file
+						encounter.EncounterID = asset.Guid
+					} else {
+						slog.Warn("Asset not found for", "file", node.File.Path())
+						encounter.EncounterID = fmt.Sprintf("%s#%s", fileName, encounter.EncounterID)
+					}
+					if !yield(&encounter) {
+						return
+					}
+
 					tmpTm := node.Transform
-					// node.Entity.Name
+					node.ContextSetValue(ctxEncounterRef, encounter.EncounterID)
 					node.ContextSetValue(ctxEncounterName, game.ParseEncounterName(string(node.Entity.Name)))
 					if encounterFallback != "" {
 						node.ContextProvideIfMissing(ctxSpawnerName, encounterFallback)
 					}
+
 					for _, spawn := range game.WalkEncounterSpawns(node.Slice, v.M_stages.Element) {
 						assets := make([]nwt.AzAsset, 0)
 						assets = utils.AppendUniqNoZero(assets, spawn.M_sliceAsset)
@@ -668,4 +700,59 @@ func encodeTimeOfDay(facet nwt.TimeOfDayConstraintComponentServerFacet) string {
 		return strings.Join(result, ",")
 	}
 	return ""
+}
+
+func scanEncounterManagerObject(node *game.SliceNode, entity *nwt.AZ__Entity, manager nwt.EncounterManagerComponent) EncounterEntry {
+	result := EncounterEntry{
+		Name:        string(entity.Name),
+		EncounterID: fmt.Sprintf("%v", manager.BaseClass1.BaseClass1.Id),
+		Stages:      make([]EncounterStage, 0),
+	}
+
+	for _, stage := range manager.M_stages.Element {
+		stageEntity := game.FindEntityById(node.Slice, stage.EntityId.Id)
+		if stageEntity == nil {
+			continue
+		}
+		encounter := findEncounterComponent(stageEntity)
+		if encounter == nil {
+			continue
+		}
+		result.Stages = append(result.Stages, scanEncounterStage(node, stageEntity, encounter))
+	}
+	return result
+}
+
+func scanEncounterStage(node *game.SliceNode, entity *nwt.AZ__Entity, encounter *nwt.EncounterComponent) EncounterStage {
+	result := EncounterStage{
+		Name:       string(entity.Name),
+		Stages:     make([]EncounterStage, 0),
+		Objectives: make([]any, 0),
+	}
+	for _, stage := range encounter.M_stages.Element {
+		stageEntity := game.FindEntityById(node.Slice, stage.EntityId.Id)
+		if stageEntity == nil {
+			continue
+		}
+		encounter := findEncounterComponent(stageEntity)
+		if encounter == nil {
+			continue
+		}
+		result.Stages = append(result.Stages, scanEncounterStage(node, stageEntity, encounter))
+	}
+
+	for _, objective := range encounter.M_objectives.Element {
+		result.Objectives = append(result.Objectives, objective.Element)
+	}
+	return result
+}
+
+func findEncounterComponent(entity *nwt.AZ__Entity) *nwt.EncounterComponent {
+	for _, component := range entity.Components.Element {
+		switch v := component.(type) {
+		case nwt.EncounterComponent:
+			return &v
+		}
+	}
+	return nil
 }

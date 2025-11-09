@@ -30,7 +30,6 @@ func (ctx *Scanner) ScanVitals(file nwfs.File) iter.Seq[VitalsEntry] {
 				MtlFile:      data.MtlFile,
 				AdbFile:      data.AdbFile,
 				Tags:         data.Tags,
-				Trace:        data.Trace,
 			}
 			if !yield(entry) {
 				return
