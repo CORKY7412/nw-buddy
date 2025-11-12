@@ -134,7 +134,7 @@ export const EQUIP_SLOTS: Array<EquipSlot> = [
   },
   {
     id: 'amulet',
-    icon: 'assets/icons/slots/trinketp.png',
+    icon: 'assets/icons/slots/trinkete.png',
     iconSlot: 'assets/icons/slots/iconamulet.png',
     name: 'ui_amulet_slot_tooltip',
     itemType: 'EquippableAmulet',
@@ -150,7 +150,7 @@ export const EQUIP_SLOTS: Array<EquipSlot> = [
   },
   {
     id: 'earring',
-    icon: 'assets/icons/slots/trinkete.png',
+    icon: 'assets/icons/slots/trinketp.png',
     iconSlot: 'assets/icons/slots/icontoken.png',
     name: 'ui_unlock_token_slot',
     itemType: 'EquippableToken',
