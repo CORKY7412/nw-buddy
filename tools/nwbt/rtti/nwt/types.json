@@ -890,7 +890,7 @@
 			},
 			"4269333841": {
 				"Crc32": 4269333841,
-				"Name": "",
+				"Name": "m_overridewithuserdefinedspawnradius",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -2068,18 +2068,18 @@
 	},
 	"09B96ED1-8114-4863-922D-F4393E1BCD6F": {
 		"ID": "09B96ED1-8114-4863-922D-F4393E1BCD6F",
-		"Name": "",
+		"Name": "FEUniversalBase",
 		"Members": {
 			"1979176712": {
 				"Crc32": 1979176712,
-				"Name": "",
+				"Name": "feplatform",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3562906710": {
 				"Crc32": 3562906710,
-				"Name": "",
+				"Name": "feuniversalidstr",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -3192,7 +3192,12 @@
 					"AD882674-1D5D-4E40-B079-449B47D2492C",
 					"954683F7-7965-4686-BCDB-0F65767730D3",
 					"ADCA8AB2-924D-463F-A0EA-27D254F9682A",
-					"500A7BFE-52FE-AA45-6B0E-B1253A4D7BF7",
+					"0B382AF4-7946-4698-9223-206D1187B612",
+					"76E26125-7E1C-32F4-C1D0-B841D64312AD",
+					"B69045A3-A129-4334-BDFB-069C18CC84A2",
+					"A149EC6D-CF0F-4051-A244-3E07D7C4B605",
+					"FBC26126-32AE-4734-881E-D374235A9C5C",
+					"98021A39-D35A-423D-BDCD-86AAC61C6207",
 					"8B86F1ED-3CA0-4E28-B816-4F5BA3267C13",
 					"1FF7A74B-8C58-42F2-8A68-1706D75F57D0",
 					"B3CBD45C-2E02-44B5-8AFC-EE4E09F375E6",
@@ -3203,18 +3208,22 @@
 					"3D1526BF-AC9C-4A5D-8B0D-00ABFCCD19F1",
 					"1E6354A4-E970-4B41-B9E1-1BE15DDDC8DE",
 					"BDA85E4F-2182-45C9-9992-05592B5E7EFC",
+					"5EDF4B9E-0D3D-40B8-8C91-5142BCFC30A6",
+					"500A7BFE-52FE-AA45-6B0E-B1253A4D7BF7",
+					"55A5FED5-B91E-4CEC-B605-1BA0553735BD",
+					"EFC5D83C-A790-6A1F-F6F2-150E05D4D093",
+					"9793C036-3FDC-4020-97F6-8332BAD8A83E",
+					"B0C6AA97-E754-4E33-8D32-33E267DB622F",
+					"41BC3BB3-EF30-41E4-B751-12C4EAB97C0E",
+					"544D4993-2EC6-4E33-AA92-7B3701981ACD",
+					"B52D0D52-99CD-41BE-B6F7-D2519C15BF14",
+					"FECC8785-5D77-7138-0BDF-573DE220D90E",
 					"2A333C23-A549-BC11-1A9A-AE905170F2F6",
 					"3C0AB687-D2C0-4AD3-BFB3-F0A8933A92DE",
-					"41BC3BB3-EF30-41E4-B751-12C4EAB97C0E",
-					"76E26125-7E1C-32F4-C1D0-B841D64312AD",
 					"D1ABFC7C-EEDB-4086-B8DB-7A44AAA2AC80",
-					"EFC5D83C-A790-6A1F-F6F2-150E05D4D093",
 					"28CCA696-F4CE-4FCC-9CB5-04A539033338",
 					"6E383639-A3A8-4420-826E-25F293F43AD4",
-					"98021A39-D35A-423D-BDCD-86AAC61C6207",
-					"B0C6AA97-E754-4E33-8D32-33E267DB622F",
 					"3700DA70-407D-47A6-B788-4654EDDA32A1",
-					"5EDF4B9E-0D3D-40B8-8C91-5142BCFC30A6",
 					"C0C817DE-843F-44C8-9FC1-989CDE66B662",
 					"2A2893BF-8203-4176-B5DC-A045652ACD2F",
 					"AE52A11C-3356-4178-89A2-7152E9FC869E",
@@ -3229,12 +3238,7 @@
 					"2DFECFD9-7623-49AC-9BCA-704972E6B24B",
 					"7C051A94-079C-45A5-A94D-2005D2440A1E",
 					"8C95DACD-84CC-42C5-A49E-5E7A94DBA0EE",
-					"B52D0D52-99CD-41BE-B6F7-D2519C15BF14",
 					"B18C9858-CBE8-4F24-8622-891F2804FF7D",
-					"B69045A3-A129-4334-BDFB-069C18CC84A2",
-					"55A5FED5-B91E-4CEC-B605-1BA0553735BD",
-					"9793C036-3FDC-4020-97F6-8332BAD8A83E",
-					"544D4993-2EC6-4E33-AA92-7B3701981ACD",
 					"0F16A377-EAA0-47D2-8472-9EAAA680B169",
 					"3CCA8CD0-D455-4531-9C1E-FC8171EC84CD",
 					"8E425CD0-98E6-487A-9302-A1AD6C0D02DE",
@@ -3253,13 +3257,10 @@
 					"2D17A64A-7AC5-4C02-AC36-C5E8141FFDDF",
 					"9CB3707A-73B3-4EE5-84EA-3CF86E0E3722",
 					"40A7BBA8-71B9-44BB-AD49-D4A95B5AD8AB",
-					"0B382AF4-7946-4698-9223-206D1187B612",
 					"67D09F51-0302-4C56-B7E3-568DEE9C7C14",
 					"7D6D2AC4-0E0D-4717-9EC1-415B7002EB97",
 					"EA210BD0-1072-C3D6-25F0-82BBBECB0BFB",
-					"FBC26126-32AE-4734-881E-D374235A9C5C",
 					"D353F7E8-4266-F749-19A1-AA2C3841FBCA",
-					"FECC8785-5D77-7138-0BDF-573DE220D90E",
 					"4A2D9C0A-B147-4186-A9E0-5805B610D3CC",
 					"4FDA5200-13F8-4F21-AF8C-19706E74758F",
 					"3CF55A7C-F12C-4106-97C1-E8613F21AB59",
@@ -3316,7 +3317,6 @@
 					"600BD47C-B128-4473-9F63-EB2E30F72C5C",
 					"7C84DEE6-F1DF-4B85-8CD5-6BFB970B70D0",
 					"1AFB26D6-E891-406A-9DED-862B9D9C708C",
-					"A149EC6D-CF0F-4051-A244-3E07D7C4B605",
 					"1BD9D601-9DE8-4A8B-B115-BB534EB6020C",
 					"B7F335FF-5B90-4055-8116-2845E33D4048",
 					"0F941C00-6487-4CA7-83F6-FBF40947B318",
@@ -3344,13 +3344,9 @@
 					"418D3A41-A6F7-47BD-8F7D-33AE499CC523",
 					"E0C0B127-8A14-4830-B6A4-C3B4CADA2FE9",
 					"600F532D-D460-4AC8-9FA2-B396EEA34B9C",
-					"FC98A154-6A92-4A71-95BC-1AA8926ECC82",
 					"D7FD1261-61FA-4E03-8702-8E8236503999",
 					"305E36B8-2BFE-4B80-8831-DFA3BC6E7AE0",
 					"E409F5C0-9919-4CA5-9488-1FE8A041768E",
-					"476B4B9F-9C00-4476-AFA2-2D9F1179BAD5",
-					"7B1E1BFF-1B7F-4B38-A864-2AAACAE92ACC",
-					"BA93B9FF-7A7E-4028-889E-12D418A11C71",
 					"517760D2-237E-4582-9CEF-A91EFF641441",
 					"8DF85DCB-A2A8-4525-8F5C-B4258158878D",
 					"F16AD691-091B-44E2-8FBD-2E3AFC2739EF",
@@ -3385,6 +3381,8 @@
 					"DE8B6DD8-3D34-4AF9-A0B3-8FCCCA1AD533",
 					"B928342A-C998-4E22-8C8E-4041B4655FA3",
 					"EA3F0048-CFE7-4AB3-8C18-12FE2F7AF3A0",
+					"476B4B9F-9C00-4476-AFA2-2D9F1179BAD5",
+					"BA93B9FF-7A7E-4028-889E-12D418A11C71",
 					"CB75B952-D0BA-A939-0465-04706EF9BE09",
 					"6D3E998C-FC19-4C9D-B8F6-77C3FE985D29",
 					"161B327C-A461-41FA-AE06-5A848A5D5670",
@@ -3430,6 +3428,7 @@
 					"4E9C9AA5-B273-4CA7-BE62-341EA50FE36A",
 					"A792A061-2889-4008-905E-921426173EF9",
 					"661D79B6-C543-442E-A020-C766C81C0FA4",
+					"FC98A154-6A92-4A71-95BC-1AA8926ECC82",
 					"6702E2A4-78F5-4D97-9C62-EC6C2197F0FC",
 					"22B10178-39B6-4C12-BB37-77DB45FDD3B6",
 					"2BBE284D-C550-4197-B2B3-B9D2FE9AD3F2",
@@ -3450,13 +3449,15 @@
 					"09F2F300-6393-474E-A877-9DDBD88AE6CD",
 					"D2671994-3011-4BFE-BB0B-C206B742070E",
 					"7F289CF9-6BD4-4E8A-A5A7-2EE52EB9B47F",
-					"3A4347B4-7E99-4B06-87FB-CD090828A135",
 					"6518AD3D-117D-4F1E-8D5F-85A003FDC90E",
+					"3A4347B4-7E99-4B06-87FB-CD090828A135",
 					"E3626A07-D134-434F-8AE3-84B4F8328C33",
 					"EB76C1E3-3823-481D-A36B-92F836AB009F",
 					"8F2A37F1-40B4-43CF-AC1C-FE4E7724869D",
 					"704E9C3F-8784-4F6E-9FB6-1CA7E769F5A3",
 					"0D2243CC-FBEA-47F4-A784-44A669C64B55",
+					"45F688E1-BBBF-456F-99A1-7D01F10AD002",
+					"7B1E1BFF-1B7F-4B38-A864-2AAACAE92ACC",
 					"9A4E9675-05B6-41A5-8CC9-FD42BC16EEB0",
 					"1B17225C-566C-4522-835A-59E493917C60",
 					"5B19445A-04E9-41D9-B254-6E981FD05090",
@@ -3464,8 +3465,8 @@
 					"D707D6C5-3EFA-4275-82EB-A954F845D324",
 					"8022A627-FA7D-4516-A155-657A0927A3CA",
 					"7A7DB188-7780-4A66-934B-0DD25AC530DF",
-					"56BD2504-DF0D-4200-A86D-DC2797736747",
 					"F27A8955-0679-4AA2-96AB-F1B4DBD90C88",
+					"56BD2504-DF0D-4200-A86D-DC2797736747",
 					"8B8918AB-894D-4E44-B72C-F947844A3985",
 					"735B7BC7-87C7-4FED-AE64-EB03A08014CE",
 					"6384FC75-7BA9-4A80-8B50-57D48901C34D",
@@ -3503,7 +3504,6 @@
 					"72130A90-A927-4AB0-83E7-CF486CEB04D8",
 					"D578BBB4-7E11-4C5A-8352-A95BF5A6CFD5",
 					"427A7B93-B63B-45CC-B19B-B765993E9DE7",
-					"45F688E1-BBBF-456F-99A1-7D01F10AD002",
 					"1B2624D3-7941-41C1-BBFF-AEE2C699E41D",
 					"E7DFDAA1-237C-40F7-961B-3CC6455B4653",
 					"15DF36EA-CA2C-42B8-B545-A39223BC0AF1",
@@ -4037,7 +4037,7 @@
 			},
 			"1194365757": {
 				"Crc32": 1194365757,
-				"Name": "",
+				"Name": "gameplaycrctags",
 				"TypeID": "287CEE87-6FF3-52FC-9D32-38255E2C7FE9",
 				"TypeIDs": [],
 				"Array": false
@@ -4058,7 +4058,7 @@
 			},
 			"494723905": {
 				"Crc32": 494723905,
-				"Name": "",
+				"Name": "gameplaytags",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -5077,32 +5077,32 @@
 	},
 	"145AD436-BD9E-4D26-8755-C16DF8A84629": {
 		"ID": "145AD436-BD9E-4D26-8755-C16DF8A84629",
-		"Name": "",
+		"Name": "MusicManagerTrackInfo",
 		"Members": {
 			"1479941275": {
 				"Crc32": 1479941275,
-				"Name": "",
+				"Name": "m_stopeventoverride",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"157273991": {
 				"Crc32": 157273991,
-				"Name": "",
+				"Name": "m_starteventoverride",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2787884754": {
 				"Crc32": 2787884754,
-				"Name": "",
+				"Name": "m_switchstates",
 				"TypeID": "4C217217-7EF9-551F-B1C6-B4A528033DBC",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3385224897": {
 				"Crc32": 3385224897,
-				"Name": "",
+				"Name": "m_trackname",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -5656,7 +5656,7 @@
 		"Members": {
 			"2544375102": {
 				"Crc32": 2544375102,
-				"Name": "",
+				"Name": "m_debugindex",
 				"TypeID": "43DA906B-7DEF-4CA8-9790-854106D3F983",
 				"TypeIDs": [],
 				"Array": false
@@ -5755,14 +5755,14 @@
 		"Members": {
 			"282353030": {
 				"Crc32": 282353030,
-				"Name": "FadeOutTime",
+				"Name": "fadeouttime",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3194852418": {
 				"Crc32": 3194852418,
-				"Name": "FadeInTime",
+				"Name": "fadeintime",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
@@ -5776,7 +5776,7 @@
 			},
 			"3772719300": {
 				"Crc32": 3772719300,
-				"Name": "ColorGradingTexture",
+				"Name": "colorgradingtexture",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -6027,7 +6027,7 @@
 	},
 	"172DEDD4-227A-485E-8028-7484EEA13A48": {
 		"ID": "172DEDD4-227A-485E-8028-7484EEA13A48",
-		"Name": "",
+		"Name": "GraphBasedSpawnNodeComponentServerFacet",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -9120,7 +9120,7 @@
 	},
 	"22B25EDE-4B36-438D-B6B9-DDDF55065E29": {
 		"ID": "22B25EDE-4B36-438D-B6B9-DDDF55065E29",
-		"Name": "",
+		"Name": "FEDebugName",
 		"Members": {
 			"1816043808": {
 				"Crc32": 1816043808,
@@ -9191,7 +9191,7 @@
 			},
 			"2914110177": {
 				"Crc32": 2914110177,
-				"Name": "m_detectedtargettype",
+				"Name": "m_detectedTargetType",
 				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
 				"TypeIDs": [],
 				"Array": false
@@ -9341,7 +9341,7 @@
 			},
 			"4080080553": {
 				"Crc32": 4080080553,
-				"Name": "",
+				"Name": "m_overrideinitialqueryradiuscheck",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
@@ -9363,7 +9363,7 @@
 	},
 	"23513EC4-3AD1-4F48-A26B-CC04F86C4574": {
 		"ID": "23513EC4-3AD1-4F48-A26B-CC04F86C4574",
-		"Name": "",
+		"Name": "GraphBasedSpawnNodeComponentClientFacet",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -9749,7 +9749,7 @@
 			},
 			"947910243": {
 				"Crc32": 947910243,
-				"Name": "m_clientexecutioncondition",
+				"Name": "m_clientExecutionCondition",
 				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
 				"TypeIDs": [],
 				"Array": false
@@ -9817,7 +9817,7 @@
 	},
 	"25B722F9-6FA0-4417-B333-06789E093E5B": {
 		"ID": "25B722F9-6FA0-4417-B333-06789E093E5B",
-		"Name": "",
+		"Name": "SubFlexEvent",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -9907,7 +9907,7 @@
 		"Members": {
 			"2607446510": {
 				"Crc32": 2607446510,
-				"Name": "",
+				"Name": "m_exittriggerevents",
 				"TypeID": "8F72A3A6-3B12-5D1D-99B1-F77572E253FF",
 				"TypeIDs": [],
 				"Array": false
@@ -11741,7 +11741,7 @@
 	},
 	"2E69457D-8C56-481B-9AAE-647A18B18705": {
 		"ID": "2E69457D-8C56-481B-9AAE-647A18B18705",
-		"Name": "",
+		"Name": "StartupCondition",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -12190,7 +12190,7 @@
 			},
 			"674655060": {
 				"Crc32": 674655060,
-				"Name": "m_waitTimeSeconds",
+				"Name": "m_waittimeseconds",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
@@ -13021,11 +13021,11 @@
 	},
 	"3388147D-669E-49E9-A703-5A4FBAC170EA": {
 		"ID": "3388147D-669E-49E9-A703-5A4FBAC170EA",
-		"Name": "",
+		"Name": "FEConditionalDependent",
 		"Members": {
 			"170814513": {
 				"Crc32": 170814513,
-				"Name": "",
+				"Name": "flexconditional",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -13223,7 +13223,7 @@
 		"Members": {
 			"1520233680": {
 				"Crc32": 1520233680,
-				"Name": "m_localplayeronly",
+				"Name": "m_localPlayerOnly",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -14800,6 +14800,11 @@
 			}
 		}
 	},
+	"3AB0037F-AF8D-48CE-BCA0-A170D18B2C03": {
+		"ID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
+		"Name": "char",
+		"Members": {}
+	},
 	"3ABDD020-B74C-4AF5-8C86-EBB7ECD11E66": {
 		"ID": "3ABDD020-B74C-4AF5-8C86-EBB7ECD11E66",
 		"Name": "WeaponAccuracyComponent",
@@ -15735,14 +15740,14 @@
 		"Members": {
 			"2916754806": {
 				"Crc32": 2916754806,
-				"Name": "m_entityref",
+				"Name": "m_entityRef",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"993664239": {
 				"Crc32": 993664239,
-				"Name": "m_applyrecursively",
+				"Name": "m_applyRecursively",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -16086,7 +16091,7 @@
 	},
 	"3E58ABF2-395B-4714-8FC3-564A9DB71533": {
 		"ID": "3E58ABF2-395B-4714-8FC3-564A9DB71533",
-		"Name": "",
+		"Name": "ReusableScoreboardComponent",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -17657,7 +17662,7 @@
 			},
 			"1162612615": {
 				"Crc32": 1162612615,
-				"Name": "",
+				"Name": "m_spectatormode",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -17748,7 +17753,7 @@
 			},
 			"2067873111": {
 				"Crc32": 2067873111,
-				"Name": "",
+				"Name": "m_enableclientfpsoptimizer",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -17832,7 +17837,7 @@
 			},
 			"2896218708": {
 				"Crc32": 2896218708,
-				"Name": "",
+				"Name": "m_spectatorcameraoriginpitch",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
@@ -17853,7 +17858,7 @@
 			},
 			"308938268": {
 				"Crc32": 308938268,
-				"Name": "",
+				"Name": "m_gestureanimationinfo",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -19109,14 +19114,14 @@
 		"Members": {
 			"1520233680": {
 				"Crc32": 1520233680,
-				"Name": "m_localplayeronly",
+				"Name": "m_localPlayerOnly",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2916754806": {
 				"Crc32": 2916754806,
-				"Name": "m_entityref",
+				"Name": "m_entityRef",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -19130,7 +19135,7 @@
 			},
 			"993664239": {
 				"Crc32": 993664239,
-				"Name": "m_applyrecursively",
+				"Name": "m_applyRecursively",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -20273,14 +20278,14 @@
 			"1320638154": {
 				"Crc32": 1320638154,
 				"Name": "childvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2010179473": {
 				"Crc32": 2010179473,
 				"Name": "childhalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -21571,7 +21576,7 @@
 	},
 	"505F1A37-A8DF-4733-BC48-5A4D785980DB": {
 		"ID": "505F1A37-A8DF-4733-BC48-5A4D785980DB",
-		"Name": "",
+		"Name": "DungeonDunwood02Data",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -22219,7 +22224,7 @@
 			},
 			"3556072060": {
 				"Crc32": 3556072060,
-				"Name": "m_detectionvolumeentity",
+				"Name": "m_detectionVolumeEntity",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -22938,7 +22943,7 @@
 	},
 	"572333F7-5507-4907-9571-6925C7DD8C97": {
 		"ID": "572333F7-5507-4907-9571-6925C7DD8C97",
-		"Name": "",
+		"Name": "QuestSeraphimData",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -24263,14 +24268,14 @@
 			"1441707225": {
 				"Crc32": 1441707225,
 				"Name": "texthalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1508381331": {
 				"Crc32": 1508381331,
 				"Name": "caseoverride",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -24291,14 +24296,14 @@
 			"1820919170": {
 				"Crc32": 1820919170,
 				"Name": "textvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2152931211": {
 				"Crc32": 2152931211,
 				"Name": "overflowmode",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -24319,14 +24324,14 @@
 			"2787519099": {
 				"Crc32": 2787519099,
 				"Name": "shrinktofit",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2934723730": {
 				"Crc32": 2934723730,
 				"Name": "wraptextsetting",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -25692,7 +25697,7 @@
 			},
 			"4156664423": {
 				"Crc32": 4156664423,
-				"Name": "",
+				"Name": "m_getweapongearscoredatafromvitals",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -26435,7 +26440,7 @@
 	},
 	"6384FC75-7BA9-4A80-8B50-57D48901C34D": {
 		"ID": "6384FC75-7BA9-4A80-8B50-57D48901C34D",
-		"Name": "",
+		"Name": "GraphBasedSpawnNodeComponent",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -26997,7 +27002,12 @@
 					"59BAF21F-BD73-4A2C-9042-A2246B665BED",
 					"F57E125F-FF7A-43E9-9C01-8069C35632ED",
 					"F16D036F-151B-4994-9507-9F4A7F2752AE",
-					"B6A6E43A-5A1D-437C-BCF7-59B213EC9565",
+					"BAD8A9E3-13A4-4E63-8495-4E585A8B1AE1",
+					"956127D3-9804-4345-BB8A-951707EF1660",
+					"C7BF1096-1AAF-4151-81B1-4C6A224F1353",
+					"EB66A021-1E57-49E0-BE64-B1FB1BBCA0FA",
+					"8D60C77E-D1F1-431D-97E1-6C9196D82E2D",
+					"22116D6F-4085-4E65-AEBE-0FEE171C4D97",
 					"890457CE-D810-4291-AE89-340B74C2FE0C",
 					"AA380AA0-A627-440F-963B-4750D29DA35A",
 					"A8E62510-9F7A-483A-9B13-6FEEF4CEDE5B",
@@ -27007,21 +27017,20 @@
 					"6421B8C9-1737-4FB5-9E3C-7879A19BCB3B",
 					"011CECFC-280A-44AD-951F-8BC218E8CD17",
 					"C7FEC799-6F47-43F7-8CAD-55C4AE194FF8",
+					"B6A6E43A-5A1D-437C-BCF7-59B213EC9565",
+					"E5280783-DF44-4BCD-BF99-E1B98AB6C3CD",
+					"E645E8B3-569D-4C55-B1EB-5D01F6F150AC",
+					"A1FB6D1A-345B-4E55-B2C8-0972B4DF2F40",
+					"DE6997D1-6961-4FD8-9673-C288F3517E00",
+					"1E22D973-1CD5-46C4-BEFF-A94A97D6B684",
+					"9C3A631F-A83B-4D76-9F37-42C579D2E3F9",
+					"935E3119-9036-4472-874C-957902542BBC",
 					"93308ACC-792A-4638-8EB0-54896B50E9E4",
 					"5F03D592-6C9C-4A3C-AC21-4DD13A127C2E",
-					"DE6997D1-6961-4FD8-9673-C288F3517E00",
-					"956127D3-9804-4345-BB8A-951707EF1660",
 					"F9B06579-8DF2-48B3-9E6A-238372C97877",
-					"E645E8B3-569D-4C55-B1EB-5D01F6F150AC",
 					"A4282775-903B-4638-9DC7-28A69D60170E",
 					"1E859C26-E649-437E-9D67-A250A5D6D6A3",
-					"22116D6F-4085-4E65-AEBE-0FEE171C4D97",
-					"9C3A631F-A83B-4D76-9F37-42C579D2E3F9",
 					"9ECFF158-0EC3-4C37-B04C-2723999A49CF",
-					"C7BF1096-1AAF-4151-81B1-4C6A224F1353",
-					"E5280783-DF44-4BCD-BF99-E1B98AB6C3CD",
-					"A1FB6D1A-345B-4E55-B2C8-0972B4DF2F40",
-					"1E22D973-1CD5-46C4-BEFF-A94A97D6B684",
 					"05CF8899-3788-40EE-AEC9-73BBDED170A8",
 					"898582BE-34AB-42B1-A97C-BC761EF1007B",
 					"71308A3E-8B7E-4AD2-A358-4DED7BA837CC",
@@ -27032,13 +27041,10 @@
 					"164E5A9C-5042-491D-B66B-6D5B862FC2CE",
 					"1B39EC97-1D35-403A-A83B-C6BA1CBDA904",
 					"970D4BB4-9AE9-4FC1-B916-197CFAC70F44",
-					"BAD8A9E3-13A4-4E63-8495-4E585A8B1AE1",
 					"93B855CF-B965-4BFA-BD43-97BBD5975676",
 					"31D2D363-1003-4258-933B-2D3E3731DECE",
 					"585E3D10-B91A-49B6-8610-E6B1F7E3D1E5",
-					"8D60C77E-D1F1-431D-97E1-6C9196D82E2D",
 					"67271F2B-431E-46AC-BF0E-836B65CB2B2D",
-					"935E3119-9036-4472-874C-957902542BBC",
 					"745005CD-41DD-4B1E-9159-86D1A6D2C4B6",
 					"1E18BC12-08B9-4EE5-B9BB-D097E0436936",
 					"A99BDF00-0863-4BBE-9AB3-A7FF191E2607",
@@ -27080,7 +27086,6 @@
 					"57150469-DB20-41CF-84C5-3F50CA42162F",
 					"50D59114-6D9A-4859-8D13-CF7015C3225B",
 					"B1EBA493-C6A6-47FB-BE70-BCDD1EC41E65",
-					"EB66A021-1E57-49E0-BE64-B1FB1BBCA0FA",
 					"4D335B40-103D-4DEB-B4E9-BC1789529C1D",
 					"6BA3F935-5E69-4696-A820-C6B67DA4AA7F",
 					"6C52CB20-936B-45FF-B40F-062C81DC80FB",
@@ -27098,9 +27103,7 @@
 					"BE8B88EE-5B2F-46E8-A635-AD711BF16542",
 					"527D161A-CB9A-486E-A0B9-499FD528AB00",
 					"5F5E7C32-CD69-455E-86D0-AD26203980AE",
-					"9E0450E5-1B6F-4252-8DE1-A32AC4DE81EF",
 					"B81DA6F9-194D-4E95-85C9-9546AEBE0F47",
-					"ACA8AB76-AE4F-421E-9787-388715C262A1",
 					"AAE3B29E-A5FC-4892-BC4F-6E3AADE9CCF2",
 					"A22BCADB-F56E-45BD-A14F-21BADD42214E",
 					"2F1B4679-770D-43FB-B57A-3F20320C0D0D",
@@ -27129,6 +27132,7 @@
 					"DD7F684D-FFAE-4610-B782-90EB2C5A8C96",
 					"9F7D842D-D93D-458B-AF2B-AF61E2F6C2F6",
 					"7C50CDEB-5303-449D-853F-FCDDDE389134",
+					"ACA8AB76-AE4F-421E-9787-388715C262A1",
 					"D41D6B5F-CED5-4D31-AC52-2907DF9D0208",
 					"6789290B-3BB1-4F88-A70B-7DB0CD9C6FAA",
 					"7ADE50A7-B076-48CB-A810-B6B95117CCDA",
@@ -27164,6 +27168,7 @@
 					"E559BC18-67E3-4DDF-875C-8B8B1198AF49",
 					"5E40EA95-05E0-4378-A901-CBA90B694D7E",
 					"173C7C3A-FB21-4F17-B90D-C52C0708B24C",
+					"9E0450E5-1B6F-4252-8DE1-A32AC4DE81EF",
 					"EF7D24D2-13BA-4E5C-97FB-B48FD040E148",
 					"8432A24F-CFAA-40D5-BBBE-FE8245936F8C",
 					"B9D335B4-03EC-4BD3-8C4C-26DE0A61A65B",
@@ -27181,8 +27186,8 @@
 					"B8B4F707-0A08-47D3-B7D3-FD6A9310C47E",
 					"EFC8BD7E-98CF-4E80-95CA-38009B100142",
 					"5DFA124A-E8DA-45C3-8C2C-629CC939E9B8",
-					"FE482CA3-B86E-4951-8F72-46296662057E",
 					"7ACC0899-1A77-4AA3-AE15-B0B1D71A8ADE",
+					"FE482CA3-B86E-4951-8F72-46296662057E",
 					"E0488355-0630-4F9F-BBBC-4713CA7736CA",
 					"E8385061-8DA3-48AA-9831-FE49B16A8076",
 					"293526EF-680C-4725-9E7E-669936E60C0F",
@@ -27193,8 +27198,8 @@
 					"108AC913-5AB4-4F00-812F-0532D101B9A9",
 					"B0D4B298-5581-472B-9883-94B6E2566E2C",
 					"87F29CAC-2421-4B4B-A6A3-344F27D68EE6",
-					"809C7953-9CC3-440F-8735-6C9DF3905528",
 					"40163348-9D28-462B-ACE2-F603FC63038C",
+					"809C7953-9CC3-440F-8735-6C9DF3905528",
 					"CB2CFEA9-B758-47AE-8857-488A62A78444",
 					"B68035D6-B180-4391-808F-D2751D82BBEA",
 					"172DEDD4-227A-485E-8028-7484EEA13A48",
@@ -27365,7 +27370,12 @@
 					"68121721-8715-4AC3-AE93-238F5E19F9B2",
 					"4A3DF78E-C81D-4F7C-BFFA-CDD2A16B329E",
 					"A70D1C4F-8E9D-4ED5-96F8-8A58D5B921C8",
-					"7B603A07-AF80-4896-913F-A52FC128B49E",
+					"96175897-4273-4B21-9208-6283F0FAB91D",
+					"2D862CEE-6963-4D50-ADF1-45CA8EB24A91",
+					"E688460F-E660-4C7A-9449-033420E7FF66",
+					"F3B45A3F-4324-4CF9-AA34-2A561D7E2B47",
+					"22DB1CD7-BA04-4991-AF2A-62AD80B06516",
+					"68B753AD-51F7-4980-A020-ABF8DB7B4BE7",
 					"EE42E0E7-3468-451D-B0CD-7E398FCB0F37",
 					"B4DEA877-D7EF-4B88-8D4A-F6CC3DEA61A2",
 					"8B8FFD4B-56AF-4E7B-A255-2A69F1BCA36C",
@@ -27375,21 +27385,20 @@
 					"F3F36F24-788E-4881-857A-B0BD63C21519",
 					"E09D1A65-2A96-4F0C-911C-9DF03B731A5D",
 					"0E1D2DC5-B77B-4AD1-8171-11BA3FE1F9E9",
+					"7B603A07-AF80-4896-913F-A52FC128B49E",
+					"CDE73B24-E5A1-4EE3-A627-373CE9CFCCFC",
+					"D0F8FE67-F19C-4B10-8187-D725160FC630",
+					"F15F7A11-889F-4E96-AB22-4B28F1373C93",
+					"A371D42D-61E5-401C-81BA-AC2FFE920AFB",
+					"3E1115FB-7150-456A-AB69-7870CE6DD7F0",
+					"BA3606E7-F881-451B-ABA3-3A3D190FF2D3",
+					"0C304D06-39C3-46DA-86F7-56562A180C59",
 					"B3CF6DB3-DE8C-4226-9E78-4197263D2F0F",
 					"7EF5DA10-47DB-4685-9951-096B46DD430C",
-					"A371D42D-61E5-401C-81BA-AC2FFE920AFB",
-					"2D862CEE-6963-4D50-ADF1-45CA8EB24A91",
 					"02F3F825-1908-4BC3-9C5D-87743A181E1F",
-					"D0F8FE67-F19C-4B10-8187-D725160FC630",
 					"7EB4F4A6-E4C3-4E2B-AF87-36D40E1EBE8B",
 					"9E1EE4CB-76C6-43BE-8776-7019CE92D872",
-					"68B753AD-51F7-4980-A020-ABF8DB7B4BE7",
-					"BA3606E7-F881-451B-ABA3-3A3D190FF2D3",
 					"4403FD55-97D3-4D31-8A15-14E7646C5F3A",
-					"E688460F-E660-4C7A-9449-033420E7FF66",
-					"CDE73B24-E5A1-4EE3-A627-373CE9CFCCFC",
-					"F15F7A11-889F-4E96-AB22-4B28F1373C93",
-					"3E1115FB-7150-456A-AB69-7870CE6DD7F0",
 					"4C264327-E4F2-4AAB-A5F3-09AD92624C37",
 					"D12C2090-D151-4086-9EE9-EDD64BB7CB0B",
 					"7FF34F2A-0445-4913-B51F-5726B26B8D38",
@@ -27400,13 +27409,10 @@
 					"314F6DBB-A1AB-490B-A895-9D2B0B8F0F20",
 					"39426C2E-3592-46AB-A768-D29C4A7CF686",
 					"FC323F2D-FAF4-4B22-93E5-8018FA8A8634",
-					"96175897-4273-4B21-9208-6283F0FAB91D",
 					"D9A8AD86-AA9B-46F9-825E-63BC4B4F6847",
 					"768BEF72-13C8-4A6A-BEAE-644A903A9DFD",
 					"8B0550C2-11EA-4CBC-A30F-BABD119C325A",
-					"22DB1CD7-BA04-4991-AF2A-62AD80B06516",
 					"A75621DB-20C0-405F-9C5B-04ECA882508D",
-					"0C304D06-39C3-46DA-86F7-56562A180C59",
 					"10A41273-029D-4038-9C23-B0E3ECCD532B",
 					"79A85CCD-3644-41CB-8B01-3DE862EB25FC",
 					"6142325B-50AF-4F07-9F72-7F08FC727EDB",
@@ -27448,7 +27454,6 @@
 					"785DCE90-AB5C-4FD3-B9BE-BC83DEF4E804",
 					"F54E8414-7863-4D8D-AFF4-89CB777C6ECA",
 					"64816940-CE8A-4567-A55F-CB520CFC53DC",
-					"F3B45A3F-4324-4CF9-AA34-2A561D7E2B47",
 					"0298F9D1-5D29-4BE2-880E-F9CA382C7752",
 					"ABC07432-10AA-46CA-AF3E-8B0667799BF6",
 					"AACEEB96-0132-43BC-99E2-A55AA397AD21",
@@ -27466,9 +27471,7 @@
 					"373F3007-C182-4055-9721-784571890544",
 					"6E3C132E-EFD7-440D-8E07-578529CAE867",
 					"7639598D-BCF9-4415-A033-EEF4600A12F1",
-					"AEDFC696-EBAF-4689-A079-82012E62CED5",
 					"C0B50021-C129-4B8A-A402-03783C1A611F",
-					"447D6BC6-1C61-7343-0326-8A8B2BBC816D",
 					"8B157ED9-F54E-44CF-AEEC-F50CD18CEFF3",
 					"B658EB66-43FC-4ED9-ABDA-6798C6506765",
 					"6276F6DE-7FD6-47C3-8519-2167CD0B56A6",
@@ -27497,6 +27500,7 @@
 					"44CDD46D-778F-4A1F-947F-9A87E1BBBF60",
 					"B4696A08-51F0-44BB-92C0-EB91CE945968",
 					"C1BFCFFC-ABD7-403D-89EA-5A88AC612991",
+					"447D6BC6-1C61-7343-0326-8A8B2BBC816D",
 					"89D84F2C-C634-4C97-ADFC-2AFCEB69F8FF",
 					"7C3A4D83-E2E4-4692-8828-C2D5BFF843D3",
 					"9464838E-D978-476F-8641-5EE9D31D60F5",
@@ -27532,6 +27536,7 @@
 					"81E88F00-6852-433D-8575-46986228F71C",
 					"596A6561-04AA-4FFC-AC83-7B0402E7E108",
 					"2CE3DE26-1DFB-46C7-9946-3D60A342A167",
+					"AEDFC696-EBAF-4689-A079-82012E62CED5",
 					"CA672EC4-786A-4045-88FB-CDF5A73A2A87",
 					"782B7389-541E-48EA-8A70-68A8BB010745",
 					"FAC4C1F4-E032-492A-A178-18ADC8C1E3E0",
@@ -27549,8 +27554,8 @@
 					"51F88658-95A6-4802-94A7-B93E77D3F6F3",
 					"1E62555A-2798-46B1-BA69-6A9F795BE128",
 					"C68ABEB4-3627-46DC-9883-3C6A76710408",
-					"D3B3DBD1-4E6B-47DE-81CB-690565E1D5E2",
 					"175CBBF4-4E73-4B4A-9F3D-CF6590CAF579",
+					"D3B3DBD1-4E6B-47DE-81CB-690565E1D5E2",
 					"B6FC895F-2940-4DDE-8E68-38F49C895D11",
 					"19CA2D66-7A92-409E-95CD-7BAB7210F202",
 					"C2F23D3F-85BB-4BD9-8790-E5A33113DD9F",
@@ -27561,8 +27566,8 @@
 					"05EE6C1E-2346-4695-AF98-89E909E5D9B1",
 					"AF589920-331F-40FC-99C2-E1878169BBA2",
 					"FDE9AE24-23DC-4E48-BC61-35BB92B59EB9",
-					"CB418EA0-3A18-40FF-BCA8-0566DF4596CB",
 					"946012A8-C17C-48E7-B36F-BF4362D66CFD",
+					"CB418EA0-3A18-40FF-BCA8-0566DF4596CB",
 					"5D542FF9-DDF1-426A-9835-03D7F2E30234",
 					"1DC53CD5-0D29-403C-B970-C16725FBCF25",
 					"23513EC4-3AD1-4F48-A26B-CC04F86C4574",
@@ -27773,7 +27778,7 @@
 			"1320638154": {
 				"Crc32": 1320638154,
 				"Name": "childvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -27787,7 +27792,7 @@
 			"2010179473": {
 				"Crc32": 2010179473,
 				"Name": "childhalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -28471,46 +28476,46 @@
 	},
 	"68BBBA08-63E3-4F35-8389-F7BE76A33A50": {
 		"ID": "68BBBA08-63E3-4F35-8389-F7BE76A33A50",
-		"Name": "",
+		"Name": "CatacombsGameplayTileData",
 		"Members": {
 			"1188667254": {
 				"Crc32": 1188667254,
-				"Name": "",
+				"Name": "gateasset",
 				"TypeID": "77A19D40-8731-4D3C-9041-1B43047366A4",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1682289769": {
 				"Crc32": 1682289769,
-				"Name": "",
+				"Name": "is secret chamber",
 				"TypeID": "B505B05D-57BF-5A45-9113-B3A2784E2CD7",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2747862721": {
 				"Crc32": 2747862721,
-				"Name": "",
+				"Name": "spectatorinteractasset",
 				"TypeID": "77A19D40-8731-4D3C-9041-1B43047366A4",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"286210458": {
 				"Crc32": 286210458,
-				"Name": "",
+				"Name": "powerupassets",
 				"TypeID": "E1EDCBE5-AE2D-553F-9954-FB5B9CA391EA",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3147407401": {
 				"Crc32": 3147407401,
-				"Name": "",
+				"Name": "spectatorinteracts",
 				"TypeID": "99DAD0BC-740E-5E82-826B-8FC7968CC02C",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3383358346": {
 				"Crc32": 3383358346,
-				"Name": "",
+				"Name": "gatelockedasset",
 				"TypeID": "77A19D40-8731-4D3C-9041-1B43047366A4",
 				"TypeIDs": [],
 				"Array": false
@@ -28524,7 +28529,7 @@
 			},
 			"3973362638": {
 				"Crc32": 3973362638,
-				"Name": "",
+				"Name": "gates",
 				"TypeID": "99DAD0BC-740E-5E82-826B-8FC7968CC02C",
 				"TypeIDs": [],
 				"Array": false
@@ -29591,18 +29596,18 @@
 	},
 	"6D2846E7-2741-42B5-A6CC-795BC4D10929": {
 		"ID": "6D2846E7-2741-42B5-A6CC-795BC4D10929",
-		"Name": "",
+		"Name": "MusicManagerLayerInfo",
 		"Members": {
 			"1723678088": {
 				"Crc32": 1723678088,
-				"Name": "",
+				"Name": "m_excludedlayernamecrc",
 				"TypeID": "43DA906B-7DEF-4CA8-9790-854106D3F983",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"872489111": {
 				"Crc32": 872489111,
-				"Name": "",
+				"Name": "m_excludedlayername",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -30580,39 +30585,39 @@
 	},
 	"72D040D6-14F1-489E-855F-84945BD0C7EA": {
 		"ID": "72D040D6-14F1-489E-855F-84945BD0C7EA",
-		"Name": "",
+		"Name": "MusicManagerLayerInfo",
 		"Members": {
 			"1479941275": {
 				"Crc32": 1479941275,
-				"Name": "",
+				"Name": "m_stopeventoverride",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"157273991": {
 				"Crc32": 157273991,
-				"Name": "",
+				"Name": "m_starteventoverride",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2712367046": {
 				"Crc32": 2712367046,
-				"Name": "",
+				"Name": "m_excludedlayerinfo",
 				"TypeID": "D38B3D67-CABD-58DE-B5C5-A34249835A01",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2787884754": {
 				"Crc32": 2787884754,
-				"Name": "",
+				"Name": "m_switchstates",
 				"TypeID": "4C217217-7EF9-551F-B1C6-B4A528033DBC",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3279060007": {
 				"Crc32": 3279060007,
-				"Name": "",
+				"Name": "m_layername",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -30641,11 +30646,11 @@
 	},
 	"72EEEC78-7042-4ABF-9C93-45AA893E9421": {
 		"ID": "72EEEC78-7042-4ABF-9C93-45AA893E9421",
-		"Name": "",
+		"Name": "RotationComboEvent",
 		"Members": {
 			"2544375102": {
 				"Crc32": 2544375102,
-				"Name": "",
+				"Name": "m_debugindex",
 				"TypeID": "43DA906B-7DEF-4CA8-9790-854106D3F983",
 				"TypeIDs": [],
 				"Array": false
@@ -30668,18 +30673,18 @@
 	},
 	"72FA58A7-CCB6-4898-AADF-F951CB7BB75B": {
 		"ID": "72FA58A7-CCB6-4898-AADF-F951CB7BB75B",
-		"Name": "",
+		"Name": "SubSyncTimelineToTODEvent",
 		"Members": {
 			"1218905319": {
 				"Crc32": 1218905319,
-				"Name": "",
+				"Name": "synctimelinetointerval",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3278971135": {
 				"Crc32": 3278971135,
-				"Name": "",
+				"Name": "timelinespawnid",
 				"TypeID": "72EEEC78-7042-4ABF-9C93-45AA893E9421",
 				"TypeIDs": [],
 				"Array": false
@@ -32718,14 +32723,14 @@
 			"1320638154": {
 				"Crc32": 1320638154,
 				"Name": "childvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2010179473": {
 				"Crc32": 2010179473,
 				"Name": "childhalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -32984,7 +32989,7 @@
 			},
 			"4156664423": {
 				"Crc32": 4156664423,
-				"Name": "",
+				"Name": "m_getweapongearscoredatafromvitals",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -33004,28 +33009,28 @@
 		"Members": {
 			"1578633270": {
 				"Crc32": 1578633270,
-				"Name": "m_eventsonexit",
+				"Name": "m_eventsOnExit",
 				"TypeID": "198013DC-527D-5558-BC75-BDBAE68E4252",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1641510247": {
 				"Crc32": 1641510247,
-				"Name": "m_detectedgdeonexitnotifications",
+				"Name": "m_detectedGDEOnExitNotifications",
 				"TypeID": "03145BF4-AD4A-5888-A3BB-3DBB8F67FB8C",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2444781948": {
 				"Crc32": 2444781948,
-				"Name": "m_eventsonenter",
+				"Name": "m_eventsOnEnter",
 				"TypeID": "198013DC-527D-5558-BC75-BDBAE68E4252",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"248935850": {
 				"Crc32": 248935850,
-				"Name": "m_eventsonlastexit",
+				"Name": "m_eventsOnLastExit",
 				"TypeID": "198013DC-527D-5558-BC75-BDBAE68E4252",
 				"TypeIDs": [],
 				"Array": false
@@ -33039,14 +33044,14 @@
 			},
 			"3679604283": {
 				"Crc32": 3679604283,
-				"Name": "m_detectedgdeonenternotifications",
+				"Name": "m_detectedGDEOnEnterNotifications",
 				"TypeID": "03145BF4-AD4A-5888-A3BB-3DBB8F67FB8C",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"4211471486": {
 				"Crc32": 4211471486,
-				"Name": "m_eventsonfirstenter",
+				"Name": "m_eventsOnFirstEnter",
 				"TypeID": "198013DC-527D-5558-BC75-BDBAE68E4252",
 				"TypeIDs": [],
 				"Array": false
@@ -33099,10 +33104,10 @@
 			"1094737465": {
 				"Crc32": 1094737465,
 				"Name": "element",
-				"TypeID": "709B11EA-FD56-4FEF-B841-7CEA549368E6",
+				"TypeID": "7F2EF312-4089-4582-89C5-5D4156DAA7FB",
 				"TypeIDs": [
-					"7F2EF312-4089-4582-89C5-5D4156DAA7FB",
 					"C6651A66-23D4-4508-B4AD-180C516655A8",
+					"709B11EA-FD56-4FEF-B841-7CEA549368E6",
 					"27462017-FE0F-4B81-96E9-8875B750EC69",
 					"7495C65C-9193-4193-BBB2-DE3343B9EB03",
 					"44B34B6C-63B0-443C-BEEE-272EA4106EDC"
@@ -33474,18 +33479,18 @@
 	},
 	"7E3A423A-EEBD-4645-96B8-972EC92C7F21": {
 		"ID": "7E3A423A-EEBD-4645-96B8-972EC92C7F21",
-		"Name": "",
+		"Name": "MusicManagerSwitchStateInfo",
 		"Members": {
 			"2707156212": {
 				"Crc32": 2707156212,
-				"Name": "",
+				"Name": "m_switchstatename",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2776319492": {
 				"Crc32": 2776319492,
-				"Name": "",
+				"Name": "m_switchgroupname",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -34052,7 +34057,7 @@
 			},
 			"1804488323": {
 				"Crc32": 1804488323,
-				"Name": "DestroyOnDeactivate",
+				"Name": "destroyondeactivate",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -34491,39 +34496,39 @@
 	},
 	"81B71022-5308-4832-A1B4-3612B1FB2721": {
 		"ID": "81B71022-5308-4832-A1B4-3612B1FB2721",
-		"Name": "",
+		"Name": "FlexEventsData",
 		"Members": {
 			"1064277641": {
 				"Crc32": 1064277641,
-				"Name": "",
+				"Name": "eventconditions",
 				"TypeID": "3447C089-8243-5355-97CC-7530D3B8A895",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"127553369": {
 				"Crc32": 127553369,
-				"Name": "",
+				"Name": "addstateconditionbutton",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1901150581": {
 				"Crc32": 1901150581,
-				"Name": "",
+				"Name": "addeventconditionbutton",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2518661883": {
 				"Crc32": 2518661883,
-				"Name": "",
+				"Name": "debugplatformfilter",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3066167790": {
 				"Crc32": 3066167790,
-				"Name": "",
+				"Name": "startwithstagecontrol",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -34537,35 +34542,35 @@
 			},
 			"3996142334": {
 				"Crc32": 3996142334,
-				"Name": "",
+				"Name": "showdebuginfo",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"4051135897": {
 				"Crc32": 4051135897,
-				"Name": "",
+				"Name": "stateconditions",
 				"TypeID": "98FF2F25-6160-5D4C-B7C7-34B636703F59",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"675725327": {
 				"Crc32": 675725327,
-				"Name": "",
+				"Name": "refreshbutton",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"799173220": {
 				"Crc32": 799173220,
-				"Name": "",
+				"Name": "stages",
 				"TypeID": "25039856-1F8C-52CA-9E67-C95D50016C2C",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"930465908": {
 				"Crc32": 930465908,
-				"Name": "",
+				"Name": "alwaysactiveevents",
 				"TypeID": "199F1B7B-2AD4-50DB-8F28-A43F42D5680B",
 				"TypeIDs": [],
 				"Array": false
@@ -35897,7 +35902,7 @@
 	},
 	"8A0F94D4-3B2C-4107-B57D-A44409F6AF1E": {
 		"ID": "8A0F94D4-3B2C-4107-B57D-A44409F6AF1E",
-		"Name": "",
+		"Name": "QuestVarlaamData",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -36145,32 +36150,32 @@
 	},
 	"8B8918AB-894D-4E44-B72C-F947844A3985": {
 		"ID": "8B8918AB-894D-4E44-B72C-F947844A3985",
-		"Name": "",
+		"Name": "MusicManagerInfoComponent",
 		"Members": {
 			"1457009526": {
 				"Crc32": 1457009526,
-				"Name": "",
+				"Name": "m_layerinfo",
 				"TypeID": "0EDDF436-1106-5221-B067-502314A3106A",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1550590352": {
 				"Crc32": 1550590352,
-				"Name": "",
+				"Name": "m_trackinfo",
 				"TypeID": "0AF63F6E-3E02-5934-9D80-984A42C99C9D",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1820844375": {
 				"Crc32": 1820844375,
-				"Name": "",
+				"Name": "m_mainstopevent",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1847044137": {
 				"Crc32": 1847044137,
-				"Name": "",
+				"Name": "musicmanagername",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -36184,7 +36189,7 @@
 			},
 			"3808611106": {
 				"Crc32": 3808611106,
-				"Name": "",
+				"Name": "m_mainstartevent",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -37118,7 +37123,7 @@
 	},
 	"911079C7-0BA3-461C-8E38-EA0396B5FCCB": {
 		"ID": "911079C7-0BA3-461C-8E38-EA0396B5FCCB",
-		"Name": "",
+		"Name": "FlexEvent",
 		"Members": {
 			"1302005391": {
 				"Crc32": 1302005391,
@@ -37129,14 +37134,14 @@
 			},
 			"1335267842": {
 				"Crc32": 1335267842,
-				"Name": "",
+				"Name": "feplatformexecution",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2004903823": {
 				"Crc32": 2004903823,
-				"Name": "",
+				"Name": "addsubeventbutton",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -37150,14 +37155,14 @@
 			},
 			"905699183": {
 				"Crc32": 905699183,
-				"Name": "",
+				"Name": "subevents",
 				"TypeID": "7C3C50F8-F518-5E3D-AB3E-BE1C710DAA03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"983315993": {
 				"Crc32": 983315993,
-				"Name": "BaseClass3",
+				"Name": "baseclass3",
 				"TypeID": "3388147D-669E-49E9-A703-5A4FBAC170EA",
 				"TypeIDs": [],
 				"Array": false
@@ -37966,11 +37971,11 @@
 	},
 	"95E1B61B-F826-4C94-9995-4D7587085DE9": {
 		"ID": "95E1B61B-F826-4C94-9995-4D7587085DE9",
-		"Name": "",
+		"Name": "EventFlexCondition",
 		"Members": {
 			"1310732450": {
 				"Crc32": 1310732450,
-				"Name": "",
+				"Name": "resetrule",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
@@ -40880,7 +40885,7 @@
 			},
 			"3556072060": {
 				"Crc32": 3556072060,
-				"Name": "m_detectionvolumeentity",
+				"Name": "m_detectionVolumeEntity",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -41082,7 +41087,7 @@
 			},
 			"3556072060": {
 				"Crc32": 3556072060,
-				"Name": "m_detectionvolumeentity",
+				"Name": "m_detectionVolumeEntity",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -43056,7 +43061,7 @@
 	},
 	"ABD814BF-3DBA-4447-A1D7-F0E260C49F5B": {
 		"ID": "ABD814BF-3DBA-4447-A1D7-F0E260C49F5B",
-		"Name": "",
+		"Name": "ReusableScoreboardComponentServerFacet",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -43498,7 +43503,7 @@
 			"1320638154": {
 				"Crc32": 1320638154,
 				"Name": "childvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -43512,7 +43517,7 @@
 			"2010179473": {
 				"Crc32": 2010179473,
 				"Name": "childhalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -43616,7 +43621,7 @@
 	},
 	"ADFC4EDE-9FFC-45A1-A8CE-E514A4F9069B": {
 		"ID": "ADFC4EDE-9FFC-45A1-A8CE-E514A4F9069B",
-		"Name": "",
+		"Name": "SubEntityEvent",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -43627,7 +43632,7 @@
 			},
 			"776455063": {
 				"Crc32": 776455063,
-				"Name": "",
+				"Name": "entityevent",
 				"TypeID": "F26A9525-7094-4972-849E-C1C00EAAFD36",
 				"TypeIDs": [],
 				"Array": false
@@ -44583,56 +44588,56 @@
 		"Members": {
 			"1037920719": {
 				"Crc32": 1037920719,
-				"Name": "m_updatetargetposition",
+				"Name": "m_updateTargetPosition",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1299573241": {
 				"Crc32": 1299573241,
-				"Name": "m_detectdeadtargets",
+				"Name": "m_detectDeadTargets",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"1567243836": {
 				"Crc32": 1567243836,
-				"Name": "m_detectonlyffatargets",
+				"Name": "m_detectOnlyFFATargets",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2569946931": {
 				"Crc32": 2569946931,
-				"Name": "",
+				"Name": "m_detectOnlyDeathsDoorTargets",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2655397697": {
 				"Crc32": 2655397697,
-				"Name": "m_detectinvulnerabletargets",
+				"Name": "m_detectInvulnerableTargets",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2914110177": {
 				"Crc32": 2914110177,
-				"Name": "m_detectedtargettype",
+				"Name": "m_detectedTargetType",
 				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3278804081": {
 				"Crc32": 3278804081,
-				"Name": "m_detectdeathsdoortargets",
+				"Name": "m_detectDeathsDoorTargets",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"3556072060": {
 				"Crc32": 3556072060,
-				"Name": "m_detectionvolumeentity",
+				"Name": "m_detectionVolumeEntity",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -45577,7 +45582,7 @@
 	},
 	"B5FAA2D9-50DF-4602-89E6-767F8B6895F4": {
 		"ID": "B5FAA2D9-50DF-4602-89E6-767F8B6895F4",
-		"Name": "",
+		"Name": "QuestDraculaData",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -46586,14 +46591,14 @@
 			},
 			"447931111": {
 				"Crc32": 447931111,
-				"Name": "CommandId",
+				"Name": "commandid",
 				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"908330411": {
 				"Crc32": 908330411,
-				"Name": "TickForDuration",
+				"Name": "tickforduration",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
@@ -47302,21 +47307,21 @@
 			"2465674556": {
 				"Crc32": 2465674556,
 				"Name": "spritetype",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"25586265": {
 				"Crc32": 25586265,
 				"Name": "filledgeorigin",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2573180544": {
 				"Crc32": 2573180544,
 				"Name": "imagetype",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -47344,7 +47349,7 @@
 			"3823542843": {
 				"Crc32": 3823542843,
 				"Name": "filltype",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -47365,7 +47370,7 @@
 			"4134849518": {
 				"Crc32": 4134849518,
 				"Name": "fillcornerorigin",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -48376,7 +48381,7 @@
 			},
 			"3556072060": {
 				"Crc32": 3556072060,
-				"Name": "m_detectionvolumeentity",
+				"Name": "m_detectionVolumeEntity",
 				"TypeID": "EA5FE48A-66F7-42D7-EE11-12391C964778",
 				"TypeIDs": [],
 				"Array": false
@@ -48654,7 +48659,7 @@
 			},
 			"3003963223": {
 				"Crc32": 3003963223,
-				"Name": "",
+				"Name": "Custom FX Lib Character Tag",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -49461,7 +49466,7 @@
 	},
 	"CAFE9EDC-4863-414C-9FF0-85B994445302": {
 		"ID": "CAFE9EDC-4863-414C-9FF0-85B994445302",
-		"Name": "",
+		"Name": "RaidMonarchsBluffs00Data",
 		"Members": {
 			"12413206": {
 				"Crc32": 12413206,
@@ -49472,7 +49477,7 @@
 			},
 			"2261941075": {
 				"Crc32": 2261941075,
-				"Name": "",
+				"Name": "propstatueassets",
 				"TypeID": "E1EDCBE5-AE2D-553F-9954-FB5B9CA391EA",
 				"TypeIDs": [],
 				"Array": false
@@ -49486,7 +49491,7 @@
 			},
 			"4256814751": {
 				"Crc32": 4256814751,
-				"Name": "",
+				"Name": "relicassets",
 				"TypeID": "E1EDCBE5-AE2D-553F-9954-FB5B9CA391EA",
 				"TypeIDs": [],
 				"Array": false
@@ -49532,14 +49537,14 @@
 			},
 			"3794564206": {
 				"Crc32": 3794564206,
-				"Name": "",
+				"Name": "m_ghostedvsinvisibilitycheckinterval",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"502152535": {
 				"Crc32": 502152535,
-				"Name": "",
+				"Name": "m_ditheringstrengthwhenghosted",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
@@ -49842,7 +49847,7 @@
 			},
 			"1302031969": {
 				"Crc32": 1302031969,
-				"Name": "Filter Name",
+				"Name": "filter name",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -50549,35 +50554,35 @@
 		"Members": {
 			"2308730378": {
 				"Crc32": 2308730378,
-				"Name": "Asynchronous",
+				"Name": "asynchronous",
 				"TypeID": "A0CA880C-AFE4-43CB-926C-59AC48496112",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2376176224": {
 				"Crc32": 2376176224,
-				"Name": "Solver max iterations",
+				"Name": "solver max iterations",
 				"TypeID": "43DA906B-7DEF-4CA8-9790-854106D3F983",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2846689810": {
 				"Crc32": 2846689810,
-				"Name": "Contact distance",
+				"Name": "contact distance",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"2919277749": {
 				"Crc32": 2919277749,
-				"Name": "Up Direction",
+				"Name": "up direction",
 				"TypeID": "8379EB7D-01FA-4538-B64B-A6543B4BE73D",
 				"TypeIDs": [],
 				"Array": false
 			},
 			"295828378": {
 				"Crc32": 295828378,
-				"Name": "Max Slope",
+				"Name": "max slope",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false
@@ -52072,7 +52077,7 @@
 	},
 	"D6E55774-2F90-4B52-8B48-32051E190051": {
 		"ID": "D6E55774-2F90-4B52-8B48-32051E190051",
-		"Name": "",
+		"Name": "ReusableScoreboardComponentClientFacet",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -52804,7 +52809,7 @@
 	},
 	"DA61E78A-B1A6-41D8-802D-18CE156AC9A4": {
 		"ID": "DA61E78A-B1A6-41D8-802D-18CE156AC9A4",
-		"Name": "",
+		"Name": "QuestWolfData",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -56027,7 +56032,7 @@
 			"1320638154": {
 				"Crc32": 1320638154,
 				"Name": "childvalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -56041,7 +56046,7 @@
 			"2010179473": {
 				"Crc32": 2010179473,
 				"Name": "childhalignment",
-				"TypeID": "72039442-EB38-4D42-A1AD-CB68F7E0EEF6",
+				"TypeID": "3AB0037F-AF8D-48CE-BCA0-A170D18B2C03",
 				"TypeIDs": [],
 				"Array": false
 			},
@@ -58576,7 +58581,7 @@
 	},
 	"F26A9525-7094-4972-849E-C1C00EAAFD36": {
 		"ID": "F26A9525-7094-4972-849E-C1C00EAAFD36",
-		"Name": "",
+		"Name": "EntityComboEvent",
 		"Members": {
 			"2755818698": {
 				"Crc32": 2755818698,
@@ -58854,7 +58859,7 @@
 			},
 			"3638893586": {
 				"Crc32": 3638893586,
-				"Name": "",
+				"Name": "m_loadingscreencategory",
 				"TypeID": "72B9409A-7D1A-4831-9CFE-FCB3FADD3426",
 				"TypeIDs": [],
 				"Array": false
@@ -59857,7 +59862,7 @@
 			},
 			"1714619440": {
 				"Crc32": 1714619440,
-				"Name": "",
+				"Name": "m_pointsexpirationtimedatalayer",
 				"TypeID": "03AAAB3F-5C47-5A66-9EBC-D5FA4DB353C9",
 				"TypeIDs": [],
 				"Array": false
@@ -60802,7 +60807,7 @@
 	},
 	"FC53A8D3-29FA-49D3-A152-21BCE0EF83A7": {
 		"ID": "FC53A8D3-29FA-49D3-A152-21BCE0EF83A7",
-		"Name": "",
+		"Name": "TimeOfDayCondition",
 		"Members": {
 			"3566360373": {
 				"Crc32": 3566360373,
@@ -60813,7 +60818,7 @@
 			},
 			"695482090": {
 				"Crc32": 695482090,
-				"Name": "",
+				"Name": "timeofday",
 				"TypeID": "EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D",
 				"TypeIDs": [],
 				"Array": false

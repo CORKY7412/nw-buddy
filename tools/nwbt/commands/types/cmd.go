@@ -152,6 +152,29 @@ func runScan(ccmd *cobra.Command, args []string) {
 		}
 	}
 
+	{
+		mixedTypeFile := path.Join(flgOutputDir, "mixed-types2.json")
+		mixedTypeData, err := os.ReadFile(mixedTypeFile)
+		var mixedList MixedTypesList
+		if err != nil {
+			slog.Warn("Failed to read mixed types file", "file", mixedTypeFile, "error", err)
+		}
+		if err := json.Unmarshal(mixedTypeData, &mixedList); err != nil {
+			slog.Warn("Failed to parse mixed types file", "file", mixedTypeFile, "error", err)
+		}
+
+		for _, item := range mixedList.UuidMap {
+			if !uidTable.Has(item.TypeId) {
+				uidTable.Put(item.TypeId, item.Name)
+			}
+			for _, elem := range item.Elements {
+				if !crcTable.HasName(elem.Name) {
+					crcTable.PutName(elem.Name)
+				}
+			}
+		}
+	}
+
 	outFile := path.Join(flgOutputDir, "types.json")
 	typeTable := utils.Must(scanObjects(fs, uidTable, crcTable))
 	if err := typeTable.SaveJson(outFile); err != nil {
@@ -169,12 +192,17 @@ func runGenerate(ccmd *cobra.Command, args []string) {
 	os.WriteFile(path.Join(flgOutputDir, "generated.go"), formatted, os.ModePerm)
 }
 
+type MixedTypesList struct {
+	UuidMap map[string]MixedType `json:"uuidMap"`
+}
+
 type MixedType struct {
-	Name     string             `json:"name"`
-	TypeId   string             `json:"typeId"`
-	Version  string             `json:"version"`
+	Name   string `json:"name"`
+	TypeId string `json:"typeId"`
+	// Version  string             `json:"version"`
 	Elements []MixedTypeElement `json:"elements"`
 }
+
 type MixedTypeElement struct {
 	Name   string `json:"name"`
 	TypeId string `json:"typeId"`

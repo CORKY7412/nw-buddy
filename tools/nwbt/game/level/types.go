@@ -61,12 +61,22 @@ type CapitalLayerDefinition struct {
 	Chunks   []nwt.ChunkEntry
 }
 
-type RegionMacroMaterial struct {
-	RegionsX  int       `json:"regionsX"`
-	RegionsY  int       `json:"regionsY"`
-	NormalMap nwfs.File `json:"normalMap"`
-	ColorMap  nwfs.File `json:"colorMap"`
-	GlossMap  nwfs.File `json:"specularMap"`
+type RegionMaterial struct {
+	RegionX                 int                        `json:"regionX"`
+	RegionY                 int                        `json:"regionY"`
+	DefaultMaterial         nwfs.File                  `json:"defaultMaterial"`
+	NormalMap               nwfs.File                  `json:"normalMap"`
+	ColorMap                nwfs.File                  `json:"colorMap"`
+	GlossMap                nwfs.File                  `json:"specularMap"`
+	Layers                  []TerrainMaterialLayerData `json:"layers"`
+	PertinentLayersMipChain []string                   `json:"pertinentLayersMipChain"`
+}
+
+type TerrainMaterialLayerData struct {
+	Material      nwfs.File `json:"material"`
+	SplatMap      nwfs.File `json:"splatMap"`
+	AffectedTiles string    `json:"affectedTiles"`
+	Priority      int       `json:"priority"`
 }
 
 type CollectionLoader interface {
@@ -88,18 +98,14 @@ type RegionLoader interface {
 }
 
 type Info struct {
-	Name            string                `json:"name"`
-	CoatlicueName   string                `json:"coatlicueName"`
-	OceanLevel      float32               `json:"oceanLevel"`
-	MountainHeight  float32               `json:"mountainHeight"`
-	GroundMaterial  string                `json:"groundMaterial"`
-	RegionSize      int                   `json:"regionSize"`
-	Regions         []RegionReference     `json:"regions"`
-	Maps            []MapInfo             `json:"maps"`
-	TimeOfDay       *TimeOfDayInfo        `json:"timeOfDay"`
-	Environment     *EnvironmentInfo      `json:"environment"`
-	RegionMaterials []RegionMacroMaterial `json:"regionMaterials"`
-	Tracts          []tracts.Tract        `json:"tracts"`
+	Name           string            `json:"name"`
+	CoatlicueName  string            `json:"coatlicueName"`
+	RegionSize     int               `json:"regionSize"`
+	Regions        []RegionReference `json:"regions"`
+	Maps           []MapInfo         `json:"maps"`
+	TimeOfDay      *TimeOfDayInfo    `json:"timeOfDay"`
+	Tracts         []tracts.Tract    `json:"tracts"`
+	MountainHeight float32           `json:"mountainHeight"`
 }
 
 type MapInfo struct {
@@ -217,17 +223,17 @@ type LightInfo struct {
 }
 
 type TerrainInfo struct {
-	Level          string  `json:"level"`
-	TileSize       int     `json:"tileSize"`
-	MipCount       int     `json:"mipCount"`
-	Width          int     `json:"width"`
-	Height         int     `json:"height"`
-	RegionsX       int     `json:"regionsX"`
-	RegionsY       int     `json:"regionsY"`
-	RegionSize     int     `json:"regionSize"`
-	OceanLevel     float32 `json:"oceanLevel"`
-	MountainHeight float32 `json:"mountainHeight"`
-	GroundMaterial string  `json:"groundMaterial"`
+	Level          string           `json:"level"`
+	TileSize       int              `json:"tileSize"`
+	MipCount       int              `json:"mipCount"`
+	Width          int              `json:"width"`
+	Height         int              `json:"height"`
+	RegionsX       int              `json:"regionsX"`
+	RegionsY       int              `json:"regionsY"`
+	RegionSize     int              `json:"regionSize"`
+	OceanLevel     float32          `json:"oceanLevel"`
+	MountainHeight float32          `json:"mountainHeight"`
+	Materials      []RegionMaterial `json:"materials"`
 }
 
 type DistributionInfo struct {
