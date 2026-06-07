@@ -23,8 +23,7 @@
 // keeps the world small to avoid imprecision at geographic poles
 const MAX_UNITS = Math.pow(2, 25)
 const MAX_LEVEL = 18
-const BIAS = 375
-export const HEIGHT_SCALE = (2048 + BIAS) / 0xffffff
+export const HEIGHT_SCALE = 2048 / 0xffffff
 export const NW_MAP_REGION_SIZE = 2048
 
 export function mapLevelToNwLevel(level: number) {

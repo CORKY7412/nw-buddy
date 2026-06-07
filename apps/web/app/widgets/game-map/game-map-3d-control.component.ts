@@ -88,11 +88,10 @@ export class GameMap3dControl implements OnDestroy {
     const earthCircumference = 2 * Math.PI * earthRadius
     const metersPerDegreeLng = earthCircumference / 360
     const scale = xToLong(1) * metersPerDegreeLng
-
     getMapModels(this.mapId(), 7, 7).forEach((data) => {
       this.loader.load(data.url, (gltf) => {
         gltf.scene.rotateY(Math.PI)
-        gltf.scene.scale.set(scale, scale, scale)
+        gltf.scene.scale.set(scale, 1.0, scale)
         this.scene.add(gltf.scene)
       })
     })
