@@ -18,11 +18,12 @@ var CmdTypegen = &cobra.Command{
 func runTypegen(cmd *cobra.Command, args []string) {
 	converter := typescriptify.New()
 	converter.CreateInterface = true
+	converter.BackupDir = ""
 	converter.Indent = "  "
 
 	converter.Add(ServeApi{})
 	converter.Add(ServeListResult{})
-	converter.Add(ServeCatalogAssetResult{})
+	converter.Add(ServeAssetIdResult{})
 	converter.Add(ServeStatResult{})
 	converter.Add(level.LevelIndex{})
 	converter.Add(level.CoatlicueInfo{})

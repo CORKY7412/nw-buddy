@@ -1,15 +1,6 @@
-import {
-  EntityInfo,
-  fetchTypedRequest,
-  getHeightmapInfoUrl,
-  getLevelInfoUrl,
-  getLevelMissionUrl,
-  LevelInfo,
-  TerrainInfo,
-  TimeOfDay,
-} from '@nw-serve'
+import { CoatlicueInfo, nwbtFetch, nwbtLevelsCoatlicueInfoUrl, TimeOfDay } from '@nw-serve'
 
-import { Box3, Color, FogExp2, Vector3 } from 'three'
+import { Color, FogExp2 } from 'three'
 import { GameEntity, GameEntityCollection, GameService, GameServiceContainer } from '../../ecs'
 import { IVec2 } from '../../math'
 import { GridCellComponent } from '../components/grid-cell-component'
@@ -19,7 +10,6 @@ import { TransformComponent } from '../components/transform-component'
 import { ContentProvider } from './content-provider'
 import { GridProvider } from './grid-provider'
 import { SceneProvider } from './scene-provider'
-import { cryToGltfVec3 } from '../../math/mat4'
 
 export class LevelLoader implements GameService {
   private entities = new GameEntityCollection()
@@ -62,21 +52,10 @@ export class LevelLoader implements GameService {
       return
     }
     const baseUrl = this.content.nwbtUrl
-    const levelUrl = getLevelInfoUrl(name)
-    const heightmapUrl = getHeightmapInfoUrl(name)
-    const missionUrl = getLevelMissionUrl(name)
 
-    const levelInfo = await fetchTypedRequest(baseUrl, levelUrl)
+    const levelInfo = await nwbtFetch(baseUrl, nwbtLevelsCoatlicueInfoUrl(name))
     console.log('level info', levelInfo, mapName)
 
-    const heightmapInfo = await fetchTypedRequest(baseUrl, heightmapUrl).catch((err) => {
-      console.error('failed to load heightmap', err)
-      return null as TerrainInfo
-    })
-    const missionInfo = await fetchTypedRequest(baseUrl, missionUrl).catch((err) => {
-      console.error('failed to load mission', err)
-      return [] as EntityInfo[]
-    })
     const levelExtent = getLevelExtent(levelInfo)
     this.scene.installQuadTree(levelExtent.min, levelExtent.max)
 
@@ -93,15 +72,13 @@ export class LevelLoader implements GameService {
         new LevelComponent({
           level: levelInfo,
           mapName: mapName,
-          heightmap: heightmapInfo,
-          mission: missionInfo,
         }),
         new TerrainComponent({
-          data: heightmapInfo,
+          data: levelInfo,
         }),
       )
     setReadOnly(this, 'entity', level)
-    this.updateFog(levelInfo.timeOfDay)
+    this.updateFog(levelInfo.missionTimeOfDay)
     this.entities.initialize(this.game)
     this.entities.activate()
   }
@@ -126,7 +103,7 @@ export class LevelLoader implements GameService {
   }
 }
 
-function getLevelExtent(info: LevelInfo): { min: IVec2; max: IVec2 } {
+function getLevelExtent(info: CoatlicueInfo): { min: IVec2; max: IVec2 } {
   if (!info.regions?.length) {
     return null
   }

@@ -88,14 +88,12 @@ func run(cmd *cobra.Command, args []string) {
 	os.MkdirAll(flg.CacheDir, os.ModePerm)
 
 	r.PathPrefix("/list").Handler(http.StripPrefix("/list", GetListHandler(assets.Archive)))
-	r.PathPrefix("/stat").Handler(http.StripPrefix("/stat", GetStatHandler(assets)))
-	r.PathPrefix("/file").Handler(http.StripPrefix("/file", GetFileHandler(assets)))
+	r.PathPrefix("/stats").Handler(http.StripPrefix("/stats", GetStatHandler(assets)))
+	r.PathPrefix("/files").Handler(http.StripPrefix("/files", GetFileHandler(assets)))
 	r.PathPrefix("/models").Handler(http.StripPrefix("/models", http.FileServer(http.Dir(flg.ModelsDir))))
+	r.HandleFunc("/assets/{assetId}", GetAssetHandler(assets))
 
-	r.HandleFunc("/catalog", GetCatalogHandler(assets))
-	r.HandleFunc("/catalog/{assetId}", GetCatalogAssetHandler(assets))
-
-	LevelsRouter(r.PathPrefix("/level").Subrouter(), assets)
+	LevelsRouter(r.PathPrefix("/levels").Subrouter(), assets)
 
 	h := handlers.CustomLoggingHandler(os.Stdout, r, writeLog)
 	h = handlers.CORS(handlers.AllowedOrigins([]string{"*"}))(h)

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { nwbtFileListUrl, nwbtFileStatUrl, ServeListResult, ServeStatResult } from '@nw-serve'
+import { nwbtFileListUrl, nwbtFileStatUrl, nwbtFileUrl, ServeListResult, ServeStatResult } from '@nw-serve'
 import { environment } from 'apps/web/environments'
 import { map } from 'rxjs'
 
@@ -95,7 +95,7 @@ export class PakService {
       ext = tokens.pop()
     }
     const stat: FileSource = {
-      baseUrl: this.nwbtUrl('file/'),
+      baseUrl: this.nwbtUrl('files/'),
       path: file,
       ext: ext,
     }
@@ -131,7 +131,7 @@ export class PakService {
     if (format) {
       file = `${file}.${format}`
     }
-    return this.nwbtUrl(`file/${file}`)
+    return this.nwbtUrl(nwbtFileUrl(file))
   }
 
   public fileListUrl(pattern: string) {

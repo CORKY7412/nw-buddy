@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject, linkedSignal, resource, signal } from '@angular/core'
+import { Component, inject, linkedSignal, resource } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { CoatlicueListEntry, GameModeMap, nwbtFetch, nwbtLevelsListUrl } from '@nw-serve'
 import { environment } from 'apps/web/environments'
 import { map } from 'rxjs'
 import { NwModule } from '~/nw'
@@ -11,7 +12,6 @@ import { svgGameBoard, svgMounatinSun, svgVideo } from '~/ui/icons/svg'
 import { LayoutModule } from '~/ui/layout'
 import { GameViewerModule } from '~/widgets/game-viewer'
 import { PropertyGridModule } from '../../ui/property-grid'
-import { fetchTypedRequest, getLevelsUrl, LevelInfo, MapInfo } from '@nw-serve'
 
 const DEFAULT_LEVEL = 'nw_ori_er_questliang'
 const DEFAULT_POSITION: [number, number, number] = [1024, 1024, 256]
@@ -58,7 +58,7 @@ export class LevelsComponent {
   public map = toSignal(this.map$)
   public levels = resource({
     loader: async (): Promise<LevelOptions[]> => {
-      const levels = await fetchTypedRequest(environment.nwbtUrl, getLevelsUrl())
+      const levels = await nwbtFetch(environment.nwbtUrl, nwbtLevelsListUrl()).then((result) => result.coatlicues)
       const withoutMaps: LevelOption[] = []
       const withOneMap: LevelOption[] = []
       const mapGroups: LevelOptions[] = []
@@ -111,7 +111,7 @@ export class LevelsComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        position: position.map((it) => Math.round(it)).join(',')
+        position: position.map((it) => Math.round(it)).join(','),
       },
       queryParamsHandling: 'merge',
       replaceUrl: true,
@@ -144,7 +144,7 @@ function getCameraPosition(route: ActivatedRoute): [number, number, number] {
   return DEFAULT_POSITION
 }
 
-function getMapOption(level: LevelInfo, map: MapInfo): LevelOption {
+function getMapOption(level: CoatlicueListEntry, map: GameModeMap): LevelOption {
   const spawns = getSpawnPositions(map)
   const route: any[] = ['/levels', level.name]
   const query = { map: map.gameModeMapId.toLowerCase() }
@@ -160,7 +160,7 @@ function getMapOption(level: LevelInfo, map: MapInfo): LevelOption {
   }
 }
 
-function getSpawnPositions(map: MapInfo): Array<[number, number, number, number]> {
+function getSpawnPositions(map: GameModeMap): Array<[number, number, number, number]> {
   if (!map.teamTeleportData) {
     return null
   }

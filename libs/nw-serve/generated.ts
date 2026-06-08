@@ -143,17 +143,15 @@ export interface LevelIndex {
   levels: LevelListEntry[];
   coatlicues: CoatlicueListEntry[];
 }
-export interface ServeStatResultEntry {
-  file?: string;
-  asset?: Asset;
-  dds?: {[key: string]: any};
-}
-export interface ServeStatResult {
-  items: ServeStatResultEntry[];
-}
 export interface AssetId {
   guid: string;
   subId: number;
+}
+export interface ServeAssetIdResult {
+  asset?: Asset;
+  assets: Asset[];
+  link: AssetId;
+  legacy: AssetId;
 }
 export interface Asset {
   guid: string;
@@ -162,20 +160,21 @@ export interface Asset {
   file: string;
   size: number;
 }
-export interface ServeCatalogAssetResult {
+export interface ServeStatResultEntry {
+  file?: string;
   asset?: Asset;
-  assets: Asset[];
-  link: AssetId;
-  legacy: AssetId;
+  dds?: {[key: string]: any};
+}
+export interface ServeStatResult {
+  items: ServeStatResultEntry[];
 }
 export interface ServeListResult {
   items: string[];
 }
 export interface ServeApi {
-  '/list': ServeListResult;
   '/list/{filePattern}': ServeListResult;
-  '/catalog/asset/{assetId}': ServeCatalogAssetResult;
-  '/stat/{filePattern}': ServeStatResult;
+  '/stats/{filePattern}': ServeStatResult;
+  '/assets/{assetId}': ServeAssetIdResult;
   '/levels/list.json': LevelIndex;
   '/levels/{coatlicue}/info.json': CoatlicueInfo;
   '/levels/{coatlicue}/{region}/info.json': RegionInfo;

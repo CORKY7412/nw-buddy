@@ -2,7 +2,8 @@ import {
   CoatlicueInfo,
   LevelIndex,
   RegionCapitalsData,
-  ServeCatalogAssetResult,
+  RegionInfo,
+  ServeAssetIdResult,
   ServeListResult,
   ServeStatResult,
 } from './generated'
@@ -42,6 +43,10 @@ export async function nwbtFetch<T>(baseUrl: string, req: NwbtRequest<T>): Promis
   })
 }
 
+export function nwbtFileUrl(filePath: string) {
+  return `/files/${filePath}`
+}
+
 export function nwbtFileListUrl(pattern?: string) {
   if (pattern) {
     return nwbtJsonRequest<ServeListResult>(`/list/${pattern}`)
@@ -50,11 +55,11 @@ export function nwbtFileListUrl(pattern?: string) {
 }
 
 export function nwbtCatalogAssetUrl(assetId: string) {
-  return nwbtJsonRequest<ServeCatalogAssetResult>(`/catalog/asset/${assetId}`)
+  return nwbtJsonRequest<ServeAssetIdResult>(`/assets/${assetId}`)
 }
 
 export function nwbtFileStatUrl(filePattern: string) {
-  return nwbtJsonRequest<ServeStatResult>(`/stat/${filePattern}`)
+  return nwbtJsonRequest<ServeStatResult>(`/stats/${filePattern}`)
 }
 
 export function nwbtLevelsListUrl() {
@@ -66,7 +71,7 @@ export function nwbtLevelsCoatlicueInfoUrl(coatlicue: string) {
 }
 
 export function nwbtLevelsCoatlicueRegionInfoUrl(coatlicue: string, region: string) {
-  return nwbtJsonRequest<CoatlicueInfo>(`/levels/${coatlicue}/${region}/info.json`)
+  return nwbtJsonRequest<RegionInfo>(`/levels/${coatlicue}/${region}/info.json`)
 }
 
 export function nwbtLevelsCoatlicueRegionCapitalsUrl(coatlicue: string, region: string) {

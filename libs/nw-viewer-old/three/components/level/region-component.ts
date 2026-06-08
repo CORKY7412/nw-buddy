@@ -1,7 +1,12 @@
-import { fetchTypedRequest, getRegionEntitiesUrl, getRegionInfoUrl, ImpostorInfo, RegionInfo } from '@nw-serve'
-import { Box3, Color, Matrix4, Vector3 } from 'three'
+import {
+  ImpostorInfo,
+  nwbtFetch,
+  nwbtLevelsCoatlicueRegionCapitalsUrl,
+  nwbtLevelsCoatlicueRegionInfoUrl,
+  RegionInfo,
+} from '@nw-serve'
+import { Color, Matrix4, Vector3 } from 'three'
 import { GameComponent, GameEntity, GameEntityCollection } from '../../../ecs'
-import { cryToGltfMat4 } from '../../../math/mat4'
 import { ContentProvider } from '../../services/content-provider'
 import { GridProvider } from '../../services/grid-provider'
 import { RendererProvider } from '../../services/renderer-provider'
@@ -18,7 +23,7 @@ export interface RegionComponentOptions {
   regionSize: number
   centerX: number
   centerY: number
-  worldBounds: Box3
+  // worldBounds: Box3
 }
 
 export class RegionComponent implements GameComponent {
@@ -33,7 +38,7 @@ export class RegionComponent implements GameComponent {
   private indicator: StaticShapeComponent
   private colorInvisible = new Color(0.1, 0.1, 0.1)
   private colorVisible = new Color(0.25, 0.25, 0.25)
-  private worldBounds: Box3
+  // private worldBounds: Box3
   public readonly entity: GameEntity
   public readonly centerX: number
   public readonly centerY: number
@@ -51,7 +56,7 @@ export class RegionComponent implements GameComponent {
     this.centerY = data.centerY
     this.originX = this.centerX + 0.5 * data.regionSize
     this.originY = this.centerY - 0.5 * data.regionSize
-    this.worldBounds = data.worldBounds
+    // this.worldBounds = data.worldBounds
   }
 
   public initialize(entity: GameEntity): void {
@@ -112,9 +117,9 @@ export class RegionComponent implements GameComponent {
 
   private async load() {
     const baseUrl = this.content.nwbtUrl
-    const request = getRegionInfoUrl(this.levelName, this.regionName)
-    const data = await fetchTypedRequest(baseUrl, request)
-    const entities = await fetchTypedRequest(baseUrl, getRegionEntitiesUrl(this.levelName, this.regionName))
+    const request = nwbtLevelsCoatlicueRegionInfoUrl(this.levelName, this.regionName)
+    const data = await nwbtFetch(baseUrl, request)
+    const entities = await nwbtFetch(baseUrl, nwbtLevelsCoatlicueRegionCapitalsUrl(this.levelName, this.regionName))
     if (!this.isActive) {
       this.isLoaded = false
       return
@@ -254,9 +259,9 @@ export class RegionComponent implements GameComponent {
       if (position.z < originY || position.z >= originY + SEGMENT_SIZE) {
         continue
       }
-      if (this.worldBounds && !this.worldBounds.containsPoint(position)) {
-        continue
-      }
+      // if (this.worldBounds && !this.worldBounds.containsPoint(position)) {
+      //   continue
+      // }
       entities.push(item)
     }
     const centerX = originX - 0.5 * SEGMENT_SIZE

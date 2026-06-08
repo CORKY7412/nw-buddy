@@ -1,7 +1,12 @@
-import { Color4, Matrix, Scene, Vector3 } from '@babylonjs/core'
-import { fetchTypedRequest, getRegionEntitiesUrl, getRegionInfoUrl, ImpostorInfo, RegionInfo } from '@nw-serve'
+import { Color4, Scene, Vector3 } from '@babylonjs/core'
+import {
+  ImpostorInfo,
+  nwbtFetch,
+  nwbtLevelsCoatlicueRegionCapitalsUrl,
+  nwbtLevelsCoatlicueRegionInfoUrl,
+  RegionInfo,
+} from '@nw-serve'
 import { GameComponent, GameEntity, GameEntityCollection } from '../../../ecs'
-import { cryToBabylonMat4 } from '../../../math/mat4'
 import { ContentProvider } from '../../services/content-provider'
 import { SceneProvider } from '../../services/scene-provider'
 import { DebugMeshComponent } from '../debug-mesh-component'
@@ -108,10 +113,9 @@ export class RegionComponent implements GameComponent {
 
   private async load() {
     const baseUrl = this.content.nwbtUrl
-    const request = getRegionInfoUrl(this.levelName, this.regionName)
-    const data = await fetchTypedRequest(baseUrl, request)
-    const entities = await fetchTypedRequest(baseUrl, getRegionEntitiesUrl(this.levelName, this.regionName))
-    //const distribution = await fetchTypedRequest(baseUrl, getRegionDistributionUrl(this.levelName, this.regionName))
+    const request = nwbtLevelsCoatlicueRegionInfoUrl(this.levelName, this.regionName)
+    const data = await nwbtFetch(baseUrl, request)
+    const entities = await nwbtFetch(baseUrl, nwbtLevelsCoatlicueRegionCapitalsUrl(this.levelName, this.regionName))
     this.segments.clear()
 
     const capitals: CapitalWithEntities[] = []

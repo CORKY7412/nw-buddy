@@ -69,7 +69,7 @@ export class ContentProvider implements GameService {
   public nwbtUrl: string
 
   public get nwbtFileUrl() {
-    return `${this.nwbtUrl}/file/`
+    return `${this.nwbtUrl}/files/`
   }
 
   public constructor(options: ContentServiceOptions) {

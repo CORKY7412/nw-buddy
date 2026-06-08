@@ -9,13 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetCatalogHandler(assets *game.Assets) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		serveJson(assets.Catalog, w)
-	}
-}
-
-func GetCatalogAssetHandler(assets *game.Assets) http.HandlerFunc {
+func GetAssetHandler(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		assetIdString := vars["assetId"]
@@ -27,7 +21,7 @@ func GetCatalogAssetHandler(assets *game.Assets) http.HandlerFunc {
 				assetId.SubID = uint32(subidInt)
 			}
 		}
-		result := ServeCatalogAssetResult{
+		result := ServeAssetIdResult{
 			Asset:  assets.Catalog.LookupById(assetId),
 			Assets: assets.Catalog.AllByGuid(assetId.Guid),
 			Link:   assets.Catalog.LookupLink(assetId.Guid),

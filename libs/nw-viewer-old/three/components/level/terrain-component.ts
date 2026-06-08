@@ -1,17 +1,17 @@
-import { TerrainInfo } from '@nw-serve'
+import { CoatlicueInfo } from '@nw-serve'
 import { Vector3 } from 'three'
 import { GameComponent, GameEntity } from '../../../ecs'
 import { Clipmap } from '../../graphics/clipmap'
 import { SceneProvider } from '../../services/scene-provider'
 
 export interface TerrainComponentOptions {
-  data: TerrainInfo
+  data: CoatlicueInfo
 }
 
 const v3 = new Vector3()
 export class TerrainComponent implements GameComponent {
   public entity: GameEntity
-  private data: TerrainInfo
+  private data: CoatlicueInfo
   private clipmaps: Clipmap[] = []
   private scene: SceneProvider
 
@@ -26,28 +26,28 @@ export class TerrainComponent implements GameComponent {
   }
 
   public activate(): void {
-    if (!this.data || !this.data.mipCount || this.data.oceanLevel < 0) {
+    if (!this.data || this.data.oceanLevel < 0) {
       return null
     }
 
     this.clipmaps = []
-    let coarse: Clipmap
+    // let coarse: Clipmap
 
-    for (let i = this.data.mipCount - 1; i >= 0; i--) {
-      const clipmap = new Clipmap({
-        index: i,
-        vertexPerSide: Math.pow(2, 8) - 1,
-        tileSize: this.data.tileSize,
-        levelName: this.data.level,
-        coarse,
-        mountainHeight: this.data.mountainHeight,
-      })
-      this.clipmaps.push(clipmap)
-      this.scene.main.add(clipmap)
-      coarse = clipmap
-    }
-    this.scene.renderer.onDraw.add(this.update)
-    this.clipmaps.reverse() // update order from fine to coarse, so the near terrain is loaded first
+    // for (let i = this.data.mipCount - 1; i >= 0; i--) {
+    //   const clipmap = new Clipmap({
+    //     index: i,
+    //     vertexPerSide: Math.pow(2, 8) - 1,
+    //     tileSize: this.data.tileSize,
+    //     levelName: this.data.level,
+    //     coarse,
+    //     mountainHeight: this.data.mountainHeight,
+    //   })
+    //   this.clipmaps.push(clipmap)
+    //   this.scene.main.add(clipmap)
+    //   coarse = clipmap
+    // }
+    // this.scene.renderer.onDraw.add(this.update)
+    // this.clipmaps.reverse() // update order from fine to coarse, so the near terrain is loaded first
   }
 
   public deactivate(): void {
@@ -68,7 +68,6 @@ export class TerrainComponent implements GameComponent {
     const center = v3.setFromMatrixPosition(camera.matrixWorld)
     for (const clipmap of this.clipmaps) {
       clipmap.update(center, this.scene.renderer.renderer)
-
     }
   }
 }

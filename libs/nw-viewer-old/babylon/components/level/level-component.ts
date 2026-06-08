@@ -1,17 +1,15 @@
 import { Scene, Vector3 } from '@babylonjs/core'
-import { EntityInfo, LevelInfo, RegionReference, TerrainInfo } from '@nw-serve'
+import { CoatlicueInfo, RegionLocation } from '@nw-serve'
 import { GameComponent, GameEntity, GameEntityCollection } from '../../../ecs'
 import { SceneProvider } from '../../services/scene-provider'
 import { DebugMeshComponent } from '../debug-mesh-component'
-import { TerrainComponent } from '../terrain/terrain-component'
 import { TransformComponent } from '../transform-component'
-import { instantiateEntities } from './instantiate-entities'
 import { RegionComponent } from './region-component'
 
 export interface LevelOptions {
-  level: LevelInfo
-  heightmap: TerrainInfo
-  mission: EntityInfo[]
+  level: CoatlicueInfo
+  // heightmap: TerrainInfo
+  // mission: EntityInfo[]
 }
 
 export class LevelComponent implements GameComponent {
@@ -40,9 +38,9 @@ export class LevelComponent implements GameComponent {
     for (const data of this.data.level.regions) {
       this.createRegionEntity(data)
     }
-    if (this.data.mission) {
-      instantiateEntities(this.mission, this.data.mission, this.transform)
-    }
+    // if (this.data.mission) {
+    //   instantiateEntities(this.mission, this.data.mission, this.transform)
+    // }
 
     this.terrain?.initialize(this.entity.game)
     this.regions.initialize(this.entity.game)
@@ -74,23 +72,23 @@ export class LevelComponent implements GameComponent {
   }
 
   private createTerrainEntity() {
-    if (!!this.entity.has(TerrainComponent)) {
-      return null
-    }
-    const heightmap = this.data.heightmap
-    if (!heightmap || !heightmap.mipCount || heightmap.oceanLevel < 0) {
-      return null
-    }
-    this.terrain = this.entity.game.createEntity()
-    this.terrain.addComponents(
-      new TransformComponent({
-        transform: this.transform.createChild('terrain'),
-      }),
-      new TerrainComponent(heightmap),
-    )
+    // if (!!this.entity.has(TerrainComponent)) {
+    //   return null
+    // }
+    // const heightmap = this.data.heightmap
+    // if (!heightmap || !heightmap.mipCount || heightmap.oceanLevel < 0) {
+    //   return null
+    // }
+    // this.terrain = this.entity.game.createEntity()
+    // this.terrain.addComponents(
+    //   new TransformComponent({
+    //     transform: this.transform.createChild('terrain'),
+    //   }),
+    //   new TerrainComponent(heightmap),
+    // )
   }
 
-  private createRegionEntity(region: RegionReference) {
+  private createRegionEntity(region: RegionLocation) {
     const level = this.data.level
     const location = region.location
     const regionSize = level.regionSize

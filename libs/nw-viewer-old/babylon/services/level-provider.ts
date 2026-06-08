@@ -1,5 +1,5 @@
 import { Matrix, Observable, TransformNode } from '@babylonjs/core'
-import { fetchTypedRequest, getHeightmapInfoUrl, getLevelInfoUrl, getLevelMissionUrl, LevelInfo } from '@nw-serve'
+import { CoatlicueInfo, nwbtFetch, nwbtLevelsCoatlicueInfoUrl } from '@nw-serve'
 import { GameEntityCollection, GameService, GameServiceContainer } from '../../ecs'
 import { DebugMeshComponent } from '../components/debug-mesh-component'
 import { LevelComponent } from '../components/level/level-component'
@@ -44,19 +44,8 @@ export class LevelProvider implements GameService {
       return
     }
     const baseUrl = this.content.nwbtUrl
-    const levelUrl = getLevelInfoUrl(name)
-    const heightmapUrl = getHeightmapInfoUrl(name)
-    const missionUrl = getLevelMissionUrl(name)
-
-    const levelInfo = await fetchTypedRequest(baseUrl, levelUrl)
-    const heightmapInfo = await fetchTypedRequest(baseUrl, heightmapUrl).catch((err) => {
-      console.error('failed to load heightmap', err)
-      return null
-    })
-    const missionInfo = await fetchTypedRequest(baseUrl, missionUrl).catch((err) => {
-      console.error('failed to load mission', err)
-      return null
-    })
+    const levelUrl = nwbtLevelsCoatlicueInfoUrl(name)
+    const levelInfo = await nwbtFetch(baseUrl, levelUrl)
 
     const entity = this.entities.create()
     entity.addComponent(new TransformComponent({ name: `level - ${name}` }))
@@ -64,8 +53,8 @@ export class LevelProvider implements GameService {
     entity.addComponent(
       new LevelComponent({
         level: levelInfo,
-        heightmap: heightmapInfo,
-        mission: missionInfo,
+        // heightmap: heightmapInfo,
+        // mission: missionInfo,
       }),
     )
     this.entities.initialize(this.game)
@@ -120,7 +109,7 @@ export class LevelProvider implements GameService {
   }
 }
 
-function quadTreeOptions(info: LevelInfo): QuadTreeOptions {
+function quadTreeOptions(info: CoatlicueInfo): QuadTreeOptions {
   if (!info.regions?.length) {
     return null
   }
