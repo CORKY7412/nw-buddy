@@ -59,6 +59,7 @@ const (
 )
 
 func init() {
+	Cmd.AddCommand(CmdTypegen)
 	Cmd.Flags().StringVarP(&flg.GameDir, "game", "g", env.GameDir(), "game root directory")
 	Cmd.Flags().StringVarP(&flg.TempDir, "temp", "t", env.TempDir(), "temporary directory for image conversion")
 	Cmd.Flags().StringVarP(&flg.CacheDir, "cache", "c", env.CacheDir(), "image cache directory")
@@ -87,7 +88,7 @@ func run(cmd *cobra.Command, args []string) {
 	os.MkdirAll(flg.CacheDir, os.ModePerm)
 
 	r.PathPrefix("/list").Handler(http.StripPrefix("/list", GetListHandler(assets.Archive)))
-  r.PathPrefix("/stat").Handler(http.StripPrefix("/stat", GetStatHandler(assets)))
+	r.PathPrefix("/stat").Handler(http.StripPrefix("/stat", GetStatHandler(assets)))
 	r.PathPrefix("/file").Handler(http.StripPrefix("/file", GetFileHandler(assets)))
 	r.PathPrefix("/models").Handler(http.StripPrefix("/models", http.FileServer(http.Dir(flg.ModelsDir))))
 

@@ -15,9 +15,11 @@ func GetListHandler(archive nwfs.Archive) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
-		files := make([]string, len(list))
+		files := ServeListResult{
+			Items: make([]string, len(list)),
+		}
 		for i, file := range list {
-			files[i] = file.Path()
+			files.Items[i] = file.Path()
 		}
 		serveJson(files, w)
 	}
@@ -32,25 +34,24 @@ func GetStatHandler(assets *game.Assets) http.HandlerFunc {
 			return
 		}
 
-		result := make([]map[string]any, len(list))
+		result := ServeStatResult{
+			Items: make([]ServeStatResultEntry, len(list)),
+		}
 		for i, file := range list {
 			filePath := file.Path()
 
-			stat := make(map[string]any)
-			if asset := assets.Catalog.FindByFile(file.Path()); asset != nil {
-				stat["asset"] = asset
-			} else {
-				stat["file"] = filePath
-			}
+			entry := ServeStatResultEntry{}
+			entry.File = filePath
+			entry.Asset = assets.Catalog.FindByFile(file.Path())
 
 			if dds.IsDDS(filePath) || dds.IsDDSAlpha(filePath) {
 				meta, _ := dds.LoadMeta(file)
 				if meta != nil {
-					stat["dds"] = meta.Stats()
+					entry.Dds = meta.Stats()
 				}
 			}
 
-			result[i] = stat
+			result.Items[i] = entry
 		}
 
 		serveJson(result, w)

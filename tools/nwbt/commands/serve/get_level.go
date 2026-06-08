@@ -20,8 +20,7 @@ func LevelsRouter(r *mux.Router, assets *game.Assets) {
 
 func getLevelsListFunc(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		result := level.ListLevelIndex(assets)
-		serveJson(result, w)
+		serveJson(level.ListLevelIndex(assets), w)
 	}
 }
 
@@ -53,13 +52,13 @@ func getRegionInfoFunc(assets *game.Assets) http.HandlerFunc {
 		regionName := nwfs.NormalizePath(vars["region"])
 		directory := level.NewRegionDirectory(coatName, regionName)
 
-		info := directory.LoadRegionInfo(assets)
-		if info == nil {
+		result := directory.LoadRegionInfo(assets)
+		if result == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		serveJson(info, w)
+		serveJson(result, w)
 	}
 }
 

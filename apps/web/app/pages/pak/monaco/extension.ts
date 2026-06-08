@@ -1,6 +1,6 @@
 import { Directive, effect, inject, Input, OnDestroy, output, untracked } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { fetchTypedRequest, getCatalogAssetInfo } from '@nw-serve'
+import { nwbtCatalogAssetUrl, nwbtFetch, nwbtFileStatUrl } from '@nw-serve'
 import { IDisposable } from 'monaco-editor'
 import { from } from 'rxjs'
 import { environment } from '../../../../environments'
@@ -14,7 +14,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
   @Input()
   public nwbMonacoSliceExtension: void
 
-  public fileClicked = output<{ file: string, newTab: boolean }>()
+  public fileClicked = output<{ file: string; newTab: boolean }>()
 
   private monaco = toSignal(from(inject(MonacoService).loadMonaco()))
   private editor = inject(CodeEditorComponent).editor
@@ -91,10 +91,12 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
               model.getLineMaxColumn(position.lineNumber),
             ),
             contents: [
-              !asset.file ? null : {
-                isTrusted: true,
-                value: `![monaco-img-preview](${location.origin}${environment.nwbtUrl}/file/${asset.file}.png?size=256)`,
-              },
+              !asset.file
+                ? null
+                : {
+                    isTrusted: true,
+                    value: `![monaco-img-preview](${location.origin}${environment.nwbtUrl}/file/${asset.file}.png?size=256)`,
+                  },
               {
                 isTrusted: true,
                 value: '```json\n' + text + '\n```',
@@ -107,21 +109,37 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
     })
   }
 
-  private async emitOpenAsset(assetId: any, newTab: boolean) {
-    if (typeof assetId === 'string') {
-      const asset = await fetchAssetInfo(assetId)
-      this.fileClicked.emit({ file: asset.file, newTab })
-      return
-    }
-    if (typeof assetId === 'object') {
-      const list = await fetchAssetInfos(assetId.guid).then((it) => it.assets)
-      if (!list) {
+  private async emitOpenAsset({ assetId, assetPath, newTab }: { assetId: any; assetPath: string; newTab: boolean }) {
+    if (assetPath) {
+      if (typeof assetPath === 'string') {
+        let data = await fetchAssetFileInfos(assetPath)
+        if (!data.length) {
+          data = await fetchAssetFileInfos(assetPath + '*')
+        }
+        if (!data.length) {
+          return
+        }
+        const file = data[0].asset.file
+        this.fileClicked.emit({ file, newTab })
         return
       }
-      const byType = list.filter((it) => it.type.toLowerCase() === assetId.type.toLowerCase())
-      if (byType.length === 1) {
-        this.fileClicked.emit({ file: byType[0].file, newTab })
+    }
+    if (assetId) {
+      if (typeof assetId === 'string') {
+        const asset = await fetchAssetInfo(assetId)
+        this.fileClicked.emit({ file: asset.file, newTab })
         return
+      }
+      if (typeof assetId === 'object') {
+        const list = await fetchAssetInfos(assetId.guid).then((it) => it.assets)
+        if (!list) {
+          return
+        }
+        const byType = list.filter((it) => it.type.toLowerCase() === assetId.type.toLowerCase())
+        if (byType.length === 1) {
+          this.fileClicked.emit({ file: byType[0].file, newTab })
+          return
+        }
       }
     }
   }
@@ -129,11 +147,18 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
   private registerCodeLensJson(): IDisposable {
     const monaco = this.monaco()
     const editor = this.editor()
-    const cmdOpen = editor.addCommand(0, async (cmd, assetId) => {
-      this.emitOpenAsset(assetId, false)
+    const cmdOpenByAssetId = editor.addCommand(0, async (cmd, assetId) => {
+      this.emitOpenAsset({ assetId, assetPath: null, newTab: false })
     })
-    const cmdOpenTab = editor.addCommand(0, async (cmd, assetId) => {
-      this.emitOpenAsset(assetId, true)
+    const cmdOpenTabByAssetId = editor.addCommand(0, async (cmd, assetId) => {
+      this.emitOpenAsset({ assetId, assetPath: null, newTab: true })
+    })
+
+    const cmdOpenByAssetPath = editor.addCommand(0, async (cmd, assetPath) => {
+      this.emitOpenAsset({ assetId: null, assetPath, newTab: false })
+    })
+    const cmdOpenTabByAssetPath = editor.addCommand(0, async (cmd, assetPath) => {
+      this.emitOpenAsset({ assetId: null, assetPath, newTab: true })
     })
 
     return monaco.languages.registerCodeLensProvider(['json', 'xml'], {
@@ -151,7 +176,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpen,
+                id: cmdOpenByAssetId,
                 title: 'Open',
                 arguments: [sliceAssetId],
               },
@@ -164,7 +189,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpenTab,
+                id: cmdOpenTabByAssetId,
                 title: 'New tab',
                 arguments: [sliceAssetId],
               },
@@ -180,7 +205,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpen,
+                id: cmdOpenByAssetId,
                 title: 'Open',
                 arguments: [assetRef],
               },
@@ -193,7 +218,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpenTab,
+                id: cmdOpenTabByAssetId,
                 title: 'New tab',
                 arguments: [assetRef],
               },
@@ -209,7 +234,7 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpen,
+                id: cmdOpenByAssetId,
                 title: 'Open',
                 arguments: [textureAssetId],
               },
@@ -222,9 +247,38 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
                 endColumn: line.length,
               },
               command: {
-                id: cmdOpenTab,
+                id: cmdOpenTabByAssetId,
                 title: 'New tab',
                 arguments: [textureAssetId],
+              },
+            })
+          }
+          const assetPath = matchJsonSliceAssetPath(line)
+          if (assetPath) {
+            lenses.push({
+              range: {
+                startLineNumber: i + 1,
+                startColumn: line.indexOf(assetPath),
+                endLineNumber: i + 1,
+                endColumn: line.length,
+              },
+              command: {
+                id: cmdOpenByAssetPath,
+                title: 'Open',
+                arguments: [assetPath],
+              },
+            })
+            lenses.push({
+              range: {
+                startLineNumber: i + 1,
+                startColumn: line.indexOf(assetPath),
+                endLineNumber: i + 1,
+                endColumn: line.length,
+              },
+              command: {
+                id: cmdOpenTabByAssetPath,
+                title: 'New tab',
+                arguments: [assetPath],
               },
             })
           }
@@ -239,7 +293,6 @@ export class MonacoSliceExtensionDirective implements OnDestroy {
       },
     })
   }
-
 }
 
 function matchAsset(model: m.editor.ITextModel, line: number) {
@@ -267,6 +320,7 @@ function matchAsset(model: m.editor.ITextModel, line: number) {
 
 function matchJsonStringProperty(line: string, propertyName: string) {
   // "sliceAssetId": "{2DCF02DE-BBA1-5C04-853D-4CA7EAE1F9E8}:8f09fd"
+  // "assetpath": "materials/water/rivers/jav_fst_riverwater_a.mtl"
   const regex = `"${propertyName}"\\s*:\\s*"(.*?)"`
   const match = line.match(regex)
   if (match) {
@@ -289,10 +343,18 @@ function matchJsonSliceAssetId(line: string) {
   return matchJsonStringProperty(line, 'sliceAssetId')
 }
 
+function matchJsonSliceAssetPath(line: string) {
+  return matchJsonStringProperty(line, 'assetpath')
+}
+
 async function fetchAssetInfo(assetId: string) {
   return fetchAssetInfos(assetId).then((it) => it.asset)
 }
 
 async function fetchAssetInfos(assetId: string) {
-  return fetchTypedRequest(environment.nwbtUrl, getCatalogAssetInfo(assetId))
+  return nwbtFetch(environment.nwbtUrl, nwbtCatalogAssetUrl(assetId))
+}
+
+async function fetchAssetFileInfos(assetFile: string) {
+  return nwbtFetch(environment.nwbtUrl, nwbtFileStatUrl(assetFile)).then((it) => it.items)
 }

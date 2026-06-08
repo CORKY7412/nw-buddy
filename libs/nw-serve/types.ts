@@ -1,26 +1,13 @@
+import { TimeOfDay } from './generated'
+
 export interface LevelInfo {
   name: string
-  oceanLevel: number
-  mountainHeight: number
-  groundMaterial: string
   regionSize: number
   regions: RegionReference[]
   maps: MapInfo[]
   timeOfDay: TimeOfDay
 }
 
-export interface TimeOfDay {
-  time: number
-  timeStart: number
-  timeEnd: number
-  timeAnimSpeed: number
-  variables: TimeOfDayVariable[]
-}
-export interface TimeOfDayVariable {
-  name: string
-  color: string
-  value: string
-}
 export interface MapInfo {
   gameModeMapId: string
   gameModeId: string
@@ -33,15 +20,6 @@ export interface MapInfo {
 export interface RegionReference {
   name: string
   location: [number, number]
-}
-
-export interface RegionInfo {
-  name: string
-  size: number
-  cellResolution: number
-  poiImpostors: ImpostorInfo[]
-  impostors: ImpostorInfo[]
-  capitals: CapitalLayerInfo[]
 }
 
 export interface ImpostorInfo {
@@ -125,8 +103,7 @@ export interface TerrainInfo {
   regionSize: number
   oceanLevel: number
   mountainHeight: number
-  groundMaterial: string
-  regionMaterials: RegionMacroMaterial[]
+  materials: RegionMacroMaterial[]
 }
 
 export interface CatalogAssetInfo {
@@ -142,9 +119,13 @@ export interface AssetInfo {
   size: number
 }
 
+export type StatAssetInfo = Array<{
+  asset: AssetInfo
+}>
+
 export interface RegionMacroMaterial {
-  regionsX: number
-  regionsY: number
+  regionX: number
+  regionY: number
   normalMap: string
   colorMap: string
   specularMap: string

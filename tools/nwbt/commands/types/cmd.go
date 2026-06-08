@@ -39,6 +39,9 @@ var cmdGenerate = &cobra.Command{
 	Run:   runGenerate,
 }
 
+var cmdTygo = &cobra.Command{
+  Use:   "tygo",
+}
 func init() {
 	Cmd.Flags().StringVarP(&flgGameDir, "game", "g", env.GameDir(), "game root directory")
 	Cmd.Flags().StringVarP(&flgGameFile, "file", "f", path.Join(env.GameDir(), "Bin64", "NewWorld.exe"), "game executalbe")

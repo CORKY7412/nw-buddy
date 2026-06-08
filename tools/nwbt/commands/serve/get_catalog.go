@@ -27,11 +27,11 @@ func GetCatalogAssetHandler(assets *game.Assets) http.HandlerFunc {
 				assetId.SubID = uint32(subidInt)
 			}
 		}
-		result := map[string]any{
-			"asset":  assets.Catalog.LookupById(assetId),
-			"assets": assets.Catalog.AllByGuid(assetId.Guid),
-			"link":   assets.Catalog.LookupLink(assetId.Guid),
-			"legacy": assets.Catalog.LookupLegacy(assetIdString),
+		result := ServeCatalogAssetResult{
+			Asset:  assets.Catalog.LookupById(assetId),
+			Assets: assets.Catalog.AllByGuid(assetId.Guid),
+			Link:   assets.Catalog.LookupLink(assetId.Guid),
+			Legacy: assets.Catalog.LookupLegacy(assetIdString),
 		}
 		serveJson(result, w)
 	}

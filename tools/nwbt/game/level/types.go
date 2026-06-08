@@ -86,9 +86,9 @@ type TimeOfDayVariable struct {
 
 type RegionInfo struct {
 	ID              string           `json:"name"`
-	PoiImpostors    []RegionImpostor `json:"poiImpostors"`    // from impostros.json
-	Impostors       []RegionImpostor `json:"impostors"`       // from poi_impostors.json
-	TerrainMaterial *RegionMaterial  `json:"terrainMaterial"` //
+	PoiImpostors    []RegionImpostor `json:"poiImpostors"` // from impostros.json
+	Impostors       []RegionImpostor `json:"impostors"`    // from poi_impostors.json
+	TerrainMaterial *RegionMaterial  `json:"terrainMaterial"`
 }
 
 type RegionImpostor struct {

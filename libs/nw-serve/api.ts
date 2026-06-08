@@ -1,4 +1,5 @@
-import { CatalogAssetInfo, DistributionInfo, EntityInfo, LevelInfo, RegionInfo, TerrainInfo } from './types'
+import { RegionInfo } from './generated'
+import { CatalogAssetInfo, DistributionInfo, EntityInfo, LevelInfo, StatAssetInfo, TerrainInfo } from './types'
 
 export type TypedRequest<T> = {
   url: string
@@ -56,7 +57,10 @@ export function getHeightmapInfoUrl(levelName: string): TypedRequest<TerrainInfo
   return { url: `/level/${levelName}/heightmap` }
 }
 
-export function getRegionEntitiesUrl(levelName: string, regionName: string): TypedRequest<Record<string, Record<string, EntityInfo[]>>> {
+export function getRegionEntitiesUrl(
+  levelName: string,
+  regionName: string,
+): TypedRequest<Record<string, Record<string, EntityInfo[]>>> {
   return { url: `/level/${levelName}/region/${regionName}/entities` }
 }
 
@@ -66,6 +70,10 @@ export function getRegionDistributionUrl(levelName: string, regionName: string):
 
 export function getCatalogAssetInfo(assetId: string): TypedRequest<CatalogAssetInfo> {
   return { url: `/catalog/${encodeURIComponent(assetId)}` }
+}
+
+export function getStatAssetInfo(file: string): TypedRequest<StatAssetInfo> {
+  return { url: `/stat/${file}` }
 }
 
 export function getCapitalEntities(

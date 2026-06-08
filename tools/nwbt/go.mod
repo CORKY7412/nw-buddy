@@ -36,6 +36,7 @@ require (
 	github.com/goreleaser/fileglob v1.3.0
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
+	github.com/gzuidhof/tygo v0.2.21
 	github.com/joho/godotenv v1.5.1
 	github.com/qmuntal/gltf v0.28.0
 	github.com/spf13/cobra v1.8.1
@@ -45,4 +46,15 @@ require (
 	github.com/x448/float16 v0.8.4
 	golang.org/x/image v0.25.0
 	golang.org/x/sys v0.30.0
+)
+
+require github.com/tkrajina/go-reflector v0.5.5 // indirect
+
+require (
+	github.com/fatih/structtag v1.2.0 // indirect
+	github.com/tkrajina/typescriptify-golang-structs v0.2.0
+	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
