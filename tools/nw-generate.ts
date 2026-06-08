@@ -104,11 +104,12 @@ program
     const dataSrcDir = environment.nwDataDir(workspace)
     const dataLinkDir = environment.nwDataDir('.current')
     console.log('Linking data directory', dataSrcDir, '->', dataLinkDir)
-    if (fs.existsSync(dataLinkDir)) {
-      fs.rmSync(dataLinkDir, { force: true })
+    try {
+      fs.rmdirSync(dataLinkDir)
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e
     }
-
-    fs.symlinkSync(dataSrcDir, dataLinkDir, 'dir')
+    fs.symlinkSync(dataSrcDir, dataLinkDir, 'junction')
   })
 
 program
