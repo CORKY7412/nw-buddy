@@ -27,11 +27,11 @@
     "paths": {
       "~/*": ["apps/web/app/*"],
       "@nw-serve": ["libs/nw-serve"],
-      "@nw-viewer": ["libs/nw-viewer"],
-      "@nw-viewer/*": ["libs/nw-viewer/*"],
+      "@nw-viewer-old": ["libs/nw-viewer-old"],
+      "@nw-viewer-old/*": ["libs/nw-viewer-old/*"],
       "@nw-data/db": ["libs/nw-data/db"],
       "@nw-data/common": ["libs/nw-data/common"],
-      "@nw-data/generated": ["libs/nw-data/generated"],
+      "@nw-data/generated": ["libs/nw-data/generated"]
     }
   },
   "angularCompilerOptions": {
