@@ -26,20 +26,20 @@ import { FileTreeNode, FileTreeStore } from './file-tree.store'
     class: 'block h-full',
   },
   template: `
-    <cdk-virtual-scroll-viewport [itemSize]="32" class="h-full" (scrolledIndexChange)="viewport().checkViewportSize()">
+    <cdk-virtual-scroll-viewport [itemSize]="24" class="h-full" (scrolledIndexChange)="viewport().checkViewportSize()">
       <div
         *cdkVirtualFor="let item of store.list(); trackBy: trackBy"
-        [style.paddingLeft.px]="item.depth * 12"
-        class="whitespace-nowrap overflow-hidden h-8 cursor-pointer group"
+        [style.paddingLeft.px]="(item.depth - 1) * 10"
+        class="whitespace-nowrap overflow-hidden h-6 cursor-pointer group text-sm"
       >
         <div class="join w-full" [cdkContextMenuTriggerFor]="tplContextMenu">
           @if (item.isDir) {
-            <button class="join-item btn btn-sm btn-square btn-ghost" (click)="handleToggle(item)">
-              <nwb-icon [icon]="item.isDir ? folderIcon : fileIcon" class="w-5 h-5" />
+            <button class="join-item btn btn-xs btn-square btn-ghost" (click)="handleToggle(item)">
+              <nwb-icon [icon]="item.isDir ? folderIcon : fileIcon" class="w-4 h-4" />
             </button>
           }
           <button
-            class="join-item btn btn-sm bt-ghost w-full justify-start no-animation flex-nowrap pl-1"
+            class="join-item btn btn-xs bt-ghost w-full justify-start no-animation flex-nowrap pl-1"
             [class.text-primary]="item.id === active()"
             (click)="handleClick(item)"
             (dblclick)="handleToggle(item)"
@@ -47,7 +47,7 @@ import { FileTreeNode, FileTreeStore } from './file-tree.store'
             tabindex="0"
           >
             @if (!item.isDir) {
-              <nwb-icon [icon]="fileIcon" class="w-5 h-5" />
+              <nwb-icon [icon]="fileIcon" class="w-4 h-4" />
             }
             <span
               class="block opacity-80 group-hover:opacity-100 whitespace-nowrap text-nowrap overflow-hidden text-ellipsis"
@@ -64,6 +64,11 @@ import { FileTreeNode, FileTreeStore } from './file-tree.store'
             <li class="text-shadow-sm shadow-black" cdkMenuItem (click)="handleCopyPath(item)">
               <span>Copy Path</span>
             </li>
+            @if (!item.isDir) {
+              <li class="text-shadow-sm shadow-black" cdkMenuItem (click)="handleOpen(item)">
+                <span>Open in new tab</span>
+              </li>
+            }
           </ul>
         </ng-template>
       </div>
@@ -75,6 +80,7 @@ export class FileTreeComponent {
   public files = input<string[]>()
   public search = input<string>('')
   public selected = output<FileTreeNode>()
+  public open = output<FileTreeNode>()
   public selection = input<string>()
   protected active = linkedSignal(() => this.selection())
 
@@ -115,6 +121,9 @@ export class FileTreeComponent {
     if (item.isDir) {
       this.store.toggle(item.id)
     }
+  }
+  protected handleOpen(item: FileTreeNode) {
+    this.open.emit(item)
   }
 
   private scrollToSelection() {
