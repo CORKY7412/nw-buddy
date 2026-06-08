@@ -19,6 +19,6 @@ func (it nvtt) Check() (string, bool) {
 }
 
 func (it nvtt) Info() string {
-	return `NVIDIA Texture Tools Exporter is a tool for converting images to and from DDS format.
-  Download: https://developer.nvidia.com/texture-tools-exporter`
+	return "Convert images to/from DDS format (NVIDIA)\n" +
+		"download: https://developer.nvidia.com/texture-tools-exporter"
 }

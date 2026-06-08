@@ -560,14 +560,11 @@ func convertLua(params convertParams) ([]byte, error) {
 			return nil, err
 		}
 
-		outFile := utils.ReplaceExt(inputFile, ".lua")
-		defer os.Remove(outFile)
-
-		err = utils.Unluac.Run(inputFile, utils.LuacOpt{Output: outFile})
+		result, err := utils.Unluac.Run(inputFile, utils.LuacOpt{})
 		if err != nil {
 			return nil, err
 		}
-		return os.ReadFile(outFile)
+		return result, nil
 	default:
 		return nil, fmt.Errorf("unsupported target format: %s", target)
 	}

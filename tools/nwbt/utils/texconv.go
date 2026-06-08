@@ -37,9 +37,9 @@ func (it texconv) Check() (string, bool) {
 }
 
 func (it texconv) Info() string {
-	return `Texconv is a tool for converting images to and from DDS format.
-  Documentation: https://github.com/microsoft/DirectXTex/wiki/Texconv
-  Download:      https://github.com/microsoft/DirectXTex/releases`
+	return "Convert images to/from DDS format\n" +
+		"docs:     https://github.com/microsoft/DirectXTex/wiki/Texconv\n" +
+		"download: https://github.com/microsoft/DirectXTex/releases"
 }
 
 func (it texconv) Command(args ...string) *exec.Cmd {

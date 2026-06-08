@@ -1,44 +1,55 @@
 package utils
 
 import (
+	"bytes"
+	"fmt"
 	"os/exec"
 )
 
-type unluac struct {
-	jar string
-}
+type unluac struct{ command string }
 
-var Unluac = unluac{"unluac.jar"}
+var Unluac = unluac{"cLuaDecompiler"}
 
 type LuacOpt struct {
 	Output string
 }
 
 func (it unluac) Name() string {
-	return it.jar
+	return it.command
 }
 
 func (it unluac) Check() (string, bool) {
-	res, err := exec.LookPath(it.jar)
+	res, err := exec.LookPath(it.command)
 	return res, err == nil
 }
 
 func (it unluac) Info() string {
-	return `unluac ist a tool to decompile lua bytecode`
+	return "Lua bytecode disassembler and decompiler By Coldzer0\n" +
+		"docs:     https://github.com/Coldzer0/LuaDecompiler\n" +
+		"download: https://github.com/Coldzer0/LuaDecompiler/releases"
+}
+
+func (it unluac) Command(args ...string) *exec.Cmd {
+	return exec.Command(it.command, args...)
 }
 
 func (it unluac) Args(input string, options LuacOpt) []string {
 	args := make([]string, 0)
-	if options.Output != "" {
-		args = append(args, "-o", options.Output)
-	}
 	args = append(args, input)
 	return args
 }
 
-func (it unluac) Run(input string, options LuacOpt) error {
-	jarPath, _ := it.Check()
-	args := []string{"-jar", jarPath}
-	args = append(args, it.Args(input, options)...)
-	return Java.Run(args...)
+func (it unluac) Run(input string, options LuacOpt) ([]byte, error) {
+	args := it.Args(input, options)
+	cmd := it.Command(args...)
+
+	bOut := new(bytes.Buffer)
+	bErr := new(bytes.Buffer)
+	cmd.Stdout = bOut
+	cmd.Stderr = bErr
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("%w: %s", err, bErr.String())
+	}
+	return bOut.Bytes(), nil
 }

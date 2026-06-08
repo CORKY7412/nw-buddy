@@ -39,16 +39,13 @@ func processLua(task *Task, format string) {
 			return
 		}
 
-		outFile := utils.ReplaceExt(inputFile, ".lua")
-		defer os.Remove(outFile)
-
-		err = utils.Unluac.Run(inputFile, utils.LuacOpt{Output: outFile})
+		result, err := utils.Unluac.Run(inputFile, utils.LuacOpt{})
 		if err != nil {
 			task.Error = err
 			return
 		}
 		output.Path = utils.ReplaceExt(output.Path, ".lua")
-		output.Data, output.Error = os.ReadFile(outFile)
+		output.Data = result
 
 		return
 	default:

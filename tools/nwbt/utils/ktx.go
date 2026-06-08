@@ -21,7 +21,9 @@ func (it ktx) Check() (string, bool) {
 }
 
 func (it ktx) Info() string {
-	return `Libraries and tools to create and read KTX image texture files`
+	return "Create, validate and transcode KTX texture files\n" +
+		"docs:     https://github.com/KhronosGroup/KTX-Software\n" +
+		"download: https://github.com/KhronosGroup/KTX-Software/releases"
 }
 
 func (it ktx) PresetNormalMap() []string {

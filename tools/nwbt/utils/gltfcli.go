@@ -21,7 +21,9 @@ func (it gltfCli) Check() (string, bool) {
 }
 
 func (it gltfCli) Info() string {
-	return `gltf-transform `
+	return "Optimize and transform glTF 3D assets\n" +
+		"docs:    https://gltf-transform.dev/cli\n" +
+		"install: npm install --global @gltf-transform/cli"
 }
 
 func (it gltfCli) Run(args ...string) error {

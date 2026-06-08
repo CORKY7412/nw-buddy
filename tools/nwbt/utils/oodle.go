@@ -36,6 +36,12 @@ func (it oodle) Check() (string, bool) {
 	return "", false
 }
 
+func (it oodle) Info() string {
+	return "Oodle data compression library (Kraken/Leviathan), required for unpacking game archives\n" +
+		"info: https://www.radgametools.com/oodle.htm\n" +
+		"note: not available for standalone download, obtain from an existing game installation"
+}
+
 func (it *oodle) Load() error {
 	if it.decompress != nil {
 		return nil

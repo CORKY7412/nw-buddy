@@ -19,7 +19,9 @@ func (it magick) Check() (string, bool) {
 }
 
 func (it magick) Info() string {
-	return `Image Magick tools`
+	return "General purpose image conversion and manipulation\n" +
+		"docs:     https://imagemagick.org/script/command-line-tools.php\n" +
+		"download: https://imagemagick.org/script/download.php"
 }
 
 func (it magick) Command(args ...string) *exec.Cmd {
