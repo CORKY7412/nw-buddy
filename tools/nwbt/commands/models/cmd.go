@@ -12,6 +12,7 @@ import (
 	"nw-buddy/tools/utils"
 	"nw-buddy/tools/utils/env"
 	"nw-buddy/tools/utils/logging"
+	"nw-buddy/tools/utils/math"
 	"nw-buddy/tools/utils/progress"
 	"os"
 	"path"
@@ -145,7 +146,7 @@ func (c *Collector) ProcessModels() {
 	models := make([]importer.AssetGroup, 0)
 	animations := make([]importer.AssetGroup, 0)
 	for _, group := range assets {
-		if len(group.Animations) > 0 && len(group.Meshes) == 0 {
+		if len(group.Animations) > 0 && len(group.Geometries) == 0 {
 			animations = append(animations, group)
 		} else {
 			models = append(models, group)
@@ -195,25 +196,42 @@ func (c *Collector) processAassets(description string, models []importer.AssetGr
 				return "", nil
 			}
 
-			for _, mesh := range group.Meshes {
-				document.ImportGeometry(mesh, c.LoadAsset, c.flags.Simplify)
+			// model export targets gltf spec, so y-up by default
+			// also skipping all helper/shadow/lod nodes
+			document.Options = gltf.ImportOptions{
+				Base:            math.GetBase(true),
+				LoadGeometry:    c.LoadAsset,
+				LoadAnimation:   c.LoadAnimation,
+				LoadMaterials:   c.LoadMaterial,
+				Simplify:        c.flags.Simplify,
+				SkipLod:         true,
+				SkipHelper:      true,
+				SkipShadowProxy: true,
+				SkipUnlinkedMtl: true,
+			}
+
+			for _, geom := range group.Geometries {
+				document.ImportAssetGeometry(geom)
 			}
 			if len(group.Animations) > 0 {
 				document.MergeSkins()
 			}
 			for _, anim := range group.Animations {
-				document.ImportCgfAnimation(anim, c.LoadAnimation)
+				document.ImportAssetAnimations(anim)
+			}
+			for _, mats := range group.Materials {
+				document.ImportMaterials(mats)
 			}
 			if flg.Lights && len(group.Lights) > 0 {
-				document.ImportCgfLights(group.Lights, flg.LightIntensity)
+				document.ImportAssetLights(group.Lights, flg.LightIntensity)
 			}
 
-			document.ImportCgfMaterials(
+			document.ProcessMaterials(
 				gltf.WithTextureBaking(true),
 				gltf.WithCustomIOR(flg.IOR),
 				gltf.WithDiffuseOnly(flg.Simplify),
 			)
-			document.Clean()
+			document.CleanExtras()
 
 			imageFormat := ""
 			if c.flags.Webp {
@@ -366,7 +384,7 @@ func (c *Collector) ProcessOptimize() {
 	}
 	models := make([]importer.AssetGroup, 0)
 	for _, group := range assets {
-		if len(group.Animations) > 0 && len(group.Meshes) == 0 {
+		if len(group.Animations) > 0 && len(group.Geometries) == 0 {
 			//
 		} else {
 			models = append(models, group)

@@ -5,6 +5,61 @@ import (
 	"nw-buddy/tools/utils/math/mat4"
 )
 
+type Base interface {
+	Vec3(v Vec3) Vec3
+	Vec4(v Vec4) Vec4
+	Quat(v Quat) Quat
+	Mat4(m mat4.Data) mat4.Data
+}
+
+func GetBase(yUp bool) Base {
+  if yUp {
+    return &cryToGltfBase{}
+  }
+  return &cryBase{}
+}
+
+type cryToGltfBase struct{}
+
+func (b *cryToGltfBase) Vec3(v Vec3) Vec3 {
+	return CryToGltfVec3(v)
+}
+
+func (b *cryToGltfBase) Vec4(v Vec4) Vec4 {
+	return CryToGltfVec4(v)
+}
+
+func (b *cryToGltfBase) Quat(v Quat) Quat {
+	return CryToGltfQuat(v)
+}
+
+func (b *cryToGltfBase) Mat4(m mat4.Data) mat4.Data {
+	return CryToGltfMat4(m)
+}
+
+type cryBase struct{}
+
+func (b *cryBase) Vec3(v Vec3) Vec3 {
+	return v
+}
+
+func (b *cryBase) Vec4(v Vec4) Vec4 {
+	return v
+}
+
+func (b *cryBase) Quat(v Quat) Quat {
+	return v
+}
+
+func (b *cryBase) Mat4(m mat4.Data) mat4.Data {
+	return mat4.Data{
+		m[0], m[1], m[2], m[3],
+		m[4], m[5], m[6], m[7],
+		m[8], m[9], m[10], m[11],
+		m[12], m[13], m[14], m[15],
+	}
+}
+
 type Vec3 = [3]float32
 type Vec4 = [4]float32
 type Quat = [4]float32

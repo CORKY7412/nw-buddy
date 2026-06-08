@@ -189,12 +189,12 @@ type AnimationFile struct {
 	Type AnimationFileType `json:"type"`
 }
 
-func (doc *Document) SelectModelAnimations(files []AnimationFile) []importer.Animation {
+func (doc *Document) SelectModelAnimations(files []AnimationFile) []importer.AnimationAsset {
 	return SelectModelAnimations(doc.GetActions(), files)
 }
 
-func SelectModelAnimations(actions []AnimationAction, files []AnimationFile) []importer.Animation {
-	groups := maps.NewDict[*importer.Animation]()
+func SelectModelAnimations(actions []AnimationAction, files []AnimationFile) []importer.AnimationAsset {
+	groups := maps.NewDict[*importer.AnimationAsset]()
 
 	for _, action := range actions {
 		for _, fragment := range action.Fragments {
@@ -240,7 +240,7 @@ func SelectModelAnimations(actions []AnimationAction, files []AnimationFile) []i
 				case Comb:
 					// const doc, err = comb.Load(animation.File)
 				case Caf:
-					groups.LoadOrStore(animation.File, &importer.Animation{
+					groups.LoadOrStore(animation.File, &importer.AnimationAsset{
 						File: animation.File,
 						Name: animation.Name,
 					})
@@ -248,7 +248,7 @@ func SelectModelAnimations(actions []AnimationAction, files []AnimationFile) []i
 			}
 		}
 	}
-	result := make([]importer.Animation, 0)
+	result := make([]importer.AnimationAsset, 0)
 	for _, group := range groups.Values() {
 		result = append(result, *group)
 	}

@@ -56,6 +56,8 @@ func ReadChunkNode_0x0824(r *buf.Reader, header ChunkHeader) (res Chunker, err e
 	for i := range out.Transform {
 		out.Transform[i] = r.MustReadFloat32()
 	}
+	// https://github.com/aws/lumberyard/blob/413ecaf24d7a534801cac64f50272fe3191d278f/dev/Code/CryEngine/Cry3DEngine/CGF/CGFSaver.cpp#L34
+	// #define SCALE_TO_CGF 100.0f
 	out.Transform[12] *= 0.01
 	out.Transform[13] *= 0.01
 	out.Transform[14] *= 0.01

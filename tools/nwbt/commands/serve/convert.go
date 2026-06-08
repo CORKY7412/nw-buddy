@@ -34,50 +34,64 @@ import (
 	"golang.org/x/image/tiff"
 )
 
-func convertFile(assets *game.Assets, file nwfs.File, targetFormat string, query url.Values) ([]byte, error) {
+type convertParams struct {
+	file   nwfs.File    // file to convert
+	assets *game.Assets // game assets for resolving dependencies and loading data
+	target string       // desired output format, e.g. ".gltf", ".png", etc.
+	query  url.Values   // query parameters from the request, used for additional instructions like resizing
+}
+
+func convertFile(params convertParams) ([]byte, error) {
+	file := params.file
+	targetFormat := params.target
+
 	if targetFormat == "" {
-		return file.Read()
+		return params.file.Read()
 	}
 
-	filePath := file.Path()
+	filePath := params.file.Path()
 	if dds.IsDDSSplitPart(filePath) {
-		return convertDDS(assets, file, targetFormat, query)
+		return convertDDS(params)
 	}
 
 	switch path.Ext(filePath) {
 	case ".datasheet":
-		return convertDatasheet(file, targetFormat)
+		return convertDatasheet(params)
 	case ".dds":
-		return convertDDS(assets, file, targetFormat, query)
+		return convertDDS(params)
 	case ".tif":
-		return convertTif(assets, file, targetFormat, query)
+		return convertTif(params)
 	case ".heightmap":
-		return convertHeightmap(file, targetFormat)
+		return convertHeightmap(params)
 	case ".cgf", ".skin":
-		return convertCGF(assets, file, targetFormat, query)
+		return convertCGF(params)
 	case ".caf":
-		return convertCAF(assets, file, targetFormat, query)
+		return convertCAF(params)
 	case ".cdf":
-		return convertCDF(assets, file, targetFormat)
+		return convertCDF(params)
 	case ".dynamicslice":
 		if targetFormat == ".gltf" || targetFormat == ".glb" {
-			return convertSliceToModel(assets, file, targetFormat, query)
+			return convertSliceToModel(params)
 		}
 	case ".distribution":
-		return convertDistribution(file, targetFormat)
+		return convertDistribution(params)
 	case ".mtl":
-		return convertMTL(assets, file, targetFormat, query)
+		return convertMTL(params)
 	case ".xml":
 		if strings.HasSuffix(file.Path(), ".loc.xml") {
-			return convertLocale(file, targetFormat)
+			return convertLocale(params)
 		}
 	case ".luac":
-		return convertLua(assets, file, targetFormat, query)
+		return convertLua(params)
 	}
-	return convertAny(file, targetFormat)
+	return convertAny(params)
 }
 
-func convertDatasheet(file nwfs.File, target string) ([]byte, error) {
+func convertDatasheet(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	data, err := file.Read()
 	if err != nil {
 		return nil, err
@@ -96,7 +110,11 @@ func convertDatasheet(file nwfs.File, target string) ([]byte, error) {
 	}
 }
 
-func convertTif(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertTif(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	switch target {
 	case "", ".tif":
 		return file.Read()
@@ -120,7 +138,12 @@ func convertTif(assets *game.Assets, file nwfs.File, target string, query url.Va
 	}
 }
 
-func convertDDS(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertDDS(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+	query := params.query
+
 	switch target {
 	case "", ".dds":
 		size, _ := strconv.Atoi(query.Get("size"))
@@ -162,7 +185,11 @@ func convertDDS(assets *game.Assets, file nwfs.File, target string, query url.Va
 	}
 }
 
-func convertHeightmap(file nwfs.File, target string) ([]byte, error) {
+func convertHeightmap(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	switch target {
 	case "", ".heightmap":
 		return file.Read()
@@ -182,7 +209,12 @@ func convertHeightmap(file nwfs.File, target string) ([]byte, error) {
 	}
 }
 
-func convertCGF(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertCGF(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+	query := params.query
+
 	if target != ".gltf" && target != ".glb" {
 		return nil, fmt.Errorf("unsupported target format: %s", target)
 	}
@@ -191,14 +223,18 @@ func convertCGF(assets *game.Assets, file nwfs.File, target string, query url.Va
 	model := file.Path()
 	material := query.Get("material")
 	model, material = assets.ResolveCgfAndMtl(model, material)
-	group.Meshes = append(group.Meshes, importer.GeometryAsset{
+	group.Geometries = append(group.Geometries, importer.GeometryAsset{
 		GeometryFile: model,
 		MaterialFile: material,
 	})
-	return convertGltf(assets, group, target == ".glb")
+	return convertGltf(assets, group, target == ".glb", params)
 }
 
-func convertCAF(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertCAF(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+
 	if target != ".gltf" && target != ".glb" {
 		return nil, fmt.Errorf("unsupported target format: %s", target)
 	}
@@ -207,14 +243,18 @@ func convertCAF(assets *game.Assets, file nwfs.File, target string, query url.Va
 	model := file.Path()
 
 	filePath := file.Path()
-	group.Animations = append(group.Animations, importer.Animation{
+	group.Animations = append(group.Animations, importer.AnimationAsset{
 		File: model,
 		Name: utils.ReplaceExt(path.Base(filePath), path.Ext(filePath)),
 	})
-	return convertGltf(assets, group, target == ".glb")
+	return convertGltf(assets, group, target == ".glb", params)
 }
 
-func convertCDF(assets *game.Assets, file nwfs.File, target string) ([]byte, error) {
+func convertCDF(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+
 	if target != ".gltf" && target != ".glb" {
 		return nil, fmt.Errorf("unsupported target format: %s", target)
 	}
@@ -235,13 +275,13 @@ func convertCDF(assets *game.Assets, file nwfs.File, target string) ([]byte, err
 	for _, mesh := range cdfModel.SkinAndClothAttachments() {
 		model, material := assets.ResolveCgfAndMtl(mesh.Binding, mesh.Material)
 		if model != "" {
-			group.Meshes = append(group.Meshes, importer.GeometryAsset{
+			group.Geometries = append(group.Geometries, importer.GeometryAsset{
 				GeometryFile: model,
 				MaterialFile: material,
 			})
 		}
 	}
-	return convertGltf(assets, group, target == ".glb")
+	return convertGltf(assets, group, target == ".glb", params)
 }
 
 func CollectAnimations(assets *game.Assets, cdf *cdf.Document) ([]adb.AnimationFile, error) {
@@ -263,7 +303,13 @@ func CollectAnimations(assets *game.Assets, cdf *cdf.Document) ([]adb.AnimationF
 	return result, nil
 }
 
-func convertMTL(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertMTL(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+
+	// addMesh := isTrueParam(params.query.Get("mesh"))
+
 	if target != ".gltf" && target != ".glb" {
 		return nil, fmt.Errorf("unsupported target format: %s", target)
 	}
@@ -283,7 +329,7 @@ func convertMTL(assets *game.Assets, file nwfs.File, target string, query url.Va
 	// count := float64(len(collection))
 	for i, mtl := range collection {
 		x := float32(float64(i) * (step + gap))
-		group.Meshes = append(group.Meshes, importer.GeometryAsset{
+		group.Geometries = append(group.Geometries, importer.GeometryAsset{
 			Entity: importer.Entity{
 				Name: fmt.Sprintf("material_%d_%s", i, mtl.Name),
 				Transform: [16]float32{
@@ -299,10 +345,14 @@ func convertMTL(assets *game.Assets, file nwfs.File, target string, query url.Va
 		})
 	}
 
-	return convertGltf(assets, group, target == ".glb")
+	return convertGltf(assets, group, target == ".glb", params)
 }
 
-func convertSliceToModel(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertSliceToModel(params convertParams) ([]byte, error) {
+	assets := params.assets
+	file := params.file
+	target := params.target
+
 	if target != ".gltf" && target != ".glb" {
 		return nil, fmt.Errorf("unsupported target format x: %s", target)
 	}
@@ -322,14 +372,14 @@ func convertSliceToModel(assets *game.Assets, file nwfs.File, target string, que
 			for _, mesh := range cdfModel.SkinAndClothAttachments() {
 				model, material := assets.ResolveCgfAndMtl(mesh.Binding, mesh.Material, entity.Material)
 				if model != "" {
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
 				}
 			}
 		} else {
-			group.Meshes = append(group.Meshes, importer.GeometryAsset{
+			group.Geometries = append(group.Geometries, importer.GeometryAsset{
 				Entity: importer.Entity{
 					Name:      entity.Name,
 					Transform: math.CryToGltfMat4(entity.Transform),
@@ -339,11 +389,10 @@ func convertSliceToModel(assets *game.Assets, file nwfs.File, target string, que
 			})
 		}
 	}
-	return convertGltf(assets, group, target == ".glb")
+	return convertGltf(assets, group, target == ".glb", params)
 }
 
-func convertGltf(assets *game.Assets, group importer.AssetGroup, binary bool) ([]byte, error) {
-	document := gltf.NewDocument()
+func convertGltf(assets *game.Assets, group importer.AssetGroup, binary bool, params convertParams) ([]byte, error) {
 	cacheDir := imageCacheDir(flg.CacheDir, flg.TextureSize)
 
 	linker := gltf.NewResourceLinker(cacheDir)
@@ -357,6 +406,7 @@ func convertGltf(assets *game.Assets, group importer.AssetGroup, binary bool) ([
 	}
 	linker.SetQueryParam(queryParam)
 
+	document := gltf.NewDocument()
 	document.Extras = group.Extra
 	document.ImageLinker = linker
 	document.ImageLoader = image.LoaderWithConverter{
@@ -370,16 +420,33 @@ func convertGltf(assets *game.Assets, group importer.AssetGroup, binary bool) ([
 			MaxSize: flg.TextureSize,
 		},
 	}
+
+	document.Options = gltf.ImportOptions{
+		Base:            math.GetBase(params.query.Has(QUERY_YUP)),
+		LoadGeometry:    assets.LoadAsset,
+		LoadAnimation:   assets.LoadAnimation,
+		LoadMaterials:   assets.LoadMaterial,
+		Simplify:        false,
+		SkipLod:         params.query.Has(QUERY_NO_LOD),
+		SkipHelper:      true, // removes $physics $auto nodes
+		SkipShadowProxy: params.query.Has(QUERY_NO_PROXY),
+		SkipUnlinkedMtl: false,
+	}
+
 	if len(group.Animations) > 0 {
 		document.MergeSkins()
 	}
 	for _, anim := range group.Animations {
-		document.ImportCgfAnimation(anim, assets.LoadAnimation)
+		document.ImportAssetAnimations(anim)
 	}
-	for _, mesh := range group.Meshes {
-		document.ImportGeometry(mesh, assets.LoadAsset, false)
+	for _, geom := range group.Geometries {
+		document.ImportAssetGeometry(geom)
 	}
-	document.ImportCgfMaterials()
+	for _, mats := range group.Materials {
+		document.ImportMaterials(mats)
+	}
+
+	document.ProcessMaterials()
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
 	if err := document.Encode(w, binary); err != nil {
@@ -389,7 +456,11 @@ func convertGltf(assets *game.Assets, group importer.AssetGroup, binary bool) ([
 	return b.Bytes(), nil
 }
 
-func convertLocale(file nwfs.File, target string) ([]byte, error) {
+func convertLocale(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	data, err := file.Read()
 	if err != nil {
 		return nil, err
@@ -408,7 +479,11 @@ func convertLocale(file nwfs.File, target string) ([]byte, error) {
 	}
 }
 
-func convertDistribution(file nwfs.File, target string) ([]byte, error) {
+func convertDistribution(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	switch target {
 	case ".json":
 		doc, err := distribution.Load(file)
@@ -421,7 +496,11 @@ func convertDistribution(file nwfs.File, target string) ([]byte, error) {
 	}
 }
 
-func convertAny(file nwfs.File, target string) ([]byte, error) {
+func convertAny(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	data, err := file.Read()
 	if err != nil {
 		return nil, err
@@ -458,7 +537,11 @@ func imageCacheDir(cacheDir string, maxSize uint) string {
 
 var luacSig = []byte{0x04, 0x00, 0x1b, 0x4c, 0x75, 0x61}
 
-func convertLua(assets *game.Assets, file nwfs.File, target string, query url.Values) ([]byte, error) {
+func convertLua(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
 	data, err := file.Read()
 	if err != nil {
 		return nil, err
@@ -505,4 +588,12 @@ func copyToTemp(data []byte, ext, dir string) (string, error) {
 		return "", err
 	}
 	return strings.ReplaceAll(file.Name(), "\\", "/"), nil
+}
+
+func isTrueParam(param string) bool {
+	switch param {
+	case "1", "true", "yes":
+		return true
+	}
+	return false
 }

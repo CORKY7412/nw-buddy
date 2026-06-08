@@ -23,7 +23,7 @@ func (ctx *Scanner) ScanSliceComponentForData(slice *nwt.SliceComponent, source 
 		data := SliceData{
 			Entity:    entity,
 			Trace:     []any{source},
-			Transform: game.FindTransform(entity),
+			Transform: game.FindEntityTransform(entity),
 		}
 
 		for _, component := range components {
@@ -511,7 +511,7 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[Spawn] {
 						if entity == nil {
 							continue
 						}
-						node.Transform = mat4.Multiply(tmpTm, game.FindTransformMat4(entity))
+						node.Transform = mat4.Multiply(tmpTm, game.FindEntityTransformMat4(entity))
 						assets := make([]nwt.AzAsset, 0)
 						assets = utils.AppendUniqNoZero(assets, facet.M_sliceAsset)
 						assets = utils.AppendUniqNoZero(assets, facet.M_aliasAsset)
@@ -558,7 +558,7 @@ func (ctx *Scanner) ScanSlice(file nwfs.File) iter.Seq[Spawn] {
 								if entity == nil {
 									continue
 								}
-								node.Transform = mat4.Multiply(tmpTm, game.FindTransformMat4(entity))
+								node.Transform = mat4.Multiply(tmpTm, game.FindEntityTransformMat4(entity))
 								for _, asset := range assets {
 									node.WalkAsset(asset)
 								}

@@ -1,6 +1,7 @@
 package heightmap
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"image"
@@ -8,7 +9,6 @@ import (
 
 	"image/png"
 	"log/slog"
-	"nw-buddy/tools/formats/tiff"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/utils"
 	"nw-buddy/tools/utils/env"
@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/x448/float16"
 	"golang.org/x/image/draw"
 )
 
@@ -38,7 +39,7 @@ type Region struct {
 	Meta
 	Size int
 	File string
-	Data []float32
+	Data []uint16
 }
 
 type MapSettings struct {
@@ -81,13 +82,13 @@ func LoadRegion(file nwfs.File) (region Region, err error) {
 	return
 }
 
-func Load(file nwfs.File) ([]float32, error) {
+func Load(file nwfs.File) ([]uint16, error) {
 	data, err := file.Read()
 	if err != nil {
 		return nil, err
 	}
-	// return LoadFromTiff(data)
-	return LoadFieldOld(data)
+	return LoadFromTiff(data)
+	// return LoadFieldOld(data)
 }
 
 func LoadImage(file nwfs.File) (image.Image, error) {
@@ -95,26 +96,31 @@ func LoadImage(file nwfs.File) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ConvertDataToImageWithMagick(data)
+	hm, err := ParseTIFF(data)
+	if err != nil {
+		return nil, err
+	}
+	return hm.Image(), nil
+	//return convertToImageWithMagick(data)
 }
 
-func LoadFromTiff(data []byte) ([]float32, error) {
-	img, err := tiff.DecodeWithPhotometricPatch(data)
+func LoadFromTiff(data []byte) ([]uint16, error) {
+	r, err := ParseTIFF(data)
+	if err != nil {
+		return nil, err
+	}
+	return r.Samples, nil
+}
+
+func LoadFieldOld(data []byte) ([]uint16, error) {
+	img, err := convertToImageWithMagick(data)
 	if err != nil {
 		return nil, err
 	}
 	return LoadHeightFieldFromImage(img)
 }
 
-func LoadFieldOld(data []byte) ([]float32, error) {
-	img, err := ConvertDataToImageWithMagick(data)
-	if err != nil {
-		return nil, err
-	}
-	return LoadHeightFieldFromImage(img)
-}
-
-func ConvertDataToImageWithMagick(data []byte) (image.Image, error) {
+func convertToImageWithMagick(data []byte) (image.Image, error) {
 	f, err := os.CreateTemp(env.TempDir(), "*")
 	if err != nil {
 		return nil, err
@@ -145,15 +151,15 @@ func ConvertDataToImageWithMagick(data []byte) (image.Image, error) {
 	return png.Decode(pngFile)
 }
 
-func LoadHeightFieldFromImage(img image.Image) ([]float32, error) {
+func LoadHeightFieldFromImage(img image.Image) ([]uint16, error) {
 	sizeX := img.Bounds().Size().X
 	sizeY := img.Bounds().Size().Y
-	out := make([]float32, sizeX*sizeY)
+	out := make([]uint16, sizeX*sizeY)
 	index := 0
 	for y := range sizeY {
 		for x := range sizeX {
 			r, _, _, _ := img.At(x, y).RGBA()
-			out[index] = float32(r)
+			out[index] = uint16(r)
 			index++
 		}
 	}
@@ -166,7 +172,7 @@ func LoadTractmapFromFile(file nwfs.File, size int) ([]color.Color, error) {
 	if err != nil {
 		return nil, err
 	}
-	img, err := ConvertDataToImageWithMagick(data)
+	img, err := convertToImageWithMagick(data)
 	if err != nil {
 		return nil, err
 	}
@@ -206,4 +212,25 @@ func ReadPathMetadata(filePath string) (out Meta, ok bool) {
 	out.X = x
 	out.Y = y
 	return out, true
+}
+
+// ToUint16Bytes returns the heightmap as little-endian uint16 bytes, ready to upload
+// as an r16uint texture (2*Size*Size bytes).
+func (r *Region) ToUint16Bytes() []byte {
+	out := make([]byte, len(r.Data)*2)
+	for i, bits := range r.Data {
+		binary.LittleEndian.PutUint16(out[i*2:], bits)
+	}
+	return out
+}
+
+// ToFloat16Bytes returns the heightmap as little-endian uint16 bytes, ready to upload
+// as an r16float texture (2*Size*Size bytes).
+func (r *Region) ToFloat16Bytes() []byte {
+	out := make([]byte, len(r.Data)*2)
+	for i, v := range r.Data {
+		bits := float16.Fromfloat32(float32(v)).Bits()
+		binary.LittleEndian.PutUint16(out[i*2:], bits)
+	}
+	return out
 }

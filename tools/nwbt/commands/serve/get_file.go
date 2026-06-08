@@ -24,13 +24,11 @@ func GetFileHandler(assets *game.Assets) http.HandlerFunc {
 
 		res, err, _ := execGroup.Do(cacheKey, func() (any, error) {
 			ext := path.Ext(r.URL.Path)
+			query := r.URL.Query()
 			shouldcache := false
-			switch r.URL.Query().Get("cache") {
-			case "true":
-				shouldcache = true
-			case "false":
-				shouldcache = false
-			default:
+			if query.Has("cache") {
+				shouldcache = isTrueParam(query.Get("cache"))
+			} else {
 				shouldcache = ext == ".glb" || ext == ".png" // expensive transformations
 			}
 
@@ -139,7 +137,12 @@ func getFile(assets *game.Assets, r *http.Request) (contentResult, error) {
 		return result, errors.New("file not found")
 	}
 
-	data, err := convertFile(assets, file, queryType, query)
+	data, err := convertFile(convertParams{
+		file:   file,
+		assets: assets,
+		target: queryType,
+		query:  query,
+	})
 	if err != nil {
 		slog.Error("conversion failed", "path", filePath, "error", err)
 		return result, err

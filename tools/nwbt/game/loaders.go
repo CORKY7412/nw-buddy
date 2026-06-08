@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"nw-buddy/tools/formats/adb"
@@ -12,6 +13,10 @@ import (
 	"nw-buddy/tools/formats/mtl"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti/nwt"
+)
+
+var (
+	ErrNotFound = errors.New("not found")
 )
 
 func (it *Assets) LoadObjectStream(file nwfs.File) (any, error) {
@@ -116,13 +121,10 @@ func (it *Assets) LookupFileByAssetIdRef(assetIdRef string) (nwfs.File, error) {
 
 	asset := it.Catalog.LookupById(assetId)
 	if asset == nil {
-		return nil, fmt.Errorf("asset id does not exist in catalog: %v", assetIdRef)
+		return nil, fmt.Errorf("asset ref '%v' does not exist in catalog: %w", assetIdRef, ErrNotFound)
 	}
-	file, ok := it.Archive.Lookup(asset.File)
-	if ok {
-		return file, nil
-	}
-	return nil, fmt.Errorf("asset does not exist in archive: %v", asset)
+
+	return it.lookupFile(asset.File)
 }
 
 func (it *Assets) LookupFileByAssetId(id nwt.AssetId) (nwfs.File, error) {
@@ -133,13 +135,10 @@ func (it *Assets) LookupFileByAssetId(id nwt.AssetId) (nwfs.File, error) {
 
 	asset := it.Catalog.Lookup(string(id.Guid), uint(id.SubId))
 	if asset == nil {
-		return nil, fmt.Errorf("asset id does not exist in catalog: %v", id)
+		return nil, fmt.Errorf("asset id '%v' does not exist in catalog: %w", id, ErrNotFound)
 	}
-	file, ok := it.Archive.Lookup(asset.File)
-	if ok {
-		return file, nil
-	}
-	return nil, fmt.Errorf("asset does not exist in archive: %v", asset)
+
+	return it.lookupFile(asset.File)
 }
 
 func (it *Assets) LookupFileByAsset(azAsset nwt.AzAsset) (nwfs.File, error) {
@@ -149,76 +148,70 @@ func (it *Assets) LookupFileByAsset(azAsset nwt.AzAsset) (nwfs.File, error) {
 
 	asset := it.Catalog.Find(azAsset.Guid, azAsset.Type, azAsset.Hint)
 	if asset == nil {
-		return nil, fmt.Errorf("asset id does not exist in catalog: %v", azAsset)
+		return nil, fmt.Errorf("asset '%v' does not exist in catalog: %w", azAsset, ErrNotFound)
 	}
 
-	file, ok := it.Archive.Lookup(asset.File)
-	if ok {
-		return file, nil
-	}
-
-	return nil, fmt.Errorf("asset does not exist in archive: %v", asset)
+	return it.lookupFile(asset.File)
 }
 
-func (c *Assets) LoadCdf(model string) (*cdf.Document, error) {
-	file, ok := c.Archive.Lookup(model)
-	if !ok {
-		return nil, fmt.Errorf("file not found: %s", model)
+func (c *Assets) LoadCdf(cdfFile string) (*cdf.Document, error) {
+	f, err := c.lookupFile(cdfFile)
+	if err != nil {
+		return nil, err
 	}
 
-	doc, err := cdf.Load(file)
+	doc, err := cdf.Load(f)
 	if err != nil {
 		return nil, err
 	}
 	return doc, nil
 }
 
-func (c *Assets) LoadAdb(filePath string) (*adb.Document, error) {
-	file, ok := c.Archive.Lookup(filePath)
-	if !ok {
-		return nil, fmt.Errorf("file not found: %s", filePath)
+func (c *Assets) LoadAdb(adbFile string) (*adb.Document, error) {
+	f, err := c.lookupFile(adbFile)
+	if err != nil {
+		return nil, err
 	}
 
-	doc, err := adb.Load(file)
+	doc, err := adb.Load(f)
 	if err != nil {
 		return nil, err
 	}
 	return doc, nil
 }
 
-func (c *Assets) LoadAnimation(anim importer.Animation) *cgf.File {
-	mfile, ok := c.Archive.Lookup(anim.File)
-	if !ok {
-		slog.Warn("Animation file not found", "file", anim.File)
+func (c *Assets) LoadAnimation(anim importer.AnimationAsset) *cgf.File {
+	f, err := c.lookupFile(anim.File)
+	if err != nil {
+		slog.Warn("animation file not found", "file", anim.File)
 		return nil
 	}
-	doc, err := cgf.Load(mfile)
+	doc, err := cgf.Load(f)
 	if err != nil {
-		slog.Warn("Animation not loaded", "file", anim.File, "err", err)
+		slog.Warn("animation not loaded", "file", anim.File, "err", err)
 		return nil
 	}
 	return doc
 }
 
 func (c *Assets) LoadGeometry(geometryFile string) (*cgf.File, error) {
-	modelFile, ok := c.Archive.Lookup(geometryFile)
-	if !ok {
-		return nil, fmt.Errorf("model file not found: %s", geometryFile)
-	}
-	return cgf.Load(modelFile)
-}
-
-func (c *Assets) LoadMaterial(materialFile string) ([]mtl.Material, error) {
-	mtlFile, ok := c.Archive.Lookup(materialFile)
-	if !ok {
-		return nil, fmt.Errorf("material file not found: %s", materialFile)
-	}
-	material, err := mtl.Load(mtlFile)
+	f, err := c.lookupFile(geometryFile)
 	if err != nil {
 		return nil, err
 	}
-	materials := material.Collection()
-	return materials, nil
+	return cgf.Load(f)
+}
+
+func (c *Assets) LoadMaterial(materialFile string) ([]mtl.Material, error) {
+	f, err := c.lookupFile(materialFile)
+	if err != nil {
+		return nil, err
+	}
+	material, err := mtl.Load(f)
+	if err != nil {
+		return nil, err
+	}
+	return material.Collection(), nil
 }
 
 func (c *Assets) LoadAsset(mesh importer.GeometryAsset) (*cgf.File, []byte, []mtl.Material) {
@@ -227,26 +220,39 @@ func (c *Assets) LoadAsset(mesh importer.GeometryAsset) (*cgf.File, []byte, []mt
 		slog.Warn("Model file not found", "file", mesh.GeometryFile)
 		return nil, nil, nil
 	}
+
 	heapFile, ok := c.Archive.Lookup(mesh.GeometryFile + "heap")
 	var heap []byte
 	if ok {
 		heap, _ = heapFile.Read()
 	}
+
 	model, err := cgf.Load(modelFile)
 	if err != nil {
 		slog.Warn("Model not loaded", "file", mesh.GeometryFile, "err", err)
 		return nil, nil, nil
 	}
+
 	mtlFile, ok := c.Archive.Lookup(mesh.MaterialFile)
 	if !ok {
 		slog.Warn("Material not found", "material", mesh.MaterialFile, "model", mesh.GeometryFile, "name", mesh.Name)
 		return nil, nil, nil
 	}
+
 	material, err := mtl.Load(mtlFile)
 	if err != nil {
 		slog.Warn("Material not loaded", "file", mesh.MaterialFile, "err", err)
 		return nil, nil, nil
 	}
+
 	materials := material.Collection()
 	return model, heap, materials
+}
+
+func (c *Assets) lookupFile(path string) (nwfs.File, error) {
+	file, ok := c.Archive.Lookup(path)
+	if !ok {
+		return nil, fmt.Errorf("file not found in archive: %s: %w", path, ErrNotFound)
+	}
+	return file, nil
 }

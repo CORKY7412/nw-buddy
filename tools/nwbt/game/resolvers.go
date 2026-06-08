@@ -2,6 +2,7 @@ package game
 
 import (
 	"log/slog"
+	"nw-buddy/tools/formats/capitals"
 	"nw-buddy/tools/formats/catalog"
 	"nw-buddy/tools/formats/cgf"
 	"nw-buddy/tools/formats/cloth"
@@ -170,4 +171,39 @@ func (ctx *Assets) ResolveDynamicSliceByName(sliceName string) nwfs.File {
 		slog.Debug("slice not resolved", "name", sliceName, "file", fileName)
 	}
 	return file
+}
+
+func (ctx *Assets) ResolveCapitalSlice(capital capitals.Capital) nwfs.File {
+	var file nwfs.File
+
+	if assetId, ok := catalog.ParseAssetId(capital.SliceAssetID); ok {
+		asset := ctx.Catalog.LookupById(assetId)
+		if asset != nil {
+			file, _ = ctx.Archive.Lookup(asset.File)
+		}
+	}
+
+	if file == nil {
+		file = ctx.ResolveDynamicSliceByName(capital.SliceName)
+	}
+
+	return file
+}
+
+func (ctx *Assets) ResolveCapitalAsset(capital capitals.Capital) *catalog.Asset {
+
+	if assetId, ok := catalog.ParseAssetId(capital.SliceAssetID); ok {
+		asset := ctx.Catalog.LookupById(assetId)
+		if asset != nil {
+			return asset
+		}
+	}
+
+	if capital.SliceName == "<PLOT>" || capital.SliceName == "" {
+		return nil
+	}
+
+	slog.Debug("capital asset not resolved", "sliceAssetId", capital.SliceAssetID, "sliceName", capital.SliceName)
+
+	return nil
 }

@@ -1,7 +1,6 @@
 package heightmap
 
 import (
-	"image"
 	"iter"
 	"math"
 )
@@ -83,7 +82,7 @@ func (r *Region) HeightAt(x int, y int) (float32, bool) {
 		return 0, false
 	}
 	y = r.Size - y - 1
-	return r.Data[y*r.Size+x], true
+	return float32(r.Data[y*r.Size+x]), true
 }
 
 func (r *Region) SetHeightAt(x int, y int, height float32) {
@@ -91,7 +90,7 @@ func (r *Region) SetHeightAt(x int, y int, height float32) {
 		return
 	}
 	y = r.Size - y - 1
-	r.Data[y*r.Size+x] = height
+	r.Data[y*r.Size+x] = uint16(height)
 }
 
 var samples = [][2]int{
@@ -140,7 +139,7 @@ func (t *Terrain) Downsize() (out *Terrain) {
 					Y: y,
 				},
 				Size: out.RegionSize,
-				Data: make([]float32, out.RegionSize*out.RegionSize),
+				Data: make([]uint16, out.RegionSize*out.RegionSize),
 			}
 		}
 	}
@@ -201,23 +200,6 @@ func (mips Mipmaps) TileAt(level, x, y int) Tile {
 			H: tileSize,
 		},
 	}
-}
-
-func (mips Mipmaps) TileHeightmap(tile Tile) image.Image {
-	level := tile.Level - 1
-	if level < 0 || level >= len(mips.Levels) {
-		return nil
-	}
-	mip := mips.Levels[tile.Level-1]
-	tileSize := mips.TileSize
-	img := image.NewNRGBA(image.Rect(0, 0, tile.Area.W, tile.Area.H))
-	for x, y := range iterArea(0, 0, tile.Area.W, tile.Area.H) {
-		tx := tile.Area.X + x
-		ty := tile.Area.Y + y
-		h, _ := mip.HeightAt(tx, ty) // GetSmoothHeightAt(tx, ty)
-		img.Set(x, tileSize-y-1, EncodeHeightToNRGBA(h))
-	}
-	return img
 }
 
 func iterArea(x, y, w, h int) iter.Seq2[int, int] {

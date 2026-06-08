@@ -116,7 +116,7 @@ func (c *Collector) Entities(glob string) {
 					modelAsset := meshNode.Static_Mesh
 					modelFile, err := c.LookupFileByAsset(modelAsset)
 					if err != nil {
-						slog.Error("model file not found", "asset", modelAsset, "err", err)
+						slog.Warn("skip missing model", "err", err)
 						continue
 					}
 					if modelFile == nil {
@@ -127,7 +127,7 @@ func (c *Collector) Entities(glob string) {
 					materialAsset := meshNode.Material_Override_Asset
 					materialFile, err := c.LookupFileByAsset(materialAsset)
 					if err != nil {
-						slog.Error("material not found", "asset", materialAsset, "err", err)
+						slog.Warn("ignore model material", "err", err)
 					}
 					material := ""
 					if materialFile != nil {
@@ -137,7 +137,7 @@ func (c *Collector) Entities(glob string) {
 					for _, instance := range v.Instanced_mesh_render_node.Instance_transforms.Element {
 						transform := mat4.FromAzTransform(instance)
 						transform = mat4.Multiply(node.Transform, transform)
-						group.Meshes = append(group.Meshes, importer.GeometryAsset{
+						group.Geometries = append(group.Geometries, importer.GeometryAsset{
 							GeometryFile: model,
 							MaterialFile: material,
 							Entity: importer.Entity{
@@ -155,7 +155,7 @@ func (c *Collector) Entities(glob string) {
 					modelAsset := meshNode.Static_Mesh
 					modelFile, err := c.LookupFileByAsset(modelAsset)
 					if err != nil {
-						slog.Error("model file not found", "asset", modelAsset, "err", err)
+						slog.Warn("skip missing model", "err", err)
 						continue
 					}
 					if modelFile == nil {
@@ -166,7 +166,7 @@ func (c *Collector) Entities(glob string) {
 					materialAsset := meshNode.Material_Override_Asset
 					materialFile, err := c.LookupFileByAsset(materialAsset)
 					if err != nil {
-						slog.Error("material not found", "asset", materialAsset, "err", err)
+						slog.Warn("ignore model material", "err", err)
 					}
 					material := ""
 					if materialFile != nil {
@@ -174,7 +174,7 @@ func (c *Collector) Entities(glob string) {
 					}
 					model, material = c.ResolveCgfAndMtl(model, material)
 
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 						Entity: importer.Entity{
@@ -189,7 +189,7 @@ func (c *Collector) Entities(glob string) {
 					modelAsset := v.Skinned_Mesh_Render_Node.Skinned_Mesh
 					modelFile, err := c.LookupFileByAsset(modelAsset)
 					if err != nil {
-						slog.Error("model file not found", "asset", modelAsset, "err", err)
+						slog.Warn("skip missing model", "err", err)
 						continue
 					}
 					if modelFile == nil {
@@ -200,7 +200,7 @@ func (c *Collector) Entities(glob string) {
 					materialAsset := v.Skinned_Mesh_Render_Node.Material_Override_Asset
 					materialFile, err := c.LookupFileByAsset(materialAsset)
 					if err != nil {
-						slog.Error("material not found", "asset", materialAsset, "err", err)
+						slog.Warn("ignore model material", "err", err)
 					}
 					material := ""
 					if materialFile != nil {
@@ -208,13 +208,13 @@ func (c *Collector) Entities(glob string) {
 					}
 					cdf, err := c.LoadCdf(model)
 					if err != nil {
-						slog.Warn("failed to resolve cdf asset", "file", model, "err", err)
+						slog.Warn("skip unresolved cdf file", "err", err)
 						continue
 					}
 
 					for _, attachment := range cdf.SkinAndClothAttachments() {
 						if model, mtl := c.ResolveCgfAndMtl(attachment.Binding, attachment.Material, material); model != "" {
-							group.Meshes = append(group.Meshes, importer.GeometryAsset{
+							group.Geometries = append(group.Geometries, importer.GeometryAsset{
 								Entity: importer.Entity{
 									Name:      attachment.AName,
 									Transform: math.CryToGltfMat4(mat4.Multiply(rootTransform, node.Transform)),
@@ -254,7 +254,7 @@ func (c *Collector) Entities(glob string) {
 								if entity == nil {
 									continue
 								}
-								node.Transform = mat4.Multiply(nodeTranform, game.FindTransformMat4(entity))
+								node.Transform = mat4.Multiply(nodeTranform, game.FindEntityTransformMat4(entity))
 								if !node.WalkAsset(timeline.M_aliasAsset) {
 									node.WalkAsset(timeline.M_sliceAsset)
 								}
@@ -273,7 +273,7 @@ func (c *Collector) Entities(glob string) {
 						if entity == nil {
 							continue
 						}
-						node.Transform = mat4.Multiply(nodeTransform, game.FindTransformMat4(entity))
+						node.Transform = mat4.Multiply(nodeTransform, game.FindEntityTransformMat4(entity))
 						if !node.WalkAsset(facet.M_aliasAsset) {
 							node.WalkAsset(facet.M_sliceAsset)
 						}
@@ -285,7 +285,7 @@ func (c *Collector) Entities(glob string) {
 			}
 		})
 
-		if len(group.Meshes) > 0 {
+		if len(group.Geometries) > 0 {
 			group.TargetFile = c.outputPath(utils.ReplaceExt(file.Path(), ""))
 			c.models.Store(group.TargetFile, group)
 		}

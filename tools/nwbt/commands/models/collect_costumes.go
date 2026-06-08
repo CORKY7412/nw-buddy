@@ -66,13 +66,13 @@ func (c *Collector) CollectCostumes(ids ...string) {
 			for _, mesh := range cdf.SkinAndClothAttachments() {
 				model, mtl := c.ResolveCgfAndMtl(mesh.Binding, mesh.Material)
 				if model != "" {
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: mtl,
 					})
 				}
 			}
-			if len(group.Meshes) > 0 {
+			if len(group.Geometries) > 0 {
 				group.TargetFile = file
 				c.models.Store(group.TargetFile, group)
 			}

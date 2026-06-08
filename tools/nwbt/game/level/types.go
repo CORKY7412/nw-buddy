@@ -1,172 +1,76 @@
 package level
 
 import (
-	"nw-buddy/tools/formats/capitals"
-	"nw-buddy/tools/formats/heightmap"
-	"nw-buddy/tools/formats/impostors"
-	"nw-buddy/tools/formats/localmappings"
-	"nw-buddy/tools/formats/mapsettings"
-	"nw-buddy/tools/formats/terrain"
 	"nw-buddy/tools/formats/tracts"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti/nwt"
 	"nw-buddy/tools/utils/math/mat4"
 )
 
-const (
-	SegmentSize = 128
-)
-
-type Definition struct {
-	Name                string
-	CoatlicueName       string
-	MissionEntitiesFile nwfs.File
-	MissionFile         nwfs.File
-	Maps                []MapDefinition
-	Tracts              tracts.Document
-	PlayableArea        [][2]int
-	WorldArea           [][2]int
-	Regions             []RegionReference
-	TerrainSettings     *terrain.Document
+type LevelListEntry struct {
+	Name           string   `json:"name"`
+	CoatlicueNames []string `json:"coatlicueNames"`
 }
 
-type MapDefinition struct {
-	GameModeMapId    string
-	GameModeId       string
-	SlicePath        string
-	CoatlicueName    string
-	WorldBounds      string
-	TeamTeleportData string
+type CoatlicueListEntry struct {
+	Name  string        `json:"name"`
+	Level string        `json:"level"`
+	Maps  []GameModeMap `json:"maps"`
 }
 
-type RegionDefinition struct {
-	Name          string
-	LocalMappings localmappings.Document
-	MapSettings   mapsettings.Document
-	Impostors     []impostors.Impostor
-	PoiImpostors  []impostors.Impostor
-	Capitals      []CapitalLayerDefinition
-
-	Chunks       nwfs.File
-	Distribution nwfs.File
-	Heightmap    nwfs.File
-	Metadata     nwfs.File
-	Slicedata    nwfs.File
-	Tractmap     nwfs.File
+type LevelIndex struct {
+	Levels     []LevelListEntry     `json:"levels"`
+	Coatlicues []CoatlicueListEntry `json:"coatlicues"`
 }
 
-type CapitalLayerDefinition struct {
-	Name     string
-	Capitals []capitals.Capital
-	Chunks   []nwt.ChunkEntry
+type Vec2 struct {
+	X float32 `json:"x"`
+	Y float32 `json:"y"`
 }
 
-type RegionMaterial struct {
-	RegionX                 int                        `json:"regionX"`
-	RegionY                 int                        `json:"regionY"`
-	DefaultMaterial         nwfs.File                  `json:"defaultMaterial"`
-	NormalMap               nwfs.File                  `json:"normalMap"`
-	ColorMap                nwfs.File                  `json:"colorMap"`
-	GlossMap                nwfs.File                  `json:"specularMap"`
-	Layers                  []TerrainMaterialLayerData `json:"layers"`
-	PertinentLayersMipChain []string                   `json:"pertinentLayersMipChain"`
+type Vec3 struct {
+	X float32 `json:"x"`
+	Y float32 `json:"y"`
+	Z float32 `json:"z"`
 }
 
-type TerrainMaterialLayerData struct {
-	Material      nwfs.File `json:"material"`
-	SplatMap      nwfs.File `json:"splatMap"`
-	AffectedTiles string    `json:"affectedTiles"`
-	Priority      int       `json:"priority"`
+type CoatlicueInfo struct {
+	Level              string           `json:"level"`              // related level folder name, may be nested
+	Name               string           `json:"name"`               // coatlicue folder name, never nested
+	RegionSize         int              `json:"regionSize"`         // from [coatlicue]/tracts.json, usually 2048
+	RegionCellSize     int              `json:"regionCellSize"`     // from [coatlicue]/offlineoptions.json,  usually 128
+	EnableChunks       bool             `json:"enableChunks"`       // from [coatlicue]/offlineoptions.json
+	EnableVegetation   bool             `json:"enableVegetation"`   // from [coatlicue]/offlineoptions.json
+	EnableDistribution bool             `json:"enableDistribution"` // from [coatlicue]/offlineoptions.json
+	MountainHeight     float32          `json:"mountainHeight"`     // from [coatlicue]/terrain.json
+	MountainRoughness  float32          `json:"mountainRoughness"`  // from [coatlicue]/terrain.json
+	OceanLevel         float32          `json:"oceanLevel"`         // from [coatlicue]/terrain.json
+	ValleyIntensity    float32          `json:"valleyIntensity"`    // from [coatlicue]/terrain.json
+	Tracts             *tracts.Document `json:"tracts"`             // from [coatlicue]/tracts.json
+	Regions            []RegionLocation `json:"regions"`            // from world.json and playable.json
+	GameModeMaps       []GameModeMap    `json:"gameModeMaps"`       // from datasheets, all maps referencing this level/coatlicue
+	MissionTimeOfDay   *TimeOfDay       `json:"missionTimeOfDay"`   // from [level]/mission_mission0.xml
+	MissionEntities    []ViewerEntity   `json:"missionEntities"`    // from [level]/mission0.entities_xml
 }
 
-type CollectionLoader interface {
-	Level(name string) Loader
+type GameModeMap struct {
+	GameModeMapId      string   `json:"gameModeMapId"`
+	GameModeId         string   `json:"gameModeId"`
+	SlicePath          string   `json:"slicePath"`
+	CoatlicueName      string   `json:"coatlicueName"`
+	WorldBounds        []string `json:"worldBounds"`
+	TeamTeleportData   string   `json:"teamTeleportData"`
+	UIMapId            string   `json:"uiMapId"`
+	SliceExclusionList []string `json:"sliceExclusionList"`
 }
 
-type Loader interface {
-	Info() *Info
-	MissionEntities() []EntityInfo
-	Region(name string) RegionLoader
-	Terrain() *heightmap.Mipmaps
-	TerrainInfo() *TerrainInfo
+type RegionLocation struct {
+	ID       string `json:"name"`     // folder base name, e.g. "r_+00_+00" (or r_+xx_+yy)
+	Location [2]int `json:"location"` // grid location, e.g. [0,0], [1,0], [2,0] etc. first value is X, second is Y
+	Playable bool   `json:"playable"` // from playable.json
 }
 
-type RegionLoader interface {
-	Info() *RegionInfo
-	Entities() map[string]map[string][]EntityInfo
-	Distribution() *DistributionInfo
-}
-
-type Info struct {
-	Name           string            `json:"name"`
-	CoatlicueName  string            `json:"coatlicueName"`
-	RegionSize     int               `json:"regionSize"`
-	Regions        []RegionReference `json:"regions"`
-	Maps           []MapInfo         `json:"maps"`
-	TimeOfDay      *TimeOfDayInfo    `json:"timeOfDay"`
-	Tracts         []tracts.Tract    `json:"tracts"`
-	MountainHeight float32           `json:"mountainHeight"`
-}
-
-type MapInfo struct {
-	GameModeMapId    string `json:"gameModeMapId"`
-	GameModeId       string `json:"gameModeId"`
-	SlicePath        string `json:"slicePath"`
-	CoatlicueName    string `json:"coatlicueName"`
-	WorldBounds      string `json:"worldBounds"`
-	TeamTeleportData string `json:"teamTeleportData"`
-}
-
-type RegionReference struct {
-	ID       string  `json:"name"`
-	Location *[2]int `json:"location"`
-}
-
-type RegionInfo struct {
-	Name           string             `json:"name"`
-	Size           int                `json:"size"`
-	CellResolution int                `json:"cellResolution"`
-	SegmentSize    int                `json:"segmentSize"`
-	Segments       []SegmentReference `json:"segments"`
-	Capitals       []CapitalLayerInfo `json:"capitals"`
-	PoiImpostors   []ImpostorInfo     `json:"poiImpostors"`
-	Impostors      []ImpostorInfo     `json:"impostors"`
-	Distribution   string             `json:"distribution"`
-}
-type SegmentReference struct {
-	ID       int     `json:"id"`
-	Location *[2]int `json:"location"`
-}
-
-type ImpostorInfo struct {
-	Position [2]float64 `json:"position"`
-	Model    string     `json:"model"`
-}
-
-type CapitalLayerInfo struct {
-	Name     string        `json:"name"`
-	Capitals []CapitalInfo `json:"capitals"`
-	Chunks   []ChunkInfo   `json:"chunks"`
-}
-
-type CapitalInfo struct {
-	ID        string    `json:"id"`
-	Transform mat4.Data `json:"transform"`
-	Radius    float32   `json:"radius"`
-	Slice     string    `json:"slice"`
-}
-
-type ChunkInfo struct {
-	ID        string    `json:"id"`
-	Transform mat4.Data `json:"transform"`
-	Size      float32   `json:"size"`
-	Slice     string    `json:"slice"`
-}
-
-type EnvironmentInfo struct {
-}
-
-type TimeOfDayInfo struct {
+type TimeOfDay struct {
 	Time          float32             `json:"time"`
 	TimeStart     float32             `json:"timeStart"`
 	TimeEnd       float32             `json:"timeEnd"`
@@ -178,6 +82,50 @@ type TimeOfDayVariable struct {
 	Name  string `json:"name"`
 	Color string `json:"color"`
 	Value string `json:"value"`
+}
+
+type RegionInfo struct {
+	ID              string           `json:"name"`
+	PoiImpostors    []RegionImpostor `json:"poiImpostors"`    // from impostros.json
+	Impostors       []RegionImpostor `json:"impostors"`       // from poi_impostors.json
+	TerrainMaterial *RegionMaterial  `json:"terrainMaterial"` //
+}
+
+type RegionImpostor struct {
+	Position Vec2   `json:"position"`
+	Model    string `json:"model"`
+}
+
+type RegionMaterial struct {
+	TileX                   int                   `json:"tileX"`
+	TileY                   int                   `json:"tileY"`
+	DefaultMaterial         nwfs.File             `json:"defaultMaterial"`
+	NormalMap               nwfs.File             `json:"normalMap"`
+	ColorMap                nwfs.File             `json:"colorMap"`
+	GlossMap                nwfs.File             `json:"specularMap"`
+	Layers                  []RegionMaterialLayer `json:"layers"`
+	PertinentLayersMipChain []string              `json:"pertinentLayersMipChain"`
+}
+
+type RegionMaterialLayer struct {
+	Material      nwfs.File `json:"material"`
+	SplatMap      nwfs.File `json:"splatMap"`
+	AffectedTiles string    `json:"affectedTiles"`
+	Priority      int       `json:"priority"`
+}
+
+type CapitalRuntimeData struct {
+	ID        string         `json:"id"`
+	Transform mat4.Data      `json:"transform"`
+	Radius    float32        `json:"radius"`
+	Slice     AssetReference `json:"slice"`
+}
+
+type ChunkRuntimeData struct {
+	ID        string         `json:"id"`
+	Transform mat4.Data      `json:"transform"`
+	Size      float32        `json:"size"`
+	Slice     AssetReference `json:"slice"`
 }
 
 type EntityInfo struct {
@@ -208,11 +156,6 @@ type VitalSpawnInfo struct {
 	StatusEffects []string `json:"statusEffects"`
 }
 
-type EncounterInfo struct {
-	Name   string   `json:"name"`
-	Stages []string `json:"stages"`
-}
-
 type LightInfo struct {
 	Type              uint             `json:"type"`
 	Color             [4]nwt.AzFloat32 `json:"color"`
@@ -222,26 +165,95 @@ type LightInfo struct {
 	PointAttenuation  float32          `json:"pointAttenuation"`
 }
 
-type TerrainInfo struct {
-	Level          string           `json:"level"`
-	TileSize       int              `json:"tileSize"`
-	MipCount       int              `json:"mipCount"`
-	Width          int              `json:"width"`
-	Height         int              `json:"height"`
-	RegionsX       int              `json:"regionsX"`
-	RegionsY       int              `json:"regionsY"`
-	RegionSize     int              `json:"regionSize"`
-	OceanLevel     float32          `json:"oceanLevel"`
-	MountainHeight float32          `json:"mountainHeight"`
-	Materials      []RegionMaterial `json:"materials"`
+type RegionCapitalsData struct {
+	Capitals map[string][]CapitalRuntimeData `json:"capitals"` // keyed by layer name
+	Chunks   map[string][]ChunkRuntimeData   `json:"chunks"`   // keyed by layer name
+	Slices   map[string]ViewerSlice          `json:"slices"`   // keyed by asset UUID_SUBID
 }
 
-type DistributionInfo struct {
-	Slices   map[string][]EntityInfo        `json:"slices"`
-	Segments map[string][]DistributionSlice `json:"segments"`
+const (
+	MeshComponentName          = "Mesh"
+	SpawnerComponentName       = "Spawner"
+	PointSpawnerComponentName  = "PointSpawner"
+	PrefabSpawnerComponentName = "PrefabSpawner"
+	AreaSpawnerComponentName   = "AreaSpawner"
+)
+
+type ViewerEntity struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	ParentId   string    `json:"parentId,omitempty"`
+	Transfrom  mat4.Data `json:"transform"`
+	Components []any     `json:"components"`
 }
 
-type DistributionSlice struct {
-	Slice     string       `json:"slice"`
-	Positions [][2]float32 `json:"positions"`
+type ViewerComponent struct {
+	Type string `json:"type"`
+}
+
+type ViewerSlice struct {
+	Entities []ViewerEntity `json:"entities"`
+
+	SpawnRadius   float32 `json:"spawnRadius"`
+	IsStaticSlice bool    `json:"isStaticSlice"`
+}
+
+type ViewerMeshComponent struct {
+	Type                   string      `json:"type"` // Mesh
+	Model                  string      `json:"mesh"`
+	Material               string      `json:"material"`
+	Instances              []mat4.Data `json:"instances,omitempty"`
+	MaxViewDistance        float32     `json:"maxViewDistance,omitempty,omitzero"`
+	ViewDistanceMultiplier float32     `json:"viewDistanceMultiplier,omitempty,omitzero"`
+	Opacity                float32     `json:"opacity,omitempty,omitzero"`
+	CrossFadeTime          float32     `json:"crossFadeTime,omitempty,omitzero"`
+	CastShadow             bool        `json:"castShadow,omitempty"`
+	ShouldInstance         bool        `json:"shouldInstance,omitempty"`
+	ShouldMerge            bool        `json:"shouldMerge,omitempty"`
+	ForceMerge             bool        `json:"forceMerge,omitempty"`
+	FadeEnabled            bool        `json:"fadeEnabled,omitempty"`
+	LoadOnActivate         bool        `json:"loadOnActivate,omitempty"`
+	AcceptDecals           bool        `json:"acceptDecals,omitempty"`
+	AcceptSand             bool        `json:"acceptSand,omitempty"`
+	AcceptSilhouette       bool        `json:"acceptSilhouette,omitempty"`
+	AcceptSnow             bool        `json:"acceptSnow,omitempty"`
+	AlwaysRender           bool        `json:"alwaysRender,omitempty"`
+	SortType               int8        `json:"sortType,omitempty,omitzero"`
+	VisibilityOccluder     bool        `json:"visibilityOccluder,omitempty"`
+	UseVisAreas            bool        `json:"useVisAreas,omitempty"`
+	UseManualViewDistance  bool        `json:"useManualViewDistance,omitempty"`
+}
+
+type ViewerSpawnerComponent struct {
+	Type      string         `json:"type"` // Spawner
+	Slice     AssetReference `json:"slice"`
+	AutoSpawn bool           `json:"autoSpawn"`
+}
+
+type ViewerPointSpawnerComponent struct {
+	Type      string         `json:"type"` // PointSpawner
+	Slice     AssetReference `json:"slice"`
+	AutoSpawn bool           `json:"autoSpawn"`
+}
+
+type ViewerPrefabSpawnerComponent struct {
+	Type  string         `json:"type"` // PrefabSpawner
+	Slice AssetReference `json:"slice"`
+}
+
+type ViewerAreaSpawnerComponent struct {
+	Type             string         `json:"type"` // AreaSpawner
+	Slice            AssetReference `json:"slice"`
+	Locations        []mat4.Data    `json:"locations"`
+	LiveCount        int            `json:"liveCount,omitempty,omitzero"`
+	MinResspawnRange float32        `json:"minRespawnRange,omitempty,omitzero"`
+	MaxRespawnRange  float32        `json:"maxRespawnRange,omitempty,omitzero"`
+	SpawnOnEnable    bool           `json:"spawnOnEnable,omitempty"`
+	SpawnOnTrigger   bool           `json:"spawnOnTrigger,omitempty"`
+}
+
+type AssetReference struct {
+	Guid  string `json:"guid"`
+	SubId uint32 `json:"subId"`
+	Hint  string `json:"hint,omitempty"`
 }

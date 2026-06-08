@@ -21,7 +21,7 @@ func (ctx *Scanner) ScanTerritories(file nwfs.File) iter.Seq[TerritoryEntry] {
 		}
 		for e, components := range game.EntitiesOf(slice) {
 			entry := TerritoryEntry{}
-			transform := game.FindTransform(e)
+			transform := game.FindEntityTransform(e)
 			var vshape []nwt.AzVec2
 			var shape []nwt.AzVec2
 

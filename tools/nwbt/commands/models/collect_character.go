@@ -39,7 +39,7 @@ func (c *Collector) CollectCharacter() {
 	for _, model := range models {
 		cdf, err := c.LoadCdf(model)
 		if err != nil {
-			slog.Warn("failed to resolve cdf asset", "file", model, "err", err)
+			slog.Warn("skip unresolved cdf file", "err", err)
 			return
 		}
 		c.CollectCdf(cdf, "", c.outputPath(model))
@@ -60,7 +60,7 @@ func (c *Collector) CollectCdf(cdf *cdf.Document, material string, targetFile st
 
 	for _, attachment := range cdf.SkinAndClothAttachments() {
 		if model, mtl := c.ResolveCgfAndMtl(attachment.Binding, attachment.Material, material); model != "" {
-			group.Meshes = append(group.Meshes, importer.GeometryAsset{
+			group.Geometries = append(group.Geometries, importer.GeometryAsset{
 				Entity: importer.Entity{
 					Name: attachment.AName,
 				},
@@ -69,7 +69,7 @@ func (c *Collector) CollectCdf(cdf *cdf.Document, material string, targetFile st
 			})
 		}
 	}
-	if len(group.Meshes) > 0 {
+	if len(group.Geometries) > 0 {
 		group.TargetFile = targetFile
 		c.models.Store(group.TargetFile, group)
 	}
@@ -95,7 +95,7 @@ func (c *Collector) CollectAnimations(cdf *cdf.Document) ([]adb.AnimationFile, e
 			}
 			c.models.Store(targetFile, importer.AssetGroup{
 				TargetFile: targetFile,
-				Animations: []importer.Animation{
+				Animations: []importer.AnimationAsset{
 					{
 						File: animation.File,
 						Name: animation.Name,

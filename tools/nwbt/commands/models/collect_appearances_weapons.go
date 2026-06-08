@@ -32,7 +32,7 @@ func (c *Collector) CollectAppearancesWeapons(ids ...string) {
 				if model != "" {
 					group := importer.AssetGroup{}
 					group.TargetFile = file
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
@@ -47,7 +47,7 @@ func (c *Collector) CollectAppearancesWeapons(ids ...string) {
 				if model != "" {
 					group := importer.AssetGroup{}
 					group.TargetFile = file
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
@@ -65,13 +65,13 @@ func (c *Collector) CollectAppearancesWeapons(ids ...string) {
 						for _, mesh := range cdf.SkinAndClothAttachments() {
 							model, material := c.ResolveCgfAndMtl(mesh.Binding, mesh.Material)
 							if model != "" {
-								group.Meshes = append(group.Meshes, importer.GeometryAsset{
+								group.Geometries = append(group.Geometries, importer.GeometryAsset{
 									GeometryFile: model,
 									MaterialFile: material,
 								})
 							}
 						}
-						if len(group.Meshes) > 0 {
+						if len(group.Geometries) > 0 {
 							c.models.Store(file, group)
 						}
 					}
@@ -83,7 +83,7 @@ func (c *Collector) CollectAppearancesWeapons(ids ...string) {
 					model, material := c.ResolveCgfAndMtl(meshOverride, "")
 					if model != "" {
 						group := importer.AssetGroup{TargetFile: file}
-						group.Meshes = append(group.Meshes, importer.GeometryAsset{
+						group.Geometries = append(group.Geometries, importer.GeometryAsset{
 							GeometryFile: model,
 							MaterialFile: material,
 						})

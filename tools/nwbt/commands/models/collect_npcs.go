@@ -70,19 +70,19 @@ func (c *Collector) CollectNpcs(ids ...string) {
 			if path.Ext(model) == ".cdf" {
 				cdf, err := c.LoadCdf(model)
 				if err != nil {
-					slog.Warn("failed to resolve cdf asset", "file", model, "err", err)
+					slog.Warn("skip unresolved cdf file", "err", err)
 					continue
 				}
 				c.CollectCdf(cdf, "", targetFile)
 			} else {
 				group := importer.AssetGroup{}
 				if model, material := c.ResolveCgfAndMtl(model, ""); model != "" {
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
 				}
-				if len(group.Meshes) > 0 {
+				if len(group.Geometries) > 0 {
 					group.TargetFile = targetFile
 					c.models.Store(group.TargetFile, group)
 				}

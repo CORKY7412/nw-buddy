@@ -7,6 +7,39 @@ import (
 	"nw-buddy/tools/utils/maps"
 	"strconv"
 	"strings"
+
+	"github.com/goccy/go-json"
+)
+
+const (
+	MTL_FLAG_WIRE                            = 0x0001  // Use wire frame rendering for this material.
+	MTL_FLAG_2SIDED                          = 0x0002  // Use 2 Sided rendering for this material.
+	MTL_FLAG_ADDITIVE                        = 0x0004  // Use Additive blending for this material.
+	MTL_FLAG_DETAIL_DECAL                    = 0x0008  // UNUSED RESERVED FOR LEGACY REASONS
+	MTL_FLAG_LIGHTING                        = 0x0010  // Should lighting be applied on this material.
+	MTL_FLAG_NOSHADOW                        = 0x0020  // Material do not cast shadows.
+	MTL_FLAG_ALWAYS_USED                     = 0x0040  // When set forces material to be export even if not explicitly used.
+	MTL_FLAG_PURE_CHILD                      = 0x0080  // Not shared sub material, sub material unique to his parent multi material.
+	MTL_FLAG_MULTI_SUBMTL                    = 0x0100  // This material is a multi sub material.
+	MTL_FLAG_NOPHYSICALIZE                   = 0x0200  // Should not physicalize this material.
+	MTL_FLAG_NODRAW                          = 0x0400  // Do not render this material.
+	MTL_FLAG_NOPREVIEW                       = 0x0800  // Cannot preview the material.
+	MTL_FLAG_NOTINSTANCED                    = 0x1000  // Do not instantiate this material.
+	MTL_FLAG_COLLISION_PROXY                 = 0x2000  // This material is the collision proxy.
+	MTL_FLAG_SCATTER                         = 0x4000  // Use scattering for this material
+	MTL_FLAG_REQUIRE_FORWARD_RENDERING       = 0x8000  // This material has to be rendered in forward rendering passes (alpha/additive blended)
+	MTL_FLAG_NON_REMOVABLE                   = 0x10000 // Material with this flag once created are never removed from material manager (Used for decal materials, this flag should not be saved).
+	MTL_FLAG_HIDEONBREAK                     = 0x20000 // Non-physicalized subsets with such materials will be removed after the object breaks
+	MTL_FLAG_UIMATERIAL                      = 0x40000 // Used for UI in Editor. Don't need show it DB.
+	MTL_64BIT_SHADERGENMASK                  = 0x80000 // ShaderGen mask is remapped
+	MTL_FLAG_RAYCAST_PROXY                   = 0x100000
+	MTL_FLAG_REQUIRE_NEAREST_CUBEMAP         = 0x200000 // materials with alpha blending requires special processing for shadows
+	MTL_FLAG_CONSOLE_MAT                     = 0x400000
+	MTL_FLAG_DELETE_PENDING                  = 0x800000 // Internal use only
+	MTL_FLAG_BLEND_TERRAIN                   = 0x1000000
+	MTL_FLAG_IS_TERRAIN                      = 0x2000000 // indication to the loader - Terrain type
+	MTL_FLAG_IS_SKY                          = 0x4000000 // indication to the loader - Sky type
+	MTL_FLAG_FOG_VOLUME_SHADING_QUALITY_HIGH = 0x8000000 // high vertex shading quality behaves more accurately with fog volumes.
 )
 
 func Load(file nwfs.File) (*Document, error) {
@@ -68,7 +101,7 @@ func (e *Material) IterTextures() iter.Seq[Texture] {
 	}
 }
 
-func (e *Material) TextureByMapType(mapType MtlMap) *Texture {
+func (e *Material) TextureByMapType(mapType TexMap) *Texture {
 	for _, texture := range e.Textures.Texture {
 		if texture.Map == mapType {
 			return &texture
@@ -77,8 +110,33 @@ func (e *Material) TextureByMapType(mapType MtlMap) *Texture {
 	return nil
 }
 
+func (e *Material) IsShadowProxy() bool {
+	// https://www.cryengine.com/docs/static/engines/cryengine-3/categories/1114113/pages/21268752
+	// shadow proxy materials are where
+	// Opacity is 0
+	// NO_SHADOW flag is not set
+	// Shader is "Illum"
+	if e.Opacity == nil || *e.Opacity != 0 {
+		return false
+	}
+	if e.Shader != "Illum" {
+		return false
+	}
+	if e.MtlFlags == nil || (*e.MtlFlags&MTL_FLAG_NOSHADOW) != 0 {
+		return false
+	}
+	return true
+}
+
 type PublicParams struct {
 	params *maps.Dict[string]
+}
+
+func (e *Material) PublicParamsMap() map[string]string {
+	if e.Params == nil {
+		return make(map[string]string)
+	}
+	return e.Params.ToMap()
 }
 
 func (e *PublicParams) ToMap() map[string]string {
@@ -139,6 +197,13 @@ func (it *PublicParams) Load(name string) (string, bool) {
 	return it.params.Load(name)
 }
 
+func (it *PublicParams) MarshalJSON() ([]byte, error) {
+	if it == nil || it.params == nil {
+		return []byte("{}"), nil
+	}
+	return json.Marshal(it.params)
+}
+
 type SubMaterials struct {
 	XMLName  xml.Name   `xml:"SubMaterials" json:"-"`
 	Material []Material `xml:"Material" json:",omitzero"`
@@ -187,7 +252,7 @@ type Texture struct {
 	XMLName xml.Name `xml:"Texture" json:"-"`
 	AssetId string   `xml:"AssetId,attr" json:",omitzero"`
 	File    string   `xml:"File,attr" json:",omitzero"`
-	Map     MtlMap   `xml:"Map,attr" json:",omitzero"`
+	Map     TexMap   `xml:"Map,attr" json:",omitzero"`
 	// possible values
 	//  -1 none (default)
 	//  0 point
@@ -198,15 +263,15 @@ type Texture struct {
 	//  5 anisotropic 4x
 	//  6 anisotropic 8x
 	//  7 anisotropic 16x
-	Filter *TextureFilter `xml:"Filter,attr"` // do not omit, it's crucial if set
+	Filter *TextureFilter `xml:"Filter,attr" json:",omitempty"` // omitempty will omit nil pointer but keep 0
 	// possible values
 	//  0 = false
 	//  1 = true (default)
-	IsTileU *TextureTile `xml:"IsTileU,attr"` // do not omit, it's crucial if set
+	IsTileU *TextureTile `xml:"IsTileU,attr" json:",omitempty"` // omitempty will omit nil pointer but keep 0
 	// possible values
 	//  0 = false
 	//  1 = true (default)
-	IsTileV *TextureTile `xml:"IsTileV,attr"` // do not omit, it's crucial if set
+	IsTileV *TextureTile `xml:"IsTileV,attr" json:",omitempty"` // omitempty will omit nil pointer but keep 0
 	// possible values
 	//  0 = 1D
 	//  1 = 2D (default)
@@ -216,37 +281,37 @@ type Texture struct {
 	//  5 = dynamic 2d
 	//  6 = user
 	//  7 = nearest cube
-	TexType *TextureType `xml:"TexType,attr"`
-	TexMod  *TextMod     `xml:"TexMod"`
+	TexType *TextureType `xml:"TexType,attr" json:",omitempty"`
+	TexMod  *TexMod      `xml:"TexMod" json:",omitempty"`
 }
 
-type MtlMap string
+type TexMap string
 
 const (
-	MtlMap_Bumpmap          MtlMap = "Bumpmap"
-	MtlMap_Custom           MtlMap = "Custom"
-	MtlMap_Decal            MtlMap = "Decal"
-	MtlMap_Detail           MtlMap = "Detail"
-	MtlMap_Diffuse          MtlMap = "Diffuse"
-	MtlMap_Emittance        MtlMap = "Emittance"
-	MtlMap_Environment      MtlMap = "Environment"
-	MtlMap_Heightmap        MtlMap = "Heightmap"
-	MtlMap_Occlusion        MtlMap = "Occlusion"
-	MtlMap_Opacity          MtlMap = "Opacity"
-	MtlMap_SecondSmoothness MtlMap = "SecondSmoothness"
-	MtlMap_Smoothness       MtlMap = "Smoothness"
-	MtlMap_Specular         MtlMap = "Specular"
-	MtlMap_Specular2        MtlMap = "Specular2"
-	MtlMap_SubSurface       MtlMap = "SubSurface"
-	MtlMap_1_Custom         MtlMap = "[1] Custom"
-	MtlMap_2_Custom         MtlMap = "[2] Custom"
-	MtlMap_3_Custom         MtlMap = "[3] Custom"
-	MtlMap_4_Custom         MtlMap = "[4] Custom"
-	MtlMap_5_Custom         MtlMap = "[5] Custom"
-	MtlMap_5_Smoothness     MtlMap = "[5] Smoothness"
+	MtlMap_Bumpmap          TexMap = "Bumpmap"
+	MtlMap_Custom           TexMap = "Custom"
+	MtlMap_Decal            TexMap = "Decal"
+	MtlMap_Detail           TexMap = "Detail"
+	MtlMap_Diffuse          TexMap = "Diffuse"
+	MtlMap_Emittance        TexMap = "Emittance"
+	MtlMap_Environment      TexMap = "Environment"
+	MtlMap_Heightmap        TexMap = "Heightmap"
+	MtlMap_Occlusion        TexMap = "Occlusion"
+	MtlMap_Opacity          TexMap = "Opacity"
+	MtlMap_SecondSmoothness TexMap = "SecondSmoothness"
+	MtlMap_Smoothness       TexMap = "Smoothness"
+	MtlMap_Specular         TexMap = "Specular"
+	MtlMap_Specular2        TexMap = "Specular2"
+	MtlMap_SubSurface       TexMap = "SubSurface"
+	MtlMap_1_Custom         TexMap = "[1] Custom"
+	MtlMap_2_Custom         TexMap = "[2] Custom"
+	MtlMap_3_Custom         TexMap = "[3] Custom"
+	MtlMap_4_Custom         TexMap = "[4] Custom"
+	MtlMap_5_Custom         TexMap = "[5] Custom"
+	MtlMap_5_Smoothness     TexMap = "[5] Smoothness"
 )
 
-type TextMod struct {
+type TexMod struct {
 	OffsetU                     *float32 `xml:",attr" json:",omitzero,omitempty"`
 	OffsetV                     *float32 `xml:",attr" json:",omitzero,omitempty"`
 	RotateU                     *float32 `xml:",attr" json:",omitzero,omitempty"`

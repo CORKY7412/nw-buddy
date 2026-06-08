@@ -1,211 +1,127 @@
 package serve
 
 import (
-	"bytes"
-	"image/png"
 	"net/http"
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/game/level"
 	"nw-buddy/tools/nwfs"
-	"nw-buddy/tools/utils/json"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
 func LevelsRouter(r *mux.Router, assets *game.Assets) {
-	levels := level.NewCollectionLoader(assets)
-
-	r.HandleFunc("", GetLevelNamesFunc(assets))
-	r.HandleFunc("/{level}", getLevelInfoFunc(levels))
-	r.HandleFunc("/{level}/mission", getLevelMissionEntitiesFunc(levels))
-
-	r.HandleFunc("/{level}/heightmap", getLevelHeitmapInfoFunc(levels))
-	r.HandleFunc("/{level}/heightmap/{z}_{y}_{x}.png", getLevelHeitmapTileFunc(levels))
-
-	r.HandleFunc("/{level}/region/{region}", getLevelRegionInfoFunc(levels))
-	r.HandleFunc("/{level}/region/{region}/entities", getLevelRegionEntitiesFunc(levels))
-	r.HandleFunc("/{level}/region/{region}/distribution", getLevelRegionDistributionFunc(levels))
-
+	r.HandleFunc("/list.json", getLevelsListFunc(assets))
+	r.HandleFunc("/{coatlicue}/info.json", getLevelInfoFunc(assets))
+	r.HandleFunc("/{coatlicue}/{region}/info.json", getRegionInfoFunc(assets))
+	r.HandleFunc("/{coatlicue}/{region}/capitals.json", getRegionCapitalsFunc(assets))
+	r.HandleFunc("/{coatlicue}/{region}/heightmap.r16", getRegionHeightmap(assets))
+	r.HandleFunc("/{coatlicue}/{region}/watermap.r16", getRegionWatermap(assets))
 }
 
-func GetLevelNamesFunc(assets *game.Assets) http.HandlerFunc {
+func getLevelsListFunc(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		result := level.ListLevels(assets)
+		result := level.ListLevelIndex(assets)
 		serveJson(result, w)
 	}
 }
 
-func getLevelInfoFunc(collection level.CollectionLoader) http.HandlerFunc {
+func getLevelInfoFunc(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		levelName := nwfs.NormalizePath(vars["level"])
-		level := collection.Level(levelName)
-		if level == nil {
+		coatName := nwfs.NormalizePath(vars["coatlicue"])
+
+		dir := level.NewCoatlicueDirectory(coatName)
+		if !dir.Exists(assets) {
 			http.NotFound(w, r)
 			return
 		}
 
-		info := level.Info()
-		if data, err := json.MarshalJSON(info, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
-		}
-	}
-}
-
-func getLevelMissionEntitiesFunc(collection level.CollectionLoader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		levelName := nwfs.NormalizePath(vars["level"])
-		level := collection.Level(levelName)
-		if level == nil {
+		result := dir.LoadInfo(assets)
+		if result == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		result := level.MissionEntities()
-		if data, err := json.MarshalJSON(result, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
-		}
+		serveJson(result, w)
 	}
 }
 
-func getLevelRegionInfoFunc(collection level.CollectionLoader) http.HandlerFunc {
+func getRegionInfoFunc(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		levelName := nwfs.NormalizePath(vars["level"])
+		coatName := nwfs.NormalizePath(vars["coatlicue"])
 		regionName := nwfs.NormalizePath(vars["region"])
-		level := collection.Level(levelName)
-		if level == nil {
-			http.NotFound(w, r)
-			return
-		}
-		region := level.Region(regionName)
-		if region == nil {
+		directory := level.NewRegionDirectory(coatName, regionName)
+
+		info := directory.LoadRegionInfo(assets)
+		if info == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		info := region.Info()
-		if data, err := json.MarshalJSON(info, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
-		}
+		serveJson(info, w)
 	}
 }
 
-func getLevelRegionEntitiesFunc(collection level.CollectionLoader) http.HandlerFunc {
+func getRegionHeightmap(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		levelName := nwfs.NormalizePath(vars["level"])
+		coatName := nwfs.NormalizePath(vars["coatlicue"])
 		regionName := nwfs.NormalizePath(vars["region"])
-		level := collection.Level(levelName)
-		if level == nil {
-			http.NotFound(w, r)
-			return
-		}
-		region := level.Region(regionName)
-		if region == nil {
+		directory := level.NewRegionDirectory(coatName, regionName)
+
+		heightmap := directory.LoadHeightMap(assets)
+		if heightmap == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		result := region.Entities()
-		if data, err := json.MarshalJSON(result, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
+		result := heightmap.ToFloat16Bytes()
+		if result == nil {
+			http.NotFound(w, r)
+			return
 		}
+
+		serveContent(result, w, "application/octet-stream")
 	}
 }
 
-func getLevelRegionDistributionFunc(collection level.CollectionLoader) http.HandlerFunc {
+func getRegionWatermap(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		levelName := nwfs.NormalizePath(vars["level"])
+		coatName := nwfs.NormalizePath(vars["coatlicue"])
 		regionName := nwfs.NormalizePath(vars["region"])
-		level := collection.Level(levelName)
-		if level == nil {
-			http.NotFound(w, r)
-			return
-		}
-		region := level.Region(regionName)
-		if region == nil {
+		directory := level.NewRegionDirectory(coatName, regionName)
+
+		watermap := directory.LoadWaterMap(assets)
+		if watermap == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		result := region.Distribution()
-		if data, err := json.MarshalJSON(result, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
+		result := watermap.ToFloat16Bytes()
+		if result == nil {
+			http.NotFound(w, r)
+			return
 		}
+
+		serveContent(result, w, "application/octet-stream")
 	}
 }
 
-func getLevelHeitmapInfoFunc(collection level.CollectionLoader) http.HandlerFunc {
+func getRegionCapitalsFunc(assets *game.Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		levelName := vars["level"]
-		level := collection.Level(levelName)
-		if level == nil {
-			http.NotFound(w, r)
-			return
-		}
-		result := level.TerrainInfo()
-		if data, err := json.MarshalJSON(result, "", "\t"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		} else {
-			serveContent(data, w, "application/json")
-		}
-	}
-}
+		coatName := nwfs.NormalizePath(vars["coatlicue"])
+		regionName := nwfs.NormalizePath(vars["region"])
+		directory := level.NewRegionDirectory(coatName, regionName)
 
-func getLevelHeitmapTileFunc(collection level.CollectionLoader) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		levelName := vars["level"]
-		varZ := vars["z"]
-		varX := vars["x"]
-		varY := vars["y"]
-		level := collection.Level(levelName)
-		if level == nil {
+		result := directory.LoadRuntimeCapitals(assets)
+		if result == nil {
 			http.NotFound(w, r)
 			return
 		}
 
-		z, err := strconv.Atoi(varZ)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		x, err := strconv.Atoi(varX)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		y, err := strconv.Atoi(varY)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		mips := level.Terrain()
-		tile := mips.TileAt(z, x, y)
-		img := mips.TileHeightmap(tile)
-		if img == nil {
-			http.NotFound(w, r)
-			return
-		}
-
-		buf := &bytes.Buffer{}
-		png.Encode(buf, img)
-		serveContent(buf.Bytes(), w, "image/png")
+		serveJson(result, w)
 	}
 }

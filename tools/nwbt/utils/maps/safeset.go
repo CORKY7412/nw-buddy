@@ -65,6 +65,33 @@ func (r *SafeSet[T]) Values() []T {
 	return slices.Clone(r.keys)
 }
 
+func (r *SafeSet[T]) Pop() (T, bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if len(r.keys) == 0 {
+		var zero T
+		return zero, false
+	}
+	lastIndex := len(r.keys) - 1
+	value := r.keys[lastIndex]
+	r.keys = r.keys[:lastIndex]
+	delete(r.data, value)
+	return value, true
+}
+
+func (r *SafeSet[T]) Shift() (T, bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if len(r.keys) == 0 {
+		var zero T
+		return zero, false
+	}
+	value := r.keys[0]
+	r.keys = r.keys[1:]
+	delete(r.data, value)
+	return value, true
+}
+
 func (r *SafeSet[T]) Iter() iter.Seq[T] {
 	r.mu.Lock()
 	defer r.mu.Unlock()

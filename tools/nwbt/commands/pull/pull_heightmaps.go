@@ -43,13 +43,18 @@ func pullHeightmaps(assets *game.Assets, outDir string) {
 		return
 	}
 
-	lvls := level.ListLevels(assets)
-	bar := progress.Bar(len(lvls), "Heightmaps")
-	for _, info := range lvls {
+	directories := level.ListCoatlicueDirectories(assets)
+	bar := progress.Bar(len(directories), "Heightmaps")
+	for _, dir := range directories {
 		bar.Add(1)
 
 		hasTracts := false
-		for _, tract := range info.Tracts {
+		tracts := dir.LoadTracts(assets)
+		if tracts == nil {
+			continue
+		}
+
+		for _, tract := range tracts.Tracts {
 			if tract.MapCategory != "" {
 				hasTracts = true
 				break
@@ -58,19 +63,19 @@ func pullHeightmaps(assets *game.Assets, outDir string) {
 		if !hasTracts {
 			continue
 		}
-		pullHeightmap(assets, outDir, info, bar)
+		pullHeightmap(assets, outDir, dir, bar)
 	}
 	bar.Close()
 }
 
-func pullHeightmap(assets *game.Assets, outDir string, info *level.Info, bar progress.ProgressBar) {
-	levelName := info.Name
+func pullHeightmap(assets *game.Assets, outDir string, dir level.CoatlicueDirectory, bar progress.ProgressBar) {
+	levelName := dir.Name
 	// heightmapR16OutDir := path.Join(outDir, levelName, "heightmap16")
 	heightmapRGB8OutDir := path.Join(outDir, levelName, "heightmap")
 
 	bar.Detail(fmt.Sprintf("%s load heightmap", levelName))
 
-	heightMap := level.LoadHeightmap(assets.Archive, info)
+	heightMap := dir.LoadHeightmapTiles(assets.Archive)
 	// img.WriteFile(heightMap, path.Join(heightmapR16OutDir, "heightmap.png"))
 	// heightMapRGB8 := img.CloneToRGBA(heightMap, func(x, y int) color.Color {
 	// 	r, _, _, _ := heightMap.At(x, y).RGBA()

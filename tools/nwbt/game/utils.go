@@ -122,7 +122,7 @@ func HasEntityChildren(slice *nwt.SliceComponent, entity *nwt.AZ__Entity) bool {
 	return false
 }
 
-func FindTransform(entity *nwt.AZ__Entity) transform.Node {
+func FindEntityTransform(entity *nwt.AZ__Entity) transform.Node {
 	if entity == nil {
 		return nil
 	}
@@ -137,7 +137,7 @@ func FindTransform(entity *nwt.AZ__Entity) transform.Node {
 	return nil
 }
 
-func FindTransformMat4(entity *nwt.AZ__Entity) mat4.Data {
+func FindEntityTransformMat4(entity *nwt.AZ__Entity) mat4.Data {
 	if entity == nil {
 		return mat4.Identity()
 	}
@@ -152,7 +152,7 @@ func FindTransformMat4(entity *nwt.AZ__Entity) mat4.Data {
 	return mat4.Identity()
 }
 
-func FindTransformMat4WithParentId(entity *nwt.AZ__Entity) (mat4.Data, nwt.AzUInt64) {
+func FindEntityTransformMat4WithParentId(entity *nwt.AZ__Entity) (mat4.Data, nwt.AzUInt64) {
 	if entity == nil {
 		return mat4.Identity(), 0
 	}
@@ -168,7 +168,7 @@ func FindTransformMat4WithParentId(entity *nwt.AZ__Entity) (mat4.Data, nwt.AzUIn
 }
 
 func FindTransformFromRootMat4(entity *nwt.AZ__Entity) mat4.Data {
-	tm := FindTransformMat4(entity)
+	tm := FindEntityTransformMat4(entity)
 	parent := FindEntityParent(nil, entity)
 	if parent != nil {
 		tm = mat4.Multiply(FindTransformFromRootMat4(parent), tm)
@@ -299,7 +299,7 @@ func EntityTree(slice *nwt.SliceComponent) []*EntityTreeNode {
 			}
 		}
 
-		transform, parentId := FindTransformMat4WithParentId(entity)
+		transform, parentId := FindEntityTransformMat4WithParentId(entity)
 		if _, ok := lookup[parentId]; !ok {
 			lookup[parentId] = &EntityTreeNode{
 				Transform: mat4.Identity(),
@@ -491,18 +491,6 @@ func ShouldIgnoreMeshNode(node nwt.MeshComponentRenderNode) bool {
 
 	asset := node.Static_Mesh
 	if asset.Guid == "" {
-		return true
-	}
-
-	if strings.Contains(asset.Hint, "objects/default") {
-		return true
-	}
-
-	if strings.Contains(asset.Hint, "shadow_proxy") {
-		return true
-	}
-
-	if strings.Contains(asset.Hint, "shadowproxy") {
 		return true
 	}
 

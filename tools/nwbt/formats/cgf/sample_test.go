@@ -62,7 +62,7 @@ func TestRead_MusiDrumDrum(t *testing.T) {
 		// 	material, _ := mtl.Load(mtlFile)
 		// 	return model, material.Collection()
 		// })
-		converter.ImportCgfMaterials(gltf.WithTextureBaking(true))
+		converter.ProcessMaterials(gltf.WithTextureBaking(true))
 		converter.TargetFile = utils.ReplaceExt(input[0], ".gltf")
 
 		err = converter.Save()

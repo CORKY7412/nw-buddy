@@ -2,9 +2,12 @@ package serve
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"log/slog"
+	"net"
 	"net/http"
+	"net/url"
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/rtti"
 	"nw-buddy/tools/utils"
@@ -12,11 +15,16 @@ import (
 	"nw-buddy/tools/utils/json"
 	"os"
 	"path"
+	"strconv"
+	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+
+	_ "net/http/pprof" // registers /debug/pprof endpoints
 )
 
 type Flags struct {
@@ -29,6 +37,7 @@ type Flags struct {
 	CrcFile     string
 	UuidFile    string
 	TextureSize uint
+	Y_UP        bool
 }
 
 var flg Flags
@@ -42,6 +51,13 @@ var Cmd = &cobra.Command{
 	Hidden:        true,
 }
 
+const (
+	QUERY_YUP      = "yup"
+	QUERY_NO_CACHE = "no-cache"
+	QUERY_NO_PROXY = "no-proxy"
+	QUERY_NO_LOD   = "no-lod"
+)
+
 func init() {
 	Cmd.Flags().StringVarP(&flg.GameDir, "game", "g", env.GameDir(), "game root directory")
 	Cmd.Flags().StringVarP(&flg.TempDir, "temp", "t", env.TempDir(), "temporary directory for image conversion")
@@ -52,12 +68,14 @@ func init() {
 	Cmd.Flags().UintVar(&flg.Port, "port", env.ToolsPort(), "port to listen on")
 	Cmd.Flags().StringVar(&flg.CrcFile, "crc-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-crc.json"), "file with crc hashes. Only used for object-stream conversion")
 	Cmd.Flags().StringVar(&flg.UuidFile, "uuid-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-types.json"), "file with uuid hashes. Only used for object-stream conversion")
+	Cmd.Flags().BoolVar(&flg.Y_UP, "yup", false, "whether to convert models to y-up. Only used for model conversion. Use true for three.js or babylon.js preview, false for nw-viewer")
 }
 
 var crcTable rtti.CrcTable
 var uuidTable rtti.UuidTable
 
 func run(cmd *cobra.Command, args []string) {
+
 	assets, err := game.InitPackedAssets(flg.GameDir)
 	if err != nil {
 		log.Fatal("assets not initialized", "error", err)
@@ -69,6 +87,7 @@ func run(cmd *cobra.Command, args []string) {
 	os.MkdirAll(flg.CacheDir, os.ModePerm)
 
 	r.PathPrefix("/list").Handler(http.StripPrefix("/list", GetListHandler(assets.Archive)))
+  r.PathPrefix("/stat").Handler(http.StripPrefix("/stat", GetStatHandler(assets)))
 	r.PathPrefix("/file").Handler(http.StripPrefix("/file", GetFileHandler(assets)))
 	r.PathPrefix("/models").Handler(http.StripPrefix("/models", http.FileServer(http.Dir(flg.ModelsDir))))
 
@@ -77,9 +96,13 @@ func run(cmd *cobra.Command, args []string) {
 
 	LevelsRouter(r.PathPrefix("/level").Subrouter(), assets)
 
-	h := handlers.LoggingHandler(os.Stdout, r)
+	h := handlers.CustomLoggingHandler(os.Stdout, r, writeLog)
 	h = handlers.CORS(handlers.AllowedOrigins([]string{"*"}))(h)
 	h = handlers.RecoveryHandler()(h)
+
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
 
 	addr := fmt.Sprintf("%s:%d", flg.Host, flg.Port)
 	slog.Info("serving on", "address", addr)
@@ -105,9 +128,67 @@ func serveContent(data []byte, w http.ResponseWriter, contentType string) {
 	w.Write(data)
 }
 
+func serveNoContent(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func contentTypeByExtension(ext string) string {
 	if res := mimetype.Lookup(ext); res != nil {
 		return res.String()
 	}
 	return ""
+}
+
+// buildCommonLogLine builds a log entry for req in Apache Common Log Format.
+// ts is the timestamp with which the entry should be logged.
+// status and size are used to provide the response HTTP status and size.
+func buildCommonLogLine(req *http.Request, url url.URL, ts time.Time, status int, size int) []byte {
+	username := "-"
+	if url.User != nil {
+		if name := url.User.Username(); name != "" {
+			username = name
+		}
+	}
+
+	host, _, err := net.SplitHostPort(req.RemoteAddr)
+	if err != nil {
+		host = req.RemoteAddr
+	}
+
+	uri := req.RequestURI
+
+	// Requests using the CONNECT method over HTTP/2.0 must use
+	// the authority field (aka r.Host) to identify the target.
+	// Refer: https://httpwg.github.io/specs/rfc7540.html#CONNECT
+	if req.ProtoMajor == 2 && req.Method == "CONNECT" {
+		uri = req.Host
+	}
+	if uri == "" {
+		uri = url.RequestURI()
+	}
+
+	buf := make([]byte, 0, 3*(len(host)+len(username)+len(req.Method)+len(uri)+len(req.Proto)+50)/2)
+	buf = append(buf, host...)
+	buf = append(buf, " ["...)
+	buf = append(buf, ts.Format(time.DateTime)...)
+	buf = append(buf, `] "`...)
+	buf = append(buf, req.Method...)
+	buf = append(buf, " "...)
+	buf = append(buf, uri...)
+	buf = append(buf, " "...)
+	buf = append(buf, req.Proto...)
+	buf = append(buf, `" `...)
+	buf = append(buf, strconv.Itoa(status)...)
+	buf = append(buf, " "...)
+	buf = append(buf, humanize.Bytes(uint64(size))...)
+	return buf
+}
+
+// writeLog writes a log entry for req to w in Apache Common Log Format.
+// ts is the timestamp with which the entry should be logged.
+// status and size are used to provide the response HTTP status and size.
+func writeLog(writer io.Writer, params handlers.LogFormatterParams) {
+	buf := buildCommonLogLine(params.Request, params.URL, params.TimeStamp, params.StatusCode, params.Size)
+	buf = append(buf, '\n')
+	_, _ = writer.Write(buf)
 }

@@ -2,15 +2,16 @@ package importer
 
 type AssetGroup struct {
 	TargetFile string
-	Animations []Animation
-	Meshes     []GeometryAsset
+	Animations []AnimationAsset // caf files
+	Geometries []GeometryAsset  // cgf + mtl files
+	Materials  []string         // mtl files only
 	Lights     []LightAsset
 	Cameras    []CameraAsset
 	Entities   []Entity
 	Extra      map[string]any
 }
 
-type Animation struct {
+type AnimationAsset struct {
 	File string `json:"file"`
 	Name string `json:"name"`
 }

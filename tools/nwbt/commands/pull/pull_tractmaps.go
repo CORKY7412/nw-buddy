@@ -1,6 +1,7 @@
 package pull
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
@@ -10,6 +11,7 @@ import (
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/game/level"
 	"nw-buddy/tools/utils"
+	"nw-buddy/tools/utils/env"
 	"nw-buddy/tools/utils/img"
 	"nw-buddy/tools/utils/logging"
 	"nw-buddy/tools/utils/maps"
@@ -18,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"golang.org/x/image/draw"
+
+	nwbimage "nw-buddy/tools/formats/image"
 )
 
 var cmdPullTractmaps = &cobra.Command{
@@ -41,13 +45,18 @@ func pullTractmaps(assets *game.Assets, outDir string) {
 		return
 	}
 
-	lvls := level.ListLevels(assets)
-	bar := progress.Bar(len(lvls), "Tractmaps")
-	for _, info := range lvls {
+	directories := level.ListCoatlicueDirectories(assets)
+	bar := progress.Bar(len(directories), "Tractmaps")
+	for _, dir := range directories {
 		bar.Add(1)
 
+		tracts := dir.LoadTracts(assets)
+		if tracts == nil {
+			continue
+		}
+
 		hasTracts := false
-		for _, tract := range info.Tracts {
+		for _, tract := range tracts.Tracts {
 			if tract.MapCategory != "" {
 				hasTracts = true
 				break
@@ -56,22 +65,27 @@ func pullTractmaps(assets *game.Assets, outDir string) {
 		if !hasTracts {
 			continue
 		}
-		pullTracmap(assets, outDir, info, bar)
+		pullTracmap(assets, outDir, dir, bar)
+		// pullWorldmap(assets, outDir, info, bar)
 	}
 	bar.Close()
 }
 
-func pullTracmap(assets *game.Assets, outDir string, info *level.Info, bar progress.ProgressBar) {
-	levelName := info.Name
+func pullTracmap(assets *game.Assets, outDir string, dir level.CoatlicueDirectory, bar progress.ProgressBar) {
+	levelName := dir.Name
 	levelOutDir := path.Join(outDir, levelName, "tractmap")
 
-	colors := level.TractColorToCategoryMap(info)
+	mountainHeight := dir.LoadTerrainSettings(assets).MountainHeight
+	colors := make(map[tracts.Color]string)
+	for _, tract := range dir.LoadTracts(assets).Tracts {
+		colors[tract.DisplayColor] = tract.MapCategory
+	}
 
 	bar.Detail(fmt.Sprintf("%s load heightmap", levelName))
-	heightmap := level.LoadHeightmap(assets.Archive, info)
+	heightmap := dir.LoadHeightmapTiles(assets.Archive)
 
 	bar.Detail(fmt.Sprintf("%s load tractmap", levelName))
-	tractmap := level.LoadTractmap(assets.Archive, info)
+	tractmap := dir.LoadTractmapTiles(assets.Archive)
 	if err := img.WriteFile(tractmap, path.Join(levelOutDir, "tractmap.webp")); err != nil {
 		slog.Error("error writing file", "err", err)
 	}
@@ -82,7 +96,7 @@ func pullTracmap(assets *game.Assets, outDir string, info *level.Info, bar progr
 
 	loggedUnknownKeys := maps.NewSyncMap[tracts.Color, tracts.Color]()
 	recolored := img.Apply(tractmap, func(c color.RGBA, x, y int) color.RGBA {
-		occlusion := heightmapOcclusionAt(heightmap, int(float32(x)*scale), int(float32(y)*scale), info.MountainHeight)
+		occlusion := heightmapOcclusionAt(heightmap, int(float32(x)*scale), int(float32(y)*scale), mountainHeight)
 		key := tracts.Color{R: c.R, G: c.G, B: c.B}
 		layer := colors[key]
 		res, ok := GroundColors[layer]
@@ -157,6 +171,86 @@ func pullTracmap(assets *game.Assets, outDir string, info *level.Info, bar progr
 			draw.BiLinear.Scale(dst, dst.Bounds(), source, source.Bounds(), draw.Over, nil)
 			source = dst
 		}
+	}
+}
+
+func pullWorldmap(assets *game.Assets, outDir string, dir level.CoatlicueDirectory, bar progress.ProgressBar) {
+	levelName := dir.Name
+	//levelOutDir := path.Join(outDir, levelName, "worldmap")
+
+	bar.Detail(fmt.Sprintf("%s load tiles", levelName))
+	if levelName != "newworld_vitaeeterna" {
+		return
+	}
+	files, err := assets.Archive.Glob(path.Join("**", "worldtiles", levelName, "*.dds"))
+	if err != nil {
+		slog.Error("Reading tiles", "err", err)
+		return
+	}
+	var level = 1
+	var maxX, maxY int
+	for i := range files {
+		file := files[i]
+		baseName := path.Base(file.Path())
+		// pattern example: map_l2_y054_x046
+		var z, y, x int
+		if _, err := fmt.Sscanf(baseName, "map_l%d_y%03d_x%03d.dds", &z, &y, &x); err != nil {
+			slog.Error("Parsing tile name", "err", err, "file", baseName)
+			continue
+		} else if z != level {
+			continue // skip high zoom levels for now
+		} else {
+			if x > maxX {
+				maxX = x
+			}
+			if y > maxY {
+				maxY = y
+			}
+		}
+	}
+
+	tileSize := 1024
+	stepSize := int(math.Pow(2, float64(level-1)))
+	pixelsX := tileSize * ((maxX / stepSize) + 1)
+	pixelsY := tileSize * ((maxY / stepSize) + 1)
+	worldmap := image.NewRGBA(image.Rect(0, 0, pixelsX, pixelsY))
+
+	for y := 1; y <= maxY; y++ {
+		for x := 1; x <= maxX; x++ {
+			baseName := fmt.Sprintf("map_l%d_y%03d_x%03d.dds", level, maxY-y, x)
+			file, found := assets.Archive.LookupBySuffix(path.Join("worldtiles", levelName, baseName))
+			if !found {
+				continue
+			} else {
+				slog.Info("Processing tile", "file", file.Path())
+			}
+			ddsBytes, err := file.Read()
+			if err != nil {
+				slog.Error("reading dds", "err", err, "file", baseName)
+				continue
+			}
+			pngBytes, err := nwbimage.ConvertDDS(ddsBytes, nwbimage.FormatPNG, nwbimage.WithTempDir(env.TempDir()), nwbimage.WithSilent(true))
+			if err != nil {
+				slog.Error("convert dds", "err", err, "file", baseName)
+				continue
+			}
+			tile, _, err := image.Decode(bytes.NewReader(pngBytes))
+			// img.WriteFile(tile, path.Join(outDir, levelName, "test", fmt.Sprintf("map_l%d_y%03d_x%03d.png", level, y, x)))
+			if err != nil {
+				slog.Error("Decoding tile", "err", err, "file", baseName)
+				continue
+			}
+
+			point := image.Pt(tileSize*((x/stepSize)-1), tileSize*((y/stepSize)-1))
+			slog.Debug("copy", "point", point, "bounds", tile.Bounds(), "world", worldmap.Bounds())
+			draw.Copy(worldmap, point, tile, tile.Bounds(), draw.Src, nil)
+		}
+	}
+	outPath := path.Join(outDir, levelName, fmt.Sprintf("worldmap-%d.png", level))
+	if err := img.WriteFile(worldmap, outPath); err != nil {
+		slog.Error("error writing file", "err", err)
+	} else {
+		slog.Info("Worldmap saved", "file", outPath)
 	}
 }
 

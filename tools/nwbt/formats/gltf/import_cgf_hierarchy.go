@@ -3,28 +3,43 @@ package gltf
 import (
 	"nw-buddy/tools/formats/cgf"
 	"nw-buddy/tools/utils/maps"
-	"nw-buddy/tools/utils/math"
 	"nw-buddy/tools/utils/math/mat4"
+	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/qmuntal/gltf"
 )
 
-func (d *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject func(node *gltf.Node, chunk cgf.Chunker, name string)) []*gltf.Node {
+type HandleObjectFunc func(node *gltf.Node, chunk cgf.Chunker, name string, lod int)
+
+var lodRegex = regexp.MustCompile(`\$lod(\d+)`)
+
+func (doc *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject HandleObjectFunc) []*gltf.Node {
+	base := doc.Options.Base
+
 	rootNodes := make([]*gltf.Node, 0)
-	nodeMap := newIdToNodeMap(d)
+	nodeMap := newIdToNodeMap(doc)
 	for _, chunk := range cgf.SelectChunks[cgf.ChunkNode](cgfile) {
-		if strings.Contains(chunk.Name, "$lod") {
+
+		isLod := strings.Contains(chunk.Name, "$lod")
+		isHelper := strings.Contains(chunk.Name, "$physics") || strings.HasPrefix(chunk.Name, "$")
+		lod := 0
+
+		if isLod && doc.Options.SkipLod {
 			continue
 		}
-		if strings.Contains(chunk.Name, "$physics") {
+		if !isLod && isHelper && doc.Options.SkipHelper {
 			continue
+		}
+		if isLod {
+			lod, _ = strconv.Atoi(lodRegex.FindStringSubmatch(chunk.Name)[1])
 		}
 
 		node, nodeIndex := nodeMap.lookup(chunk.ChunkHeader.Id)
 		if !mat4.IsIdentity(chunk.Transform) {
-			node.Matrix = mat4.ToFloat64(math.CryToGltfMat4(mat4.Transpose(chunk.Transform)))
+			node.Matrix = mat4.ToFloat64(base.Mat4(mat4.Transpose(chunk.Transform)))
 		}
 		if chunk.ParentId == -1 {
 			rootNodes = append(rootNodes, node)
@@ -33,7 +48,7 @@ func (d *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject func(node *
 			parent.Children = append(parent.Children, nodeIndex)
 		}
 		if object, ok := cgf.FindChunk[cgf.Chunker](cgfile, chunk.ObjectId); ok {
-			handleObject(node, object, chunk.Name)
+			handleObject(node, object, chunk.Name, lod)
 		}
 	}
 	return rootNodes

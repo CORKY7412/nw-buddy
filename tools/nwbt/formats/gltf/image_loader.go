@@ -16,32 +16,32 @@ import (
 	"github.com/qmuntal/gltf/modeler"
 )
 
-func (c *Document) LoadOrStoreMtlTexture(texture *mtl.Texture, alpha ...bool) *gltf.Texture {
+func (doc *Document) LoadOrStoreMtlTexture(texture *mtl.Texture, alpha ...bool) *gltf.Texture {
 
 	if texture == nil {
 		return nil
 	}
 
-	if c.ImageLoader == nil {
+	if doc.ImageLoader == nil {
 		return nil
 	}
 
 	readAlpha := len(alpha) > 0 && alpha[0]
 	fileIsAlpha := false
-	file := resolveFile(c.ImageLoader, texture.AssetId, texture.File)
+	file := resolveFile(doc.ImageLoader, texture.AssetId, texture.File)
 	if file == nil {
 		return nil
 	}
 	if readAlpha {
-		if f := resolveFile(c.ImageLoader, utils.ReplaceExt(file.Path(), ".dds.a")); f != nil {
+		if f := resolveFile(doc.ImageLoader, utils.ReplaceExt(file.Path(), ".dds.a")); f != nil {
 			file = f
 			fileIsAlpha = true
 		}
 	}
-	sampler := c.LoadOrStoreSampler(texture)
+	sampler := doc.LoadOrStoreSampler(texture)
 	var source string
-	tex, err := c.LoadOrStoreTexture(sampler, file.Path(), func() ([]byte, error) {
-		img, err := c.ImageLoader.LoadImage(file.Path())
+	tex, err := doc.LoadOrStoreTexture(sampler, file.Path(), func() ([]byte, error) {
+		img, err := doc.ImageLoader.LoadImage(file.Path())
 		if err != nil {
 			return nil, err
 		}
@@ -65,16 +65,16 @@ func (c *Document) LoadOrStoreMtlTexture(texture *mtl.Texture, alpha ...bool) *g
 	return nil
 }
 
-func (c *Document) LoadOrStoreTexture(sampler *int, imageRef string, loadBytes func() ([]byte, error)) (*gltf.Texture, error) {
+func (doc *Document) LoadOrStoreTexture(sampler *int, imageRef string, loadBytes func() ([]byte, error)) (*gltf.Texture, error) {
 	textureRef := imageRef
-	index, err := c.LoadOrStoreImage(imageRef, loadBytes)
+	index, err := doc.LoadOrStoreImage(imageRef, loadBytes)
 	if err != nil {
 		return nil, err
 	}
 
 	// imageRef may be altered by LoadOrStoreImage
 	// grab actual imageRef and use it as textureRef
-	img := c.Images[*index]
+	img := doc.Images[*index]
 	if ref, ok := ExtrasLoad[string](img.Extras, ExtraKeyRefID); ok {
 		textureRef = ref
 	}
@@ -82,13 +82,13 @@ func (c *Document) LoadOrStoreTexture(sampler *int, imageRef string, loadBytes f
 	// sampler may be non default and is expected to have an own ref id
 	// append it to textureRef to make unique texture/sampler pair
 	if sampler != nil {
-		s := c.Samplers[*sampler]
+		s := doc.Samplers[*sampler]
 		if samplerRef, ok := ExtrasLoad[string](s.Extras, ExtraKeyRefID); ok {
 			textureRef = fmt.Sprintf("%s?sampler=%s", textureRef, samplerRef)
 		}
 	}
 
-	for _, texture := range c.Textures {
+	for _, texture := range doc.Textures {
 		if ref, _ := ExtrasLoad[string](texture.Extras, ExtraKeyRefID); ref == textureRef {
 			return texture, nil
 		}
@@ -101,22 +101,22 @@ func (c *Document) LoadOrStoreTexture(sampler *int, imageRef string, loadBytes f
 			ExtraKeyRefID: textureRef,
 		},
 	}
-	c.Textures = append(c.Textures, texture)
+	doc.Textures = append(doc.Textures, texture)
 	return texture, nil
 }
 
-func (c *Document) LoadOrStoreImage(imageRef string, loadBytes func() ([]byte, error)) (*int, error) {
+func (doc *Document) LoadOrStoreImage(imageRef string, loadBytes func() ([]byte, error)) (*int, error) {
 	if imageRef == "" {
 		return nil, nil
 	}
 
 	mimeType := "image/png"
-	if c.ImageLinker == nil {
+	if doc.ImageLinker == nil {
 		// image will be embedded in the gltf file
 		// assumed to be converted to png
 		// no file reference needed
 	} else {
-		if conv, ok := c.ImageLoader.(image.LoaderWithConverter); ok {
+		if conv, ok := doc.ImageLoader.(image.LoaderWithConverter); ok {
 			// specific conversion is active
 			format := conv.Converter.TargetFormat()
 			mimeType = format.MimeType()
@@ -128,7 +128,7 @@ func (c *Document) LoadOrStoreImage(imageRef string, loadBytes func() ([]byte, e
 		}
 	}
 
-	for i, image := range c.Images {
+	for i, image := range doc.Images {
 		if k, _ := ExtrasLoad[string](image.Extras, ExtraKeyRefID); k == imageRef {
 			return &i, nil
 		}
@@ -139,32 +139,32 @@ func (c *Document) LoadOrStoreImage(imageRef string, loadBytes func() ([]byte, e
 		return nil, err
 	}
 
-	if c.ImageLinker == nil {
-		if index, err := modeler.WriteImage(c.Document, imageRef, mimeType, bytes.NewBuffer(imageData)); err != nil {
+	if doc.ImageLinker == nil {
+		if index, err := modeler.WriteImage(doc.Document, imageRef, mimeType, bytes.NewBuffer(imageData)); err != nil {
 			return nil, err
 		} else {
-			c.Images[index].Extras = ExtrasStore(c.Images[index].Extras, ExtraKeyRefID, imageRef)
+			doc.Images[index].Extras = ExtrasStore(doc.Images[index].Extras, ExtraKeyRefID, imageRef)
 			return &index, nil
 		}
 	}
 
-	imageUri, err := c.ImageLinker.WriteLinkedResource(c.TargetFile, imageRef, imageData)
+	imageUri, err := doc.ImageLinker.WriteLinkedResource(doc.TargetFile, imageRef, imageData)
 	if err != nil {
 		slog.Warn("Linked image not written", "file", imageRef, "err", err)
 	}
-	c.Images = append(c.Images, &gltf.Image{
+	doc.Images = append(doc.Images, &gltf.Image{
 		URI:      imageUri,
 		MimeType: mimeType,
 		Extras: map[string]any{
 			ExtraKeyRefID: imageRef,
 		},
 	})
-	index := len(c.Images) - 1
+	index := len(doc.Images) - 1
 
 	return &index, nil
 }
 
-func (c *Document) LoadOrStoreSampler(tex *mtl.Texture) *int {
+func (doc *Document) LoadOrStoreSampler(tex *mtl.Texture) *int {
 	if tex == nil {
 		return nil
 	}
@@ -217,12 +217,12 @@ func (c *Document) LoadOrStoreSampler(tex *mtl.Texture) *int {
 		return nil
 	}
 	ref := fmt.Sprintf("%s_%s_%s_%s", magName, minName, wrapUName, wrapVName)
-	for i, sampler := range c.Samplers {
+	for i, sampler := range doc.Samplers {
 		if k, _ := ExtrasLoad[string](sampler.Extras, ExtraKeyRefID); k == ref {
 			return &i
 		}
 	}
-	samplerIndex := len(c.Samplers)
+	samplerIndex := len(doc.Samplers)
 	sampler := &gltf.Sampler{
 		Name:      ref,
 		MagFilter: magFilter,
@@ -233,38 +233,38 @@ func (c *Document) LoadOrStoreSampler(tex *mtl.Texture) *int {
 			ExtraKeyRefID: ref,
 		},
 	}
-	c.Samplers = append(c.Samplers, sampler)
+	doc.Samplers = append(doc.Samplers, sampler)
 	return &samplerIndex
 }
 
-func (c *Document) ResolveAndLoadImage(texture *mtl.Texture) (*image.LoadedImage, error) {
-	if file := resolveFile(c.ImageLoader, texture.AssetId, texture.File); file != nil {
-		return c.ImageLoader.LoadImage(file.Path())
+func (doc *Document) ResolveAndLoadImage(texture *mtl.Texture) (*image.LoadedImage, error) {
+	if file := resolveFile(doc.ImageLoader, texture.AssetId, texture.File); file != nil {
+		return doc.ImageLoader.LoadImage(file.Path())
 	}
 	return nil, nil
 }
 
-func (c *Document) LoadTextureBytes(t *gltf.Texture) ([]byte, error) {
+func (doc *Document) LoadTextureBytes(t *gltf.Texture) ([]byte, error) {
 	if t.Source == nil {
 		return nil, nil
 	}
-	return c.LoadImageBytes(c.Images[*t.Source])
+	return doc.LoadImageBytes(doc.Images[*t.Source])
 }
 
-func (c *Document) LoadImageBytes(img *gltf.Image) ([]byte, error) {
+func (doc *Document) LoadImageBytes(img *gltf.Image) ([]byte, error) {
 	if img == nil {
 		return nil, nil
 	}
 
 	if img.BufferView != nil {
-		if view := c.BufferViews[*img.BufferView]; view != nil {
-			return modeler.ReadBufferView(c.Document, view)
+		if view := doc.BufferViews[*img.BufferView]; view != nil {
+			return modeler.ReadBufferView(doc.Document, view)
 		}
 		return nil, nil
 	}
 
-	if img.URI != "" && c.ImageLinker != nil {
-		return c.ImageLinker.ReadLinkedResource(c.TargetFile, img.URI)
+	if img.URI != "" && doc.ImageLinker != nil {
+		return doc.ImageLinker.ReadLinkedResource(doc.TargetFile, img.URI)
 	}
 	return nil, nil
 }

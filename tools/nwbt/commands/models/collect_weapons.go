@@ -53,7 +53,7 @@ func (c *Collector) CollectWeapons() {
 				if model != "" {
 					group := importer.AssetGroup{}
 					group.TargetFile = file
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
@@ -69,7 +69,7 @@ func (c *Collector) CollectWeapons() {
 				if model != "" {
 					group := importer.AssetGroup{}
 					group.TargetFile = file
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})

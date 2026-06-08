@@ -67,7 +67,7 @@ func (c *Collector) CollectHousing(ids ...string) {
 			}
 
 			group := c.collectPrefabPath(slicePath + ".dynamicslice")
-			if len(group.Meshes) > 0 {
+			if len(group.Geometries) > 0 {
 				group.TargetFile = file
 				c.models.Store(group.TargetFile, group)
 			}
@@ -98,7 +98,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				modelAsset := meshNode.Static_Mesh
 				modelFile, err := c.LookupFileByAsset(modelAsset)
 				if err != nil {
-					slog.Error("model file not found", "asset", modelAsset, "err", err)
+					slog.Warn("skip missing model", "err", err)
 					continue
 				}
 				if modelFile == nil {
@@ -109,7 +109,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				materialAsset := meshNode.Material_Override_Asset
 				materialFile, err := c.LookupFileByAsset(materialAsset)
 				if err != nil {
-					slog.Error("material not found", "asset", materialAsset, "err", err)
+					slog.Warn("ignore model material", "err", err)
 				}
 				material := ""
 				if materialFile != nil {
@@ -117,7 +117,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				}
 				model, material = c.ResolveCgfAndMtl(model, material)
 
-				group.Meshes = append(group.Meshes, importer.GeometryAsset{
+				group.Geometries = append(group.Geometries, importer.GeometryAsset{
 					GeometryFile: model,
 					MaterialFile: material,
 					Entity: importer.Entity{
@@ -132,7 +132,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				modelAsset := v.Skinned_Mesh_Render_Node.Skinned_Mesh
 				modelFile, err := c.LookupFileByAsset(modelAsset)
 				if err != nil {
-					slog.Error("model file not found", "asset", modelAsset, "err", err)
+					slog.Warn("skip missing model", "err", err)
 					continue
 				}
 				if modelFile == nil {
@@ -142,7 +142,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				materialAsset := v.Skinned_Mesh_Render_Node.Material_Override_Asset
 				materialFile, err := c.LookupFileByAsset(materialAsset)
 				if err != nil {
-					slog.Error("material not found", "asset", materialAsset, "err", err)
+					slog.Warn("ignore model material", "err", err)
 				}
 				material := ""
 				if materialFile != nil {
@@ -151,7 +151,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 				if path.Ext(model) == ".cdf" {
 					cdf, err := c.LoadCdf(model)
 					if err != nil {
-						slog.Warn("failed to resolve cdf asset", "file", model, "err", err)
+						slog.Warn("skip unresolved cdf file", "err", err)
 						continue
 					}
 					attachments := cdf.SkinAndClothAttachments()
@@ -163,7 +163,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 							continue
 						}
 						if model, mtl := c.ResolveCgfAndMtl(attch.Binding, attch.Material, material); model != "" {
-							group.Meshes = append(group.Meshes, importer.GeometryAsset{
+							group.Geometries = append(group.Geometries, importer.GeometryAsset{
 								GeometryFile: model,
 								MaterialFile: mtl,
 								Entity: importer.Entity{
@@ -175,7 +175,7 @@ func (c *Collector) collectPrefabPath(sliceFile string) importer.AssetGroup {
 					}
 				} else {
 					if model, material = c.ResolveCgfAndMtl(model, material); model != "" {
-						group.Meshes = append(group.Meshes, importer.GeometryAsset{
+						group.Geometries = append(group.Geometries, importer.GeometryAsset{
 							GeometryFile: model,
 							MaterialFile: material,
 							Entity: importer.Entity{

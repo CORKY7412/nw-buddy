@@ -23,6 +23,7 @@ const (
 	ExtraKeyName         = "name"
 	ExtraKeyInverse      = "inverse"
 	ExtraKeyAlpha        = "alpha"
+	ExtraKeyLOD          = "lod"
 )
 
 type Document struct {
@@ -30,6 +31,7 @@ type Document struct {
 	TargetFile  string
 	ImageLoader image.Loader
 	ImageLinker ImageLinker
+	Options     ImportOptions
 }
 
 func NewDocument() *Document {
@@ -38,8 +40,8 @@ func NewDocument() *Document {
 	}
 }
 
-func (c *Document) Save() error {
-	file := c.TargetFile
+func (doc *Document) Save() error {
+	file := doc.TargetFile
 	if file == "" {
 		return fmt.Errorf("no target file specified")
 	}
@@ -53,61 +55,61 @@ func (c *Document) Save() error {
 		return err
 	}
 	defer f.Close()
-	return c.Encode(f, path.Ext(file) == ".glb")
+	return doc.Encode(f, path.Ext(file) == ".glb")
 }
 
-func (c *Document) Encode(f io.Writer, binary bool) error {
+func (doc *Document) Encode(f io.Writer, binary bool) error {
 	e := gltf.NewEncoder(f)
 	e.SetJSONIndent("", "\t")
 	e.AsBinary = binary
-	return e.Encode(c.Document)
+	return e.Encode(doc.Document)
 }
 
-func (d *Document) DefaultScene() *gltf.Scene {
-	if d.Scene == nil {
-		d.Scene = d.AppendScene(&gltf.Scene{})
+func (doc *Document) DefaultScene() *gltf.Scene {
+	if doc.Scene == nil {
+		doc.Scene = doc.AppendScene(&gltf.Scene{})
 	}
-	return d.Scenes[*d.Scene]
+	return doc.Scenes[*doc.Scene]
 }
 
-func (c *Document) AppendScene(scene *gltf.Scene) *int {
-	c.Document.Scenes = append(c.Document.Scenes, scene)
-	return gltf.Index(slices.Index(c.Document.Scenes, scene))
+func (doc *Document) AppendScene(scene *gltf.Scene) *int {
+	doc.Document.Scenes = append(doc.Document.Scenes, scene)
+	return gltf.Index(slices.Index(doc.Document.Scenes, scene))
 }
 
-func (c *Document) AppendMesh(mesh *gltf.Mesh) *int {
-	c.Document.Meshes = append(c.Document.Meshes, mesh)
-	return gltf.Index(slices.Index(c.Document.Meshes, mesh))
+func (doc *Document) AppendMesh(mesh *gltf.Mesh) *int {
+	doc.Document.Meshes = append(doc.Document.Meshes, mesh)
+	return gltf.Index(slices.Index(doc.Document.Meshes, mesh))
 }
 
-func (c *Document) AppendNode(node *gltf.Node) int {
-	c.Document.Nodes = append(c.Document.Nodes, node)
-	return slices.Index(c.Document.Nodes, node)
+func (doc *Document) AppendNode(node *gltf.Node) int {
+	doc.Document.Nodes = append(doc.Document.Nodes, node)
+	return slices.Index(doc.Document.Nodes, node)
 }
 
-func (d *Document) NodeAddChild(parent *gltf.Node, child ...*gltf.Node) {
+func (doc *Document) NodeAddChild(parent *gltf.Node, child ...*gltf.Node) {
 	for _, c := range child {
-		parent.Children = append(parent.Children, slices.Index(d.Nodes, c))
+		parent.Children = append(parent.Children, slices.Index(doc.Nodes, c))
 	}
 }
 
-func (d *Document) NodeHasChild(parent *gltf.Node, child *gltf.Node) bool {
-	return slices.Contains(parent.Children, d.NodeIndex(child))
+func (doc *Document) NodeHasChild(parent *gltf.Node, child *gltf.Node) bool {
+	return slices.Contains(parent.Children, doc.NodeIndex(child))
 }
 
-func (c *Document) NewNode() (*gltf.Node, int) {
+func (doc *Document) NewNode() (*gltf.Node, int) {
 	node := &gltf.Node{}
-	index := c.AppendNode(node)
+	index := doc.AppendNode(node)
 	return node, index
 }
 
-func (c *Document) NodeIndex(node *gltf.Node) int {
-	return slices.Index(c.Nodes, node)
+func (doc *Document) NodeIndex(node *gltf.Node) int {
+	return slices.Index(doc.Nodes, node)
 }
 
-func (d *Document) NodeParent(node *gltf.Node) *gltf.Node {
-	index := d.NodeIndex(node)
-	for _, n := range d.Nodes {
+func (doc *Document) NodeParent(node *gltf.Node) *gltf.Node {
+	index := doc.NodeIndex(node)
+	for _, n := range doc.Nodes {
 		if slices.Index(n.Children, index) != -1 {
 			return n
 		}
@@ -115,8 +117,8 @@ func (d *Document) NodeParent(node *gltf.Node) *gltf.Node {
 	return nil
 }
 
-func (d *Document) FindNodeByRefID(instanceRef string) (*gltf.Node, int) {
-	for i, node := range d.Nodes {
+func (doc *Document) FindNodeByRefID(instanceRef string) (*gltf.Node, int) {
+	for i, node := range doc.Nodes {
 		if ref, ok := ExtrasLoad[string](node.Extras, ExtraKeyRefID); ok && ref == instanceRef {
 			return node, i
 		}
@@ -124,8 +126,8 @@ func (d *Document) FindNodeByRefID(instanceRef string) (*gltf.Node, int) {
 	return nil, -1
 }
 
-func (d *Document) FindNodeByControllerId(controllerId uint32) (*gltf.Node, int) {
-	for i, node := range d.Nodes {
+func (doc *Document) FindNodeByControllerId(controllerId uint32) (*gltf.Node, int) {
+	for i, node := range doc.Nodes {
 		if ref, ok := ExtrasLoad[uint32](node.Extras, ExtraKeyControllerID); ok && ref == controllerId {
 			return node, i
 		}
@@ -133,19 +135,19 @@ func (d *Document) FindNodeByControllerId(controllerId uint32) (*gltf.Node, int)
 	return nil, -1
 }
 
-func (d *Document) AddToSceneWithTransform(scene *gltf.Scene, node *gltf.Node, transform [16]float32) {
-	parent, _ := d.NewNode()
+func (doc *Document) AddToSceneWithTransform(scene *gltf.Scene, node *gltf.Node, transform [16]float32) {
+	parent, _ := doc.NewNode()
 	parent.Matrix = mat4.ToFloat64(transform)
-	d.NodeAddChild(parent, node)
-	d.AddToScene(scene, parent)
+	doc.NodeAddChild(parent, node)
+	doc.AddToScene(scene, parent)
 }
 
-func (d *Document) AddToScene(scene *gltf.Scene, node *gltf.Node) {
-	scene.Nodes = append(scene.Nodes, d.NodeIndex(node))
+func (doc *Document) AddToScene(scene *gltf.Scene, node *gltf.Node) {
+	scene.Nodes = append(scene.Nodes, doc.NodeIndex(node))
 }
 
-func (d *Document) CopyNode(node *gltf.Node) (*gltf.Node, int) {
-	copy, index := d.NewNode()
+func (doc *Document) CopyNode(node *gltf.Node) (*gltf.Node, int) {
+	copy, index := doc.NewNode()
 
 	copy.Camera = node.Camera
 	copy.Matrix = node.Matrix
@@ -158,17 +160,17 @@ func (d *Document) CopyNode(node *gltf.Node) (*gltf.Node, int) {
 	copy.Weights = node.Weights
 
 	for _, child := range node.Children {
-		_, childIndex := d.CopyNode(d.Nodes[child])
+		_, childIndex := doc.CopyNode(doc.Nodes[child])
 		copy.Children = append(copy.Children, childIndex)
 	}
 	return copy, index
 }
 
-func (d *Document) FindPrimitiveByRef(refId string) *gltf.Primitive {
+func (doc *Document) FindPrimitiveByRef(refId string) *gltf.Primitive {
 	if refId == "" {
 		return nil
 	}
-	for _, mesh := range d.Meshes {
+	for _, mesh := range doc.Meshes {
 		for _, prim := range mesh.Primitives {
 			if ref, ok := ExtrasLoad[string](prim.Extras, ExtraKeyRefID); ok && ref == refId {
 				return prim
@@ -178,7 +180,7 @@ func (d *Document) FindPrimitiveByRef(refId string) *gltf.Primitive {
 	return nil
 }
 
-func (d *Document) CopyPrimitive(prim *gltf.Primitive) *gltf.Primitive {
+func (doc *Document) CopyPrimitive(prim *gltf.Primitive) *gltf.Primitive {
 	copy := &gltf.Primitive{}
 	copy.Attributes = copyPrimitiveAttributes(prim.Attributes)
 	copy.Indices = prim.Indices
@@ -197,8 +199,8 @@ func copyPrimitiveAttributes(attrs gltf.PrimitiveAttributes) gltf.PrimitiveAttri
 	return copy
 }
 
-func (c *Document) FindMaterialByRef(ref string) *gltf.Material {
-	index := slices.IndexFunc(c.Materials, func(it *gltf.Material) bool {
+func (doc *Document) FindMaterialByRef(ref string) *gltf.Material {
+	index := slices.IndexFunc(doc.Materials, func(it *gltf.Material) bool {
 		if lookup, ok := it.Extras.(map[string]any); ok {
 			if refId, ok := lookup["refId"].(string); ok {
 				return refId == ref
@@ -209,19 +211,19 @@ func (c *Document) FindMaterialByRef(ref string) *gltf.Material {
 	if index == -1 {
 		return nil
 	}
-	return c.Materials[index]
+	return doc.Materials[index]
 }
 
-func (c *Document) FindOrAddMaterial(material mtl.Material) *gltf.Material {
+func (doc *Document) FindOrAddMaterial(material mtl.Material) *gltf.Material {
 	refId, _ := material.CalculateHash()
-	gltfMtl := c.FindMaterialByRef(refId)
+	gltfMtl := doc.FindMaterialByRef(refId)
 	if gltfMtl != nil {
 		return gltfMtl
 	}
 	gltfMtl = &gltf.Material{}
 	gltfMtl.Name = material.Name
 	gltfMtl.Extras = map[string]any{"refId": refId, "mtl": material}
-	c.Materials = append(c.Materials, gltfMtl)
+	doc.Materials = append(doc.Materials, gltfMtl)
 	return gltfMtl
 }
 
@@ -261,9 +263,9 @@ func ExtrasDelete(data any, key string) any {
 	return lookup
 }
 
-func (d *Document) IsMaterialReferenced(material *gltf.Material) bool {
-	index := slices.Index(d.Materials, material)
-	for _, mesh := range d.Meshes {
+func (doc *Document) IsMaterialReferenced(material *gltf.Material) bool {
+	index := slices.Index(doc.Materials, material)
+	for _, mesh := range doc.Meshes {
 		for _, primitive := range mesh.Primitives {
 			if primitive.Material != nil && *primitive.Material == index {
 				return true

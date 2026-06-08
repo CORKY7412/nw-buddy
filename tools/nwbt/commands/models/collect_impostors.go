@@ -96,7 +96,7 @@ func (c *Collector) CollectImpostors(glob string) {
 			transform[12] = float32(impostor.WorldPosition.X)
 			transform[13] = float32(impostor.WorldPosition.Y)
 
-			group.Meshes = append(group.Meshes, importer.GeometryAsset{
+			group.Geometries = append(group.Geometries, importer.GeometryAsset{
 				GeometryFile: model,
 				MaterialFile: material,
 				Entity: importer.Entity{
@@ -106,13 +106,13 @@ func (c *Collector) CollectImpostors(glob string) {
 			})
 
 		}
-		if !merge && len(group.Meshes) > 0 {
+		if !merge && len(group.Geometries) > 0 {
 			group.TargetFile = c.outputPath(utils.ReplaceExt(file.Path(), ""))
 			c.models.Store(group.TargetFile, group)
 		}
 	}
 
-	if merge && len(group.Meshes) > 0 {
+	if merge && len(group.Geometries) > 0 {
 		group.TargetFile = utils.ReplaceExt(flgOutFile, "")
 		c.models.Store(flgOutFile, group)
 	}

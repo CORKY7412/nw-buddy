@@ -10,10 +10,6 @@ const (
 	shaderNoDraw             = "nodraw"
 )
 
-func (e *Material) CanBeSkipped() bool {
-	return e.IsNoDraw() || e.IsFog() || e.IsBeam() || e.IsParticle()
-}
-
 func (e *Material) IsNoDraw() bool {
 	return strings.EqualFold(e.Shader, shaderNoDraw)
 }

@@ -10,7 +10,6 @@ import (
 	"nw-buddy/tools/utils/math"
 	"nw-buddy/tools/utils/math/mat4"
 	"slices"
-	"strings"
 
 	"github.com/x448/float16"
 
@@ -18,7 +17,9 @@ import (
 	"github.com/qmuntal/gltf/modeler"
 )
 
-func (d *Document) ImportCgfMesh(name string, chunk cgf.ChunkMesh, cgfile *cgf.File, heap []byte, materialLookup MaterialLookup, simplify bool) (*int, *gltf.Mesh) {
+func (doc *Document) ImportCgfMesh(name string, chunk cgf.ChunkMesh, cgfile *cgf.File, heap []byte, materialLookup MaterialLookup) (*gltf.Mesh, *int) {
+	simplify := doc.Options.Simplify
+	base := doc.Options.Base
 
 	subsets, hasSubsets := cgf.FindChunk[cgf.ChunkMeshSubsets](cgfile, chunk.SubsetsChunkId)
 	if !hasSubsets {
@@ -28,19 +29,17 @@ func (d *Document) ImportCgfMesh(name string, chunk cgf.ChunkMesh, cgfile *cgf.F
 	mesh := &gltf.Mesh{}
 	for i, subset := range subsets.Subsets {
 		material := materialLookup.Get(int(subset.MaterialId))
-		if material != nil && strings.Contains(strings.ToLower(material.Name), "shadow_proxy") {
-			continue
-		}
-		mtl := lookupMtl(material)
-		if mtl != nil && mtl.CanBeSkipped() {
-			continue
-		}
+
+		// mtl := lookupMtl(material)
+		// if mtl != nil && mtl.IsShadowProxy() {
+		// 	continue
+		// }
 
 		subRefId := subsetRefId(cgfile, chunk, i)
 		var primitive *gltf.Primitive
-		if found := d.FindPrimitiveByRef(subRefId); found != nil {
-			primitive = d.CopyPrimitive(found)
-		} else if prim, err := convertPrimitive(d.Document, subset, chunk, cgfile, heap, simplify); err != nil {
+		if found := doc.FindPrimitiveByRef(subRefId); found != nil {
+			primitive = doc.CopyPrimitive(found)
+		} else if prim, err := convertPrimitive(doc.Document, subset, chunk, cgfile, heap, simplify, base); err != nil {
 			slog.Warn("Failed to convert primitive", "ref", subRefId, "err", err)
 			continue
 		} else {
@@ -53,8 +52,7 @@ func (d *Document) ImportCgfMesh(name string, chunk cgf.ChunkMesh, cgfile *cgf.F
 		primitive.Extras = ExtrasStore(primitive.Extras, ExtraKeySource, cgfile.Source)
 		primitive.Extras = ExtrasStore(primitive.Extras, ExtraKeyName, name)
 
-		index := slices.Index(d.Materials, material)
-		if index != -1 {
+		if index := slices.Index(doc.Materials, material); index != -1 {
 			primitive.Material = gltf.Index(index)
 		}
 		mesh.Primitives = append(mesh.Primitives, primitive)
@@ -64,7 +62,7 @@ func (d *Document) ImportCgfMesh(name string, chunk cgf.ChunkMesh, cgfile *cgf.F
 		return nil, nil
 	}
 
-	return d.AppendMesh(mesh), mesh
+	return mesh, doc.AppendMesh(mesh)
 }
 
 func subsetRefId(cgfile *cgf.File, chunk cgf.ChunkMesh, subset int) string {
@@ -74,7 +72,7 @@ func subsetRefId(cgfile *cgf.File, chunk cgf.ChunkMesh, subset int) string {
 	return hashString(fmt.Sprintf("%s_%d_%d_%d", cgfile.Source, chunk.Id, chunk.SubsetsChunkId, subset))
 }
 
-func convertPrimitive(doc *gltf.Document, subset cgf.MeshSubset, chunk cgf.ChunkMesh, cgFile *cgf.File, heap []byte, simplify bool) (out *gltf.Primitive, err error) {
+func convertPrimitive(doc *gltf.Document, subset cgf.MeshSubset, chunk cgf.ChunkMesh, cgFile *cgf.File, heap []byte, simplify bool, base math.Base) (out *gltf.Primitive, err error) {
 	defer utils.HandleRecover(&err)
 
 	out = &gltf.Primitive{
@@ -90,11 +88,11 @@ func convertPrimitive(doc *gltf.Document, subset cgf.MeshSubset, chunk cgf.Chunk
 			}
 			streamType := cgf.DataStreamType(streamTypeId)
 			if stream, ok := cgf.FindChunk[cgf.ChunkDataStream](cgFile, id); ok {
-				convertPrimitiveStream(doc, subset, stream, out, simplify)
+				convertPrimitiveStream(doc, subset, stream, out, simplify, base)
 				continue
 			}
 			if ref, ok := cgf.FindChunk[cgf.ChunkDataRef](cgFile, id); ok {
-				convertPrimitiveRef(doc, subset, streamType, ref, heap, out, simplify)
+				convertPrimitiveRef(doc, subset, streamType, ref, heap, out, simplify, base)
 				continue
 			}
 
@@ -106,7 +104,7 @@ func convertPrimitive(doc *gltf.Document, subset cgf.MeshSubset, chunk cgf.Chunk
 	return
 }
 
-func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cgf.ChunkDataStream, out *gltf.Primitive, simplify bool) {
+func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cgf.ChunkDataStream, out *gltf.Primitive, simplify bool, base math.Base) {
 
 	switch stream.StreamType {
 	case cgf.STREAM_TYPE_INDICES:
@@ -114,9 +112,15 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 		r.SeekAbsolute(int(stream.ElementSize) * int(subset.FirstIndex))
 		switch stream.ElementSize {
 		case 2:
-			indices := make([]uint16, subset.NumIndices)
+			// indices := make([]uint16, subset.NumIndices)
+			// for i := range indices {
+			// 	indices[i] = r.MustReadUint16() - uint16(subset.FirstVertex)
+			// }
+
+			// Web GPU needs 4 byte alignment. We fix that by using 32 bit indices
+			indices := make([]uint32, subset.NumIndices)
 			for i := range indices {
-				indices[i] = r.MustReadUint16() - uint16(subset.FirstVertex)
+				indices[i] = uint32(r.MustReadUint16() - uint16(subset.FirstVertex))
 			}
 			out.Indices = gltf.Index(modeler.WriteIndices(doc, indices))
 		case 4:
@@ -135,7 +139,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 		case 12:
 			vertices := make([][3]float32, subset.NumVertices)
 			for i := range vertices {
-				vertices[i] = math.CryToGltfVec3([3]float32{
+				vertices[i] = base.Vec3([3]float32{
 					r.MustReadFloat32(),
 					r.MustReadFloat32(),
 					r.MustReadFloat32(),
@@ -145,7 +149,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 		case 8:
 			vertices := make([][3]float32, subset.NumVertices)
 			for i := range subset.NumVertices {
-				vertices[i] = math.CryToGltfVec3([3]float32{
+				vertices[i] = base.Vec3([3]float32{
 					float16.Float16(r.MustReadUint16()).Float32(),
 					float16.Float16(r.MustReadUint16()).Float32(),
 					float16.Float16(r.MustReadUint16()).Float32(),
@@ -166,7 +170,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 		case 12:
 			vertices := make([][3]float32, subset.NumVertices)
 			for i := range subset.NumVertices {
-				vertices[i] = math.CryToGltfVec3([3]float32{
+				vertices[i] = base.Vec3([3]float32{
 					r.MustReadFloat32(),
 					r.MustReadFloat32(),
 					r.MustReadFloat32(),
@@ -179,7 +183,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 			r.SeekRelative(8 * int(subset.FirstVertex))
 			vertices := make([][3]float32, subset.NumVertices)
 			for i := range subset.NumVertices {
-				vertices[i] = math.CryToGltfVec3([3]float32{
+				vertices[i] = base.Vec3([3]float32{
 					float16.Float16(r.MustReadUint16()).Float32(),
 					float16.Float16(r.MustReadUint16()).Float32(),
 					float16.Float16(r.MustReadUint16()).Float32(),
@@ -202,13 +206,13 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 			tangents := make([][4]float32, subset.NumVertices)
 			normals := make([][3]float32, subset.NumVertices)
 			for i := range subset.NumVertices {
-				t := math.CryToGltfQuat([4]float32{
+				t := base.Quat([4]float32{
 					float32(r.MustReadInt16()) / 32767.0,
 					float32(r.MustReadInt16()) / 32767.0,
 					float32(r.MustReadInt16()) / 32767.0,
 					float32(r.MustReadInt16()) / 32767.0,
 				})
-				b := math.CryToGltfQuat([4]float32{
+				b := base.Quat([4]float32{
 					float32(r.MustReadInt16()) / 32767.0,
 					float32(r.MustReadInt16()) / 32767.0,
 					float32(r.MustReadInt16()) / 32767.0,
@@ -359,7 +363,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 				// convert quaternion to matrix
 				m4 := mat4.FromQuatXYZW(x, y, z, w)
 
-				tangent := math.CryToGltfVec4([4]float32{
+				tangent := base.Vec4([4]float32{
 					m4[0],
 					m4[1],
 					m4[2],
@@ -370,7 +374,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 				}
 				tangents[i] = tangent
 
-				normal := math.CryToGltfVec3([3]float32{
+				normal := base.Vec3([3]float32{
 					m4[8],
 					m4[9],
 					m4[10],
@@ -395,7 +399,7 @@ func convertPrimitiveStream(doc *gltf.Document, subset cgf.MeshSubset, stream cg
 	}
 }
 
-func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType cgf.DataStreamType, ref cgf.ChunkDataRef, heap []byte, out *gltf.Primitive, simplify bool) {
+func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType cgf.DataStreamType, ref cgf.ChunkDataRef, heap []byte, out *gltf.Primitive, simplify bool, base math.Base) {
 	switch streamType {
 	case cgf.STREAM_TYPE_INDICES:
 		r := buf.NewReaderLE(heap)
@@ -403,9 +407,14 @@ func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType c
 		r.SeekRelative(int(ref.Stride) * int(subset.FirstIndex))
 		switch ref.Stride {
 		case 2:
-			indices := make([]uint16, subset.NumIndices)
+			// indices := make([]uint16, subset.NumIndices)
+			// for i := range indices {
+			// 	indices[i] = r.MustReadUint16() - uint16(subset.FirstVertex)
+			// }
+
+			indices := make([]uint32, subset.NumIndices)
 			for i := range indices {
-				indices[i] = r.MustReadUint16() - uint16(subset.FirstVertex)
+				indices[i] = uint32(r.MustReadUint16() - uint16(subset.FirstVertex))
 			}
 			out.Indices = gltf.Index(modeler.WriteIndices(doc, indices))
 		case 4:
@@ -425,7 +434,7 @@ func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType c
 		case 16:
 			{
 				for i := range subset.NumVertices {
-					vertices[i] = math.CryToGltfVec3([3]float32{
+					vertices[i] = base.Vec3([3]float32{
 						float16.Float16(r.MustReadUint16()).Float32(), // 2 byte X
 						float16.Float16(r.MustReadUint16()).Float32(), // 2 byte Y
 						float16.Float16(r.MustReadUint16()).Float32(), // 2 byte Z
@@ -438,7 +447,7 @@ func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType c
 		case 24:
 			{
 				for i := range subset.NumVertices {
-					vertices[i] = math.CryToGltfVec3([3]float32{
+					vertices[i] = base.Vec3([3]float32{
 						r.MustReadFloat32(), // 4 byte X
 						r.MustReadFloat32(), // 4 byte Y
 						r.MustReadFloat32(), // 4 byte Z
@@ -564,8 +573,8 @@ func convertPrimitiveRef(doc *gltf.Document, subset cgf.MeshSubset, streamType c
 			bz := float32(r.MustReadInt16()) * factor
 			r.MustReadInt16()
 
-			tangent := math.CryToGltfVec3([3]float32{tx, ty, tz})
-			bitangent := math.CryToGltfVec3([3]float32{bx, by, bz})
+			tangent := base.Vec3([3]float32{tx, ty, tz})
+			bitangent := base.Vec3([3]float32{bx, by, bz})
 
 			normals[i] = math.Normalize(math.Cross(tangent, bitangent))
 			if tw < 0 {

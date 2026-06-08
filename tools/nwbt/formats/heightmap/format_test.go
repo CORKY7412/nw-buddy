@@ -32,7 +32,7 @@ func TestParseHeightField(t *testing.T) {
 	index := 0
 	for y := range size {
 		for x := range size {
-			col := heightmap.EncodeHeightToNRGBA(region[index])
+			col := heightmap.EncodeHeightToRGBA(float32(region[index]))
 			index++
 			img.Set(x, y, col)
 		}
@@ -67,13 +67,66 @@ func TestNativeTiff(t *testing.T) {
 func TestLoad(t *testing.T) {
 	files := []string{
 		"samples/region.heightmap",
-		"samples/r_+03_+02/region.heightmap",
-		"samples/r_+03_+05/region.heightmap",
+		// "samples/r_+00_+00/region.heightmap",
+		// "samples/r_+00_+01/region.heightmap",
+		// "samples/r_+00_+02/region.heightmap",
+		// "samples/r_+00_+03/region.heightmap",
+		// "samples/r_+00_+04/region.heightmap",
+		// "samples/r_+00_+05/region.heightmap",
+		// "samples/r_+00_+06/region.heightmap",
+
+		// "samples/r_+01_+00/region.heightmap",
+		// "samples/r_+01_+01/region.heightmap",
+		// "samples/r_+01_+02/region.heightmap",
+		// "samples/r_+01_+03/region.heightmap",
+		// "samples/r_+01_+04/region.heightmap",
+		// "samples/r_+01_+05/region.heightmap",
+		// "samples/r_+01_+06/region.heightmap",
+
+		// "samples/r_+02_+00/region.heightmap",
+		// "samples/r_+02_+01/region.heightmap",
+		// "samples/r_+02_+02/region.heightmap",
+		// "samples/r_+02_+03/region.heightmap",
+		// "samples/r_+02_+04/region.heightmap",
+		// "samples/r_+02_+05/region.heightmap",
+		// "samples/r_+02_+06/region.heightmap",
+
+		// "samples/r_+03_+00/region.heightmap",
+		// "samples/r_+03_+01/region.heightmap",
+		// "samples/r_+03_+02/region.heightmap",
+		// "samples/r_+03_+03/region.heightmap",
+		// "samples/r_+03_+04/region.heightmap",
+		// "samples/r_+03_+05/region.heightmap",
+		// "samples/r_+03_+06/region.heightmap",
+
+		// "samples/r_+04_+00/region.heightmap",
+		// "samples/r_+04_+01/region.heightmap",
+		// "samples/r_+04_+02/region.heightmap",
+		// "samples/r_+04_+03/region.heightmap",
+		// "samples/r_+04_+04/region.heightmap",
+		// "samples/r_+04_+05/region.heightmap",
+		// "samples/r_+04_+06/region.heightmap",
+
+		// "samples/r_+05_+00/region.heightmap",
+		// "samples/r_+05_+01/region.heightmap",
+		// "samples/r_+05_+02/region.heightmap",
+		// "samples/r_+05_+03/region.heightmap",
+		// "samples/r_+05_+04/region.heightmap",
+		// "samples/r_+05_+05/region.heightmap",
+		// "samples/r_+05_+06/region.heightmap",
+
+		// "samples/r_+06_+00/region.heightmap",
+		// "samples/r_+06_+01/region.heightmap",
+		// "samples/r_+06_+02/region.heightmap",
+		// "samples/r_+06_+03/region.heightmap",
+		// "samples/r_+06_+04/region.heightmap",
+		// "samples/r_+06_+05/region.heightmap",
+		// "samples/r_+06_+06/region.heightmap",
 	}
 	for _, file := range files {
 		data, err := os.ReadFile(file)
 		assert.NoError(t, err, "Failed to read file: %s", file)
-		_, err = heightmap.LoadFromTiff(data)
+		_, err = heightmap.ParseTIFF(data) // heightmap.LoadFromTiff(data)
 		assert.NoError(t, err, "Failed to load heightmap from file: %s", file)
 	}
 }

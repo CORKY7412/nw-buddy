@@ -59,12 +59,12 @@ func (c *Collector) CollectAppearancesArmor(ids ...string) {
 				group.TargetFile = file
 				model, material := c.ResolveCgfAndMtl(model, material)
 				if model != "" {
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
 					if genderChr != "" {
-						group.Meshes = append(group.Meshes, importer.GeometryAsset{
+						group.Geometries = append(group.Geometries, importer.GeometryAsset{
 							GeometryFile: genderChr,
 							MaterialFile: game.DEFAULT_MATERIAL,
 							SkipGeometry: true, // we are only interested in skin
@@ -73,7 +73,7 @@ func (c *Collector) CollectAppearancesArmor(ids ...string) {
 					for _, attachment := range attachments {
 						model, material = c.ResolveCgfAndMtl(attachment.Binding, attachment.Material)
 						if model != "" {
-							group.Meshes = append(group.Meshes, importer.GeometryAsset{
+							group.Geometries = append(group.Geometries, importer.GeometryAsset{
 								GeometryFile: model,
 								MaterialFile: material,
 							})
@@ -91,12 +91,12 @@ func (c *Collector) CollectAppearancesArmor(ids ...string) {
 				group.TargetFile = file
 				model, material := c.ResolveCgfAndMtl(model, material)
 				if model != "" {
-					group.Meshes = append(group.Meshes, importer.GeometryAsset{
+					group.Geometries = append(group.Geometries, importer.GeometryAsset{
 						GeometryFile: model,
 						MaterialFile: material,
 					})
 					if genderChr != "" {
-						group.Meshes = append(group.Meshes, importer.GeometryAsset{
+						group.Geometries = append(group.Geometries, importer.GeometryAsset{
 							GeometryFile: genderChr,
 							MaterialFile: game.DEFAULT_MATERIAL,
 							SkipGeometry: true, // we are only interested in skin
@@ -105,7 +105,7 @@ func (c *Collector) CollectAppearancesArmor(ids ...string) {
 					for _, attachment := range attachments {
 						model, material = c.ResolveCgfAndMtl(attachment.Binding, attachment.Material)
 						if model != "" {
-							group.Meshes = append(group.Meshes, importer.GeometryAsset{
+							group.Geometries = append(group.Geometries, importer.GeometryAsset{
 								GeometryFile: model,
 								MaterialFile: material,
 							})
