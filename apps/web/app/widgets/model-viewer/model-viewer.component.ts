@@ -304,7 +304,7 @@ export class ModelViewerComponent implements OnDestroy {
   }
 
   private async bindAppearance() {
-    const { NwMaterialExtension } = await import('@nw-viewer/babylon/extensions')
+    const { NwMaterialExtension } = await import('@nw-viewer-old/babylon/extensions')
     effect(
       () => {
         const model = this.model()
@@ -328,7 +328,7 @@ export class ModelViewerComponent implements OnDestroy {
   }
 
   private async bindDyeState() {
-    const { updateNwMaterial } = await import('@nw-viewer/babylon/extensions')
+    const { updateNwMaterial } = await import('@nw-viewer-old/babylon/extensions')
     const { renderFrame } = await import('./viewer/create-viewer')
     effect(
       () => {

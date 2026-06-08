@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core'
 import { rxResource } from '@angular/core/rxjs-interop'
-import type { ProceduralBar, ProceduralLayer } from '@nw-viewer/babylon/adb'
+import type { ProceduralBar, ProceduralLayer } from '@nw-viewer-old/babylon/adb'
 import { PropertyGridModule } from '~/ui/property-grid'
 import { TooltipModule } from '~/ui/tooltip'
 import { GameViewerService } from './game-viewer.service'

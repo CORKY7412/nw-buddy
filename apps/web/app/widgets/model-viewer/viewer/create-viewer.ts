@@ -9,7 +9,7 @@ export async function createViewer(options: {
   mode?: 'dark' | 'light'
   onInitialized?: (details: ViewerDetails) => void
 }): Promise<Viewer> {
-  await import('@nw-viewer/babylon/extensions').then(({ NwMaterialPlugin }) => {
+  await import('@nw-viewer-old/babylon/extensions').then(({ NwMaterialPlugin }) => {
     NwMaterialPlugin.register()
   })
   const { CreateViewerForCanvas } = await import('@babylonjs/viewer')
