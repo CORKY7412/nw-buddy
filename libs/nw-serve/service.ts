@@ -54,7 +54,7 @@ export function nwbtFileListUrl(pattern?: string) {
   return nwbtJsonRequest<ServeListResult>(`/list`)
 }
 
-export function nwbtCatalogAssetUrl(assetId: string) {
+export function nwbtAssetsUrl(assetId: string) {
   return nwbtJsonRequest<ServeAssetIdResult>(`/assets/${assetId}`)
 }
 

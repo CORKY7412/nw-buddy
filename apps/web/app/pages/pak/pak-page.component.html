@@ -1,12 +1,25 @@
 <ion-split-pane contentId="editor">
   <ion-menu contentId="editor" class="min-w-96 max-w-screen-lg order-3" [nwbSplitPane]="gutter">
-    <nwb-assets-sidebar class="ion-page" />
+    <nwb-assets-sidebar class="ion-page" #sidebar />
   </ion-menu>
   <nwb-split-gutter class="order-2" #gutter="gutter" />
   <div class="ion-page order-1" id="editor">
     <ion-header class="bg-base-300">
       <ion-toolbar>
-        <ion-title>Pak Browser</ion-title>
+        <div class="indicator ml-2">
+          <span
+            class="indicator-item indicator-start status animate-ping"
+            [class.status-success]="service.isConnected()"
+            [class.status-error]="!service.isConnected()"
+          ></span>
+          <span
+            class="indicator-item indicator-start status"
+            [class.status-success]="service.isConnected()"
+            [class.status-error]="!service.isConnected()"
+          ></span>
+          <a [routerLink]="'.'" class="ml-2"> NWBT Pak Browser </a>
+        </div>
+
         @if (tabs()?.length) {
           <div slot="end" class="join">
             @for (tab of tabs(); track $index) {
@@ -22,6 +35,9 @@
             }
           </div>
         }
+      </ion-toolbar>
+      <ion-toolbar class="bg-base-200" [style.--min-height]="'0'">
+        <nwb-pak-navbar />
       </ion-toolbar>
     </ion-header>
     @if (source(); as source) {
@@ -72,10 +88,10 @@
               <nwb-code-editor
                 class="ion-page"
                 [nwbMonacoSliceExtension]=""
+                (nwbMonacoAssetCommand)="service.handleMonacoAssetCommand($event)"
                 [ngModel]="textContent.value()"
                 [language]="source.textType"
                 [disabled]="true"
-                (fileClicked)="handleFileSelection($event.file, $event.newTab)"
               />
             }
             @case ('img') {
@@ -118,6 +134,10 @@
           }
         </ion-content>
       </div>
+    } @else {
+      <ion-content>
+        <nwb-pak-docs />
+      </ion-content>
     }
   </div>
 </ion-split-pane>

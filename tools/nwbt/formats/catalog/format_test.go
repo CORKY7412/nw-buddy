@@ -62,6 +62,11 @@ func TestParseID(t *testing.T) {
 	require.True(t, ok)
 	require.Equal(t, "ad7a9b3e-e77f-57fa-9173-eeaf4f865eef", asset.Guid)
 	require.Equal(t, uint32(65376), asset.SubID)
+
+	asset, ok = catalog.ParseAssetId("ad7a9b3ee77f57fa9173eeaf4f865eef")
+	require.True(t, ok)
+	require.Equal(t, "ad7a9b3e-e77f-57fa-9173-eeaf4f865eef", asset.Guid)
+	require.Equal(t, uint32(0), asset.SubID)
 }
 
 func TestLookup(t *testing.T) {

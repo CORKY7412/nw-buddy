@@ -87,6 +87,34 @@ func run(cmd *cobra.Command, args []string) {
 	os.MkdirAll(flg.TempDir, os.ModePerm)
 	os.MkdirAll(flg.CacheDir, os.ModePerm)
 
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		serveJson(map[string]any{
+			"name": "NWBT API",
+			"endpoints": []string{
+				"/health",
+				"/list/{pattern}",
+				"/stats/{filePath}",
+				"/files/{filePath}",
+				"/models/{filePath}",
+				"/assets/{assetId}",
+				"/levels/list.json",
+				"/levels/{coatlicue}/info.json",
+				"/levels/{coatlicue}/{region}/info.json",
+				"/levels/{coatlicue}/{region}/capitals.json",
+				"/levels/{coatlicue}/{region}/heightmap.r16",
+				"/levels/{coatlicue}/{region}/watermap.r16",
+			},
+		}, w)
+	})
+
+	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		serveJson(map[string]any{
+			"status":    "ok",
+			"timestamp": time.Now().UTC().Format(time.RFC3339),
+		}, w)
+	})
+
 	r.PathPrefix("/list").Handler(http.StripPrefix("/list", GetListHandler(assets.Archive)))
 	r.PathPrefix("/stats").Handler(http.StripPrefix("/stats", GetStatHandler(assets)))
 	r.PathPrefix("/files").Handler(http.StripPrefix("/files", GetFileHandler(assets)))

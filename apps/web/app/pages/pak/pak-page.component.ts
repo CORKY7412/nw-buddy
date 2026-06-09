@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core'
+import { Component, computed, inject, signal, viewChild } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { CodeEditorComponent, CodeEditorModule } from '~/ui/code-editor'
 import { LayoutModule } from '~/ui/layout'
@@ -10,19 +10,22 @@ import { map } from 'rxjs'
 import { SplitGutterComponent, SplitPaneDirective } from '~/ui/split-container'
 import { GameViewerModule } from '~/widgets/game-viewer'
 import { ModelItemInfo, ModelViewerModule } from '~/widgets/model-viewer'
+import { NwModule } from '../../nw'
 import { ObjectTreeComponent, ObjectTreeLabelDirective } from '../../ui/file-tree'
 import { IconsModule } from '../../ui/icons'
 import { svgCode, svgCubes, svgImage } from '../../ui/icons/svg'
-import { MonacoSliceExtensionDirective } from './monaco'
+import { MonacoSliceAssetCommand, MonacoSliceExtensionDirective } from './monaco'
 import { dynamicSliceOutliner, Entity, entityComponentNames } from './outline'
+import { PakDocsComponent } from './pak-docs.component'
+import { PakNavbarComponent } from './pak-navbar.component'
 import { PakSidebarComponent } from './pak-sidebar.component'
 import { PakService } from './pak.service'
-import { NwModule } from '../../nw'
 
 export type TabId = 'img' | 'txt' | '3d'
 @Component({
   standalone: true,
   selector: 'nwb-assets-page',
+  providers: [PakService],
   imports: [
     PakSidebarComponent,
     LayoutModule,
@@ -38,6 +41,8 @@ export type TabId = 'img' | 'txt' | '3d'
     ObjectTreeComponent,
     ObjectTreeLabelDirective,
     NwModule,
+    PakDocsComponent,
+    PakNavbarComponent,
   ],
   host: {
     class: 'ion-page flex flex-row',
@@ -45,13 +50,14 @@ export type TabId = 'img' | 'txt' | '3d'
   templateUrl: './pak-page.component.html',
 })
 export class PakPageComponent {
-  private service = inject(PakService)
+  protected service = inject(PakService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private file = toSignal(this.route.queryParams.pipe(map((params) => params['file'] as string)))
   private tabId = toSignal(this.route.queryParams.pipe(map((params) => params['tab'] as TabId)))
   protected imageZoom = signal(1)
   protected source = computed(() => this.service.fileSource(this.file()))
+  protected navbar = viewChild(PakNavbarComponent)
   protected editor = viewChild(CodeEditorComponent)
   protected selectedEntity = signal<Entity>(null)
   protected entityComponents = computed(() => entityComponentNames(this.selectedEntity()))
@@ -127,20 +133,6 @@ export class PakPageComponent {
   protected previewType = computed(() => {
     return this.tabs()?.find((it) => it.active)?.id
   })
-
-  protected handleFileSelection(file: string, newTab: boolean) {
-    if (newTab) {
-      const url = new URL(location.pathname, location.origin)
-      url.searchParams.set('file', file)
-      window.open(url.toString(), '_blank')
-      return
-    }
-    this.router.navigate(['.'], {
-      queryParams: { file },
-      queryParamsHandling: 'merge',
-      relativeTo: this.route,
-    })
-  }
 
   protected handleEntitySelection(item: Entity) {
     this.selectedEntity.set(item)

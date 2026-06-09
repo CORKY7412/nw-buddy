@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,6 +13,7 @@ type AssetId struct {
 }
 
 var uuidReg = regexp.MustCompile(`([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})`)
+var uuid2Reg = regexp.MustCompile(`([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{12})`)
 var subidReg = regexp.MustCompile(`:([0-9a-fA-F]+)$`)
 
 func ParseAssetId(assetIdString string) (assetId AssetId, ok bool) {
@@ -53,6 +55,11 @@ func ParseUUID(uuidString string) (uuid UUID, ok bool) {
 	match := uuidReg.FindStringSubmatch(uuidString)
 	if len(match) == 2 {
 		return UUID(strings.ToLower(match[1])), true
+	}
+	match = uuid2Reg.FindStringSubmatch(uuidString)
+	if len(match) == 6 {
+		uuidStr := fmt.Sprintf("%s-%s-%s-%s-%s", match[1], match[2], match[3], match[4], match[5])
+		return UUID(strings.ToLower(uuidStr)), true
 	}
 	ok = false
 	return
