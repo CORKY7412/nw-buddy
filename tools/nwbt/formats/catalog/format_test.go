@@ -69,6 +69,22 @@ func TestParseID(t *testing.T) {
 	require.Equal(t, uint32(0), asset.SubID)
 }
 
+func TestParseUUIDprefixToInt(t *testing.T) {
+
+	value, err := catalog.ParseUUIDprefixToInt("00000002-0000-0000-0000-000000000000")
+	require.NoError(t, err)
+	require.Equal(t, uint32(2), value)
+
+	value, err = catalog.ParseUUIDprefixToInt("00000002")
+	require.NoError(t, err)
+	require.Equal(t, uint32(2), value)
+
+	value, err = catalog.ParseUUIDprefixToInt("ff60")
+	require.NoError(t, err)
+	require.Equal(t, uint32(65376), value)
+
+}
+
 func TestLookup(t *testing.T) {
 	doc, _ := getCatalog(t)
 

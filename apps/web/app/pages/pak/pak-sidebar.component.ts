@@ -115,7 +115,8 @@ import { PakService } from './pak.service'
                 </div>
                 <div>
                   <div><span class="font-bold">UUID:</span> {{ row.guid }}</div>
-                  <div><span class="font-bold">SubId:</span> {{ row.subId }}</div>
+                  <div><span class="font-bold">SubId:</span> {{ row.subId }} (0x{{ row.subId.toString(16) }})</div>
+                  <div><span class="font-bold">Type:</span> {{ row.type }}</div>
                   <div class="text-xs opacity-75">
                     {{ row.file }}
                     @if (row.size) {
@@ -174,8 +175,14 @@ export class PakSidebarComponent {
     }
     if (this.uuidFilter()) {
       const filter = this.uuidFilter().toLowerCase()
-      list = list.filter((it) => it.file.toLowerCase().includes(filter))
-      list = list.filter((it) => String(it.subId).includes(filter))
+      list = list.filter((it) => {
+        return (
+          it.file.toLowerCase().includes(filter) ||
+          String(it.type).includes(filter) ||
+          String(it.subId).includes(filter) ||
+          String(it.subId.toString(16)).includes(filter)
+        )
+      })
     }
     list.sort((a, b) => {
       return (a.subId || 0) - (b.subId || 0)

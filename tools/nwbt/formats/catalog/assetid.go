@@ -64,3 +64,11 @@ func ParseUUID(uuidString string) (uuid UUID, ok bool) {
 	ok = false
 	return
 }
+
+// 00000002-0000-0000-0000-000000000000 -> = 2
+// 2 -> = 2
+func ParseUUIDprefixToInt(value string) (uint32, error) {
+	part, _, _ := strings.Cut(value, "-")
+	val, err := strconv.ParseInt(part, 16, 64)
+	return uint32(val), err
+}

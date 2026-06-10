@@ -146,7 +146,7 @@ func (it *Assets) LookupFileByAsset(azAsset nwt.AzAsset) (nwfs.File, error) {
 		return nil, nil
 	}
 
-	asset := it.Catalog.Find(azAsset.Guid, azAsset.Type, azAsset.Hint)
+	asset := it.Catalog.Find(azAsset.Guid, azAsset.Subid, azAsset.Type, azAsset.Hint)
 	if asset == nil {
 		return nil, fmt.Errorf("asset '%v' does not exist in catalog: %w", azAsset, ErrNotFound)
 	}

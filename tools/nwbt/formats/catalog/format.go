@@ -257,7 +257,7 @@ func (doc *Document) FindByFile(file string) *Asset {
 	return nil
 }
 
-func (doc *Document) Find(assetGuid, assetType, hint string) *Asset {
+func (doc *Document) Find(assetGuid, assetSubid, assetType, hint string) *Asset {
 	azGuid, _ := ParseUUID(assetGuid)
 	if azGuid.IsZeroOrEmpty() {
 		return nil
@@ -270,32 +270,48 @@ func (doc *Document) Find(assetGuid, assetType, hint string) *Asset {
 	}
 
 	list := doc.AllByGuid(azGuid.String())
-	candidates := make([]*Asset, 0)
+	if len(list) == 0 {
+		return nil
+	}
+
+	// assetSubid is a uuid, the system uses only the first block as subid, so we can parse it as uint32
+	// 00000002-0000-0000-0000-000000000000 -> subid = 2
+	azSubid, _ := ParseUUIDprefixToInt(assetSubid)
+
+	matchType := make([]*Asset, 0)
+	matchTypeAndSub := make([]*Asset, 0)
 	for _, asset := range list {
-		if strings.EqualFold(string(azType), asset.Type) {
-			candidates = append(candidates, asset)
+		if strings.EqualFold(asset.Type, azType.String()) {
+			matchType = append(matchType, asset)
+			if asset.AssetId.SubID == azSubid {
+				matchTypeAndSub = append(matchTypeAndSub, asset)
+			}
 		}
 	}
 
-	if len(candidates) == 0 {
-		return nil
+	if len(matchTypeAndSub) == 1 {
+		return matchTypeAndSub[0]
 	}
-	if len(candidates) == 1 {
-		return candidates[0]
+
+	if len(matchType) == 1 {
+		slog.Debug("disambiguate asset by type only, unique match for type", "guid", assetGuid, "type", assetType, "subid", assetSubid, "hint", hint, "candidates", len(list))
+		return matchType[0]
 	}
 
 	hint = nwfs.NormalizePath(hint)
 	if hint != "" {
-		for _, asset := range candidates {
+		for _, asset := range list {
 			if strings.EqualFold(hint, nwfs.NormalizePath(asset.File)) {
+				slog.Debug("disambiguate asset by hint as normalized paths", "guid", assetGuid, "type", assetType, "subid", assetSubid, "hint", hint, "assetFile", asset.File, "candidates", len(list))
 				return asset
 			}
 			if strings.EqualFold(hint, path.Base(asset.File)) {
+				slog.Debug("disambiguate asset by hint as base path", "guid", assetGuid, "type", assetType, "subid", assetSubid, "hint", hint, "assetFile", asset.File, "candidates", len(list))
 				return asset
 			}
 		}
 	}
 
-	slog.Debug("take first asset", "guid", assetGuid, "type", assetType, "hint", hint, "candidates", len(candidates))
-	return candidates[0]
+	slog.Debug("unable to disambiguate asset, multiple candidates with matching type and guid", "guid", assetGuid, "type", assetType, "subid", assetSubid, "hint", hint, "candidates", len(list))
+	return nil
 }

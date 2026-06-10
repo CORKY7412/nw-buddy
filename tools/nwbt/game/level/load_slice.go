@@ -291,7 +291,7 @@ func findAsset(assets *game.Assets, list []nwt.AzAsset) *catalog.Asset {
 
 		isEmpty = false
 
-		result := assets.Catalog.Find(asset.Guid, asset.Type, asset.Hint)
+		result := assets.Catalog.Find(asset.Guid, asset.Subid, asset.Type, asset.Hint)
 		if result != nil {
 			return result
 		}
