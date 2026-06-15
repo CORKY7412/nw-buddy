@@ -82,58 +82,58 @@ func pullConstants(fs nwfs.Archive, outDir string) {
 		return
 	}
 
-	pad := attr.Player_attribute_data
-	constants.Store("NW_MIN_GEAR_SCORE", int(pad.Min_possible_weapon_gear_score))
-	constants.Store("NW_MIN_ARMOR_MITIGATION", float32(pad.Min_armor_mitigation))
-	constants.Store("NW_MAX_ARMOR_MITIGATION", float32(pad.Max_armor_mitigation))
-	constants.Store("NW_PHYSICAL_ARMOR_SCALE_FACTOR", float32(pad.Physical_armor_scale_factor))
-	constants.Store("NW_ELEMENTAL_ARMOR_SCALE_FACTOR", float32(pad.Elemental_armor_scale_factor))
-	constants.Store("NW_ARMOR_SET_RATING_EXPONENT", float32(pad.Armor_set_rating_exponent))
-	constants.Store("NW_ARMOR_MITIGATION_EXPONENT", float32(pad.Armor_mitigation_exponent))
-	constants.Store("NW_ARMOR_RATING_DECIMAL_ACCURACY", int(pad.Armor_rating_decimal_accuracy))
-	constants.Store("NW_BASE_DAMAGE_COMPOUND_INCREASE", float32(pad.Base_damage_compound_increase))
-	constants.Store("NW_COMPOUND_INCREASE_DIMINISHING_MULTIPLIER", float32(pad.Compound_increase_diminishing_multiplier))
-	constants.Store("NW_BASE_DAMAGE_GEAR_SCORE_INTERVAL", int(pad.Base_damage_gear_score_interval))
-	constants.Store("NW_MIN_POSSIBLE_WEAPON_GEAR_SCORE", int(pad.Min_possible_weapon_gear_score))
-	constants.Store("NW_DIMINISHING_GEAR_SCORE_THRESHOLD", int(pad.Diminishing_gear_score_threshold))
-	constants.Store("NW_ROUND_GEARSCORE_UP", bool(pad.Round_gearscore_up_))
-	constants.Store("NW_GEAR_SCORE_ROUNDING_INTERVAL", int(pad.Gear_score_rounding_interval))
-	constants.Store("NW_MAX_POINTS_PER_ATTRIBUTE", int(pad.Max_points_per_attribute))
-	constants.Store("NW_LEVEL_DAMAGE_MULTIPLIER", float32(pad.Level_damage_multiplier))
+	pad := attr.Player_Attribute_Data
+	constants.Store("NW_MIN_GEAR_SCORE", int(pad.Min_Possible_Weapon_Gear_Score))
+	constants.Store("NW_MIN_ARMOR_MITIGATION", float32(pad.Min_Armor_Mitigation))
+	constants.Store("NW_MAX_ARMOR_MITIGATION", float32(pad.Max_Armor_Mitigation))
+	constants.Store("NW_PHYSICAL_ARMOR_SCALE_FACTOR", float32(pad.Physical_Armor_Scale_Factor))
+	constants.Store("NW_ELEMENTAL_ARMOR_SCALE_FACTOR", float32(pad.Elemental_Armor_Scale_Factor))
+	constants.Store("NW_ARMOR_SET_RATING_EXPONENT", float32(pad.Armor_Set_Rating_Exponent))
+	constants.Store("NW_ARMOR_MITIGATION_EXPONENT", float32(pad.Armor_Mitigation_Exponent))
+	constants.Store("NW_ARMOR_RATING_DECIMAL_ACCURACY", int(pad.Armor_Rating_Decimal_Accuracy))
+	constants.Store("NW_BASE_DAMAGE_COMPOUND_INCREASE", float32(pad.Base_Damage_Compound_Increase))
+	constants.Store("NW_COMPOUND_INCREASE_DIMINISHING_MULTIPLIER", float32(pad.Compound_Increase_Diminishing_Multiplier))
+	constants.Store("NW_BASE_DAMAGE_GEAR_SCORE_INTERVAL", int(pad.Base_Damage_Gear_Score_Interval))
+	constants.Store("NW_MIN_POSSIBLE_WEAPON_GEAR_SCORE", int(pad.Min_Possible_Weapon_Gear_Score))
+	constants.Store("NW_DIMINISHING_GEAR_SCORE_THRESHOLD", int(pad.Diminishing_Gear_Score_Threshold))
+	constants.Store("NW_ROUND_GEARSCORE_UP", bool(pad.Round_Gearscore_Up_))
+	constants.Store("NW_GEAR_SCORE_ROUNDING_INTERVAL", int(pad.Gear_Score_Rounding_Interval))
+	constants.Store("NW_MAX_POINTS_PER_ATTRIBUTE", int(pad.Max_Points_Per_Attribute))
+	constants.Store("NW_LEVEL_DAMAGE_MULTIPLIER", float32(pad.Level_Damage_Multiplier))
 
-	constants.Store("NW_ITEM_RARITY_DATA", mapSlice(pad.Item_rarity_data.Element, func(rarity nwt.ItemRarityData) any {
+	constants.Store("NW_ITEM_RARITY_DATA", mapSlice(pad.Item_Rarity_Data.Element, func(rarity nwt.ItemRarityData) any {
 		return map[string]any{
-			"displayName":  string(rarity.Rarity_level_loc_string),
-			"maxPerkCount": int(rarity.Max_perk_count),
+			"displayName":  string(rarity.Rarity_Level_Loc_String),
+			"maxPerkCount": int(rarity.Max_Perk_Count),
 		}
 	}))
 
-	constants.Store("NW_CRAFTING_RESULT_LOOT_BUCKET", string(pad.Perk_generation_data.Crafting_result_loot_bucket))
-	constants.Store("NW_ROLL_PERK_ON_UPGRADE_GS", int(pad.Perk_generation_data.Roll_perk_on_upgrade_gs))
-	constants.Store("NW_ROLL_PERK_ON_UPGRADE_TIER", int(pad.Perk_generation_data.Roll_perk_on_upgrade_tier))
-	constants.Store("NW_ROLL_PERK_ON_UPGRADE_PERK_COUNT", int(pad.Perk_generation_data.Roll_perk_on_upgrade_perk_count))
+	constants.Store("NW_CRAFTING_RESULT_LOOT_BUCKET", string(pad.Perk_Generation_Data.Crafting_Result_Loot_Bucket))
+	constants.Store("NW_ROLL_PERK_ON_UPGRADE_GS", int(pad.Perk_Generation_Data.Roll_Perk_On_Upgrade_GS))
+	constants.Store("NW_ROLL_PERK_ON_UPGRADE_TIER", int(pad.Perk_Generation_Data.Roll_Perk_On_Upgrade_Tier))
+	constants.Store("NW_ROLL_PERK_ON_UPGRADE_PERK_COUNT", int(pad.Perk_Generation_Data.Roll_Perk_On_Upgrade_Perk_Count))
 
-	constants.Store("NW_PERK_GENERATION_DATA", mapSlice(pad.Perk_generation_data.Perk_data_per_tier.Element, func(perk nwt.PerkTierData) any {
+	constants.Store("NW_PERK_GENERATION_DATA", mapSlice(pad.Perk_Generation_Data.Perk_Data_Per_Tier.Element, func(perk nwt.PerkTierData) any {
 		return map[string]any{
-			"maxPerkChannel":           int(perk.Max_perk_channel),
-			"attributePerkProbability": float32(perk.Attribute_perk_probability),
-			"generalGearScorePerkCount": mapSlice(perk.General_gear_score_perk_count.Element, func(it nwt.UUID_14F31861_6045_5B62_B6D2_1FA6DA976FB8) any {
-				return mapSlice(it.Value2.Element, func(e nwt.AZStd__pair_5) any {
+			"maxPerkChannel":           int(perk.Max_Perk_Channel),
+			"attributePerkProbability": float32(perk.Attribute_Perk_Probability),
+			"generalGearScorePerkCount": mapSlice(perk.General_Gear_Score_Perk_Count.Element, func(it nwt.AZStd__pair) any {
+				return mapSlice(it.Value2.Element, func(e nwt.AZStd__pair_64503325) any {
 					return map[string]any{
 						"v1": int(e.Value1),
 						"v2": int(e.Value2),
 					}
 				})
 			}),
-			"craftingGearScorePerkCount": mapSlice(perk.Crafting_gear_score_perk_count.Element, func(it nwt.UUID_14F31861_6045_5B62_B6D2_1FA6DA976FB8) any {
-				return mapSlice(it.Value2.Element, func(e nwt.AZStd__pair_5) any {
+			"craftingGearScorePerkCount": mapSlice(perk.Crafting_Gear_Score_Perk_Count.Element, func(it nwt.AZStd__pair) any {
+				return mapSlice(it.Value2.Element, func(e nwt.AZStd__pair_64503325) any {
 					return map[string]any{
 						"v1": int(e.Value1),
 						"v2": int(e.Value2),
 					}
 				})
 			}),
-			"attributePerkBucket": string(perk.Attribute_perk_bucket),
+			"attributePerkBucket": string(perk.Attribute_Perk_Bucket),
 		}
 	}))
 

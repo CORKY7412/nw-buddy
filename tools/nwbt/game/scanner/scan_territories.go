@@ -28,7 +28,7 @@ func (ctx *Scanner) ScanTerritories(file nwfs.File) iter.Seq[TerritoryEntry] {
 			for _, component := range components {
 				switch v := component.(type) {
 				case nwt.TerritoryDataProviderComponent:
-					entry.TerritoryID = string(v.Territory_id)
+					entry.TerritoryID = string(v.Territory_Id)
 				case nwt.PolygonPrismShapeComponent:
 					prism := v.Configuration.PolygonPrism.Element.VertexContainer.Vertices.Element
 					if len(prism) > 0 {

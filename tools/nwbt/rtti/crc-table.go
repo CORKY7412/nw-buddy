@@ -66,6 +66,8 @@ func (it CrcTable) Save(path string) error {
 
 func (it CrcTable) Merge(other CrcTable) {
 	for k, v := range other {
-		it[k] = v
+		if !it.Has(k) {
+			it[k] = v
+		}
 	}
 }

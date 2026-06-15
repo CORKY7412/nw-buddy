@@ -144,11 +144,11 @@ func loadChunkLayer(assets *game.Assets, list []nwt.ChunkEntry) []ChunkRuntimeDa
 
 	progress.Concurrent(WORKER_COUNT, list, func(chunk nwt.ChunkEntry, i int) error {
 		asset := assets.Catalog.LookupById(catalog.AssetId{
-			Guid:  string(chunk.Assetid.Guid),
-			SubID: uint32(chunk.Assetid.SubId),
+			Guid:  string(chunk.AssetId.Guid),
+			SubID: uint32(chunk.AssetId.SubId),
 		})
 		result := ChunkRuntimeData{
-			ID:   fmt.Sprintf("%d_%d_%d", chunk.Cellindex.X, chunk.Cellindex.Y, chunk.Cellindex.Z),
+			ID:   fmt.Sprintf("%d_%d_%d", chunk.CellIndex.X, chunk.CellIndex.Y, chunk.CellIndex.Z),
 			Size: float32(chunk.Size),
 			Transform: mat4.FromAzTransformData([]nwt.AzFloat32{
 				// rotation
@@ -156,9 +156,9 @@ func loadChunkLayer(assets *game.Assets, list []nwt.ChunkEntry) []ChunkRuntimeDa
 				// scale
 				1, 1, 1,
 				// translation
-				chunk.Worldposition[0],
-				chunk.Worldposition[1],
-				chunk.Worldposition[2],
+				chunk.WorldPosition[0],
+				chunk.WorldPosition[1],
+				chunk.WorldPosition[2],
 			}),
 		}
 		if asset != nil {

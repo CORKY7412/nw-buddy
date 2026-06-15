@@ -40,8 +40,9 @@ var cmdGenerate = &cobra.Command{
 }
 
 var cmdTygo = &cobra.Command{
-  Use:   "tygo",
+	Use: "tygo",
 }
+
 func init() {
 	Cmd.Flags().StringVarP(&flgGameDir, "game", "g", env.GameDir(), "game root directory")
 	Cmd.Flags().StringVarP(&flgGameFile, "file", "f", path.Join(env.GameDir(), "Bin64", "NewWorld.exe"), "game executalbe")
@@ -57,6 +58,43 @@ func runScan(ccmd *cobra.Command, args []string) {
 
 	uidTable := rtti.NewUuidTable()
 	crcTable := rtti.NewCrcTable()
+
+	{
+		mixedTypeFile := path.Join(flgOutputDir, "mixed-types.json")
+		mixedTypeData, err := os.ReadFile(mixedTypeFile)
+		var mixedList MixedTypesList
+		if err != nil {
+			slog.Warn("Failed to read mixed types file", "file", mixedTypeFile, "error", err)
+		}
+		if err := json.Unmarshal(mixedTypeData, &mixedList); err != nil {
+			slog.Warn("Failed to parse mixed types file", "file", mixedTypeFile, "error", err)
+		}
+
+		var handleElement func(elem MixedTypeElement)
+		handleElement = func(elem MixedTypeElement) {
+			if !crcTable.HasName(elem.Name) {
+				crcTable.PutName(elem.Name)
+			}
+			info := elem.GenericClassInfo
+			data := info.ClassData
+			if uidTable.Has(data.TypeId) {
+				return
+			}
+			uidTable.Put(data.TypeId, data.Name)
+			for _, elem := range info.Elements {
+				handleElement(elem)
+			}
+		}
+
+		for _, item := range mixedList.UuidMap {
+			if !uidTable.Has(item.TypeId) {
+				uidTable.Put(item.TypeId, item.Name)
+			}
+			for _, elem := range item.Elements {
+				handleElement(elem)
+			}
+		}
+	}
 
 	{
 		lumbIdsFile := path.Join(flgOutputDir, "lumber-types.json")
@@ -132,52 +170,6 @@ func runScan(ccmd *cobra.Command, args []string) {
 		crcTable.Merge(lvlCrc)
 	}
 
-	{
-		mixedTypeFile := path.Join(flgOutputDir, "mixed-types.json")
-		mixedTypeData, err := os.ReadFile(mixedTypeFile)
-		mixedTypes := make([]MixedType, 0)
-		if err != nil {
-			slog.Warn("Failed to read mixed types file", "file", mixedTypeFile, "error", err)
-		}
-		if err := json.Unmarshal(mixedTypeData, &mixedTypes); err != nil {
-			slog.Warn("Failed to parse mixed types file", "file", mixedTypeFile, "error", err)
-		}
-
-		for _, item := range mixedTypes {
-			if !uidTable.Has(item.TypeId) {
-				uidTable.Put(item.TypeId, item.Name)
-			}
-			for _, elem := range item.Elements {
-				if !crcTable.HasName(elem.Name) {
-					crcTable.PutName(elem.Name)
-				}
-			}
-		}
-	}
-
-	{
-		mixedTypeFile := path.Join(flgOutputDir, "mixed-types2.json")
-		mixedTypeData, err := os.ReadFile(mixedTypeFile)
-		var mixedList MixedTypesList
-		if err != nil {
-			slog.Warn("Failed to read mixed types file", "file", mixedTypeFile, "error", err)
-		}
-		if err := json.Unmarshal(mixedTypeData, &mixedList); err != nil {
-			slog.Warn("Failed to parse mixed types file", "file", mixedTypeFile, "error", err)
-		}
-
-		for _, item := range mixedList.UuidMap {
-			if !uidTable.Has(item.TypeId) {
-				uidTable.Put(item.TypeId, item.Name)
-			}
-			for _, elem := range item.Elements {
-				if !crcTable.HasName(elem.Name) {
-					crcTable.PutName(elem.Name)
-				}
-			}
-		}
-	}
-
 	outFile := path.Join(flgOutputDir, "types.json")
 	typeTable := utils.Must(scanObjects(fs, uidTable, crcTable))
 	if err := typeTable.SaveJson(outFile); err != nil {
@@ -200,13 +192,26 @@ type MixedTypesList struct {
 }
 
 type MixedType struct {
-	Name   string `json:"name"`
-	TypeId string `json:"typeId"`
-	// Version  string             `json:"version"`
+	Name     string             `json:"name"`
+	TypeId   string             `json:"typeId"`
 	Elements []MixedTypeElement `json:"elements"`
 }
 
 type MixedTypeElement struct {
-	Name   string `json:"name"`
-	TypeId string `json:"typeId"`
+	Name             string           `json:"name"`
+	TypeId           string           `json:"typeId"`
+	GenericClassInfo GenericClassInfo `json:"genericClassInfo"`
+}
+
+type GenericClassInfo struct {
+	TypeId           string             `json:"typeId"`
+	Elements         []MixedTypeElement `json:"elements"`
+	ClassData        GenericClassData   `json:"classData"`
+	TemplatedTypeIds []string           `json:"templatedTypeIds"`
+}
+
+type GenericClassData struct {
+	Name     string             `json:"name"`
+	TypeId   string             `json:"typeId"`
+	Elements []MixedTypeElement `json:"elements"`
 }

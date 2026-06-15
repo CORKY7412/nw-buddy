@@ -6,6 +6,7 @@ import (
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti/nwt"
+	"nw-buddy/tools/utils"
 	"text/tabwriter"
 )
 
@@ -24,6 +25,7 @@ type SliceInspector struct {
 	SnowComponent          map[string]int
 	SplineComponent        map[string]int
 	TimeOfDayPOIComponent  map[string]int
+	TimeOfDayShape         []string
 }
 
 func NewSliceInspector() *SliceInspector {
@@ -41,6 +43,7 @@ func NewSliceInspector() *SliceInspector {
 		SnowComponent:          make(map[string]int),
 		SplineComponent:        make(map[string]int),
 		TimeOfDayPOIComponent:  make(map[string]int),
+		TimeOfDayShape:         make([]string, 0),
 	}
 }
 func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
@@ -51,6 +54,7 @@ func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
 		return
 	}
 	for _, entity := range f.Entities.Element {
+		var prev any = nil
 		for _, component := range entity.Components.Element {
 
 			switch v := component.(type) {
@@ -80,7 +84,7 @@ func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
 				}
 
 			case nwt.InstancedMeshComponent:
-				options := v.Instanced_mesh_render_node.BaseClass1.Render_Options
+				options := v.Instanced_Mesh_Render_Node.BaseClass1.Render_Options
 				it.InstancedMeshComponent["Count"] += 1
 				if options.VisibilityOccluder {
 					it.InstancedMeshComponent["VisibilityOccluder"] += 1
@@ -119,8 +123,8 @@ func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
 				if v.M_isStaticSlice {
 					it.AoiComponent["M_isStaticSlice"] += 1
 				}
-				if v.M_overridewithuserdefinedspawnradius {
-					it.AoiComponent["M_overridewithuserdefinedspawnradius"] += 1
+				if v.M_overrideWithUserDefinedSpawnRadius {
+					it.AoiComponent["M_overrideWithUserDefinedSpawnRadius"] += 1
 				}
 			case nwt.FogVolumeComponent:
 				it.FogVolumeComponent["Count"] += 1
@@ -152,8 +156,8 @@ func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
 				if config.Visible {
 					it.LightComponent["Visible"] += 1
 				}
-			case nwt.MeshMergerComponent:
-				it.MeshMergerComponent["Count"] += 1
+			// case nwt.MeshMergerComponent:
+			// 	it.MeshMergerComponent["Count"] += 1
 			case nwt.RiverComponent:
 				it.RiverComponent["Count"] += 1
 			case nwt.RoadComponent:
@@ -170,7 +174,11 @@ func (it *SliceInspector) Inspect(assets *game.Assets, file nwfs.File) {
 				if v.Configuration.HasTimeOfDayOverride {
 					it.TimeOfDayPOIComponent["HasTimeOfDayOverride"] += 1
 				}
+				if prev != nil {
+					it.TimeOfDayShape = utils.AppendUniq(it.TimeOfDayShape, fmt.Sprintf("%T", prev))
+				}
 			}
+			prev = component
 		}
 	}
 
@@ -245,6 +253,11 @@ func (it *SliceInspector) Print(w io.Writer) {
 	fmt.Fprintf(tw, "\nTimeOfDayPOIComponent\n")
 	for key, count := range it.TimeOfDayPOIComponent {
 		fmt.Fprintf(tw, "%s\t%d\n", key, count)
+	}
+
+	fmt.Fprintf(tw, "\nTimeOfDayShape\n")
+	for _, shape := range it.TimeOfDayShape {
+		fmt.Fprintf(tw, "%s\n", shape)
 	}
 	tw.Flush()
 

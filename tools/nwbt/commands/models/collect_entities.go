@@ -109,7 +109,7 @@ func (c *Collector) Entities(glob string) {
 					case 3: // probe
 					}
 				case nwt.InstancedMeshComponent:
-					meshNode := v.Instanced_mesh_render_node.BaseClass1
+					meshNode := v.Instanced_Mesh_Render_Node.BaseClass1
 					if game.ShouldIgnoreMeshNode(meshNode) {
 						continue
 					}
@@ -134,7 +134,7 @@ func (c *Collector) Entities(glob string) {
 						material = materialFile.Path()
 					}
 					model, material = c.ResolveCgfAndMtl(model, material)
-					for _, instance := range v.Instanced_mesh_render_node.Instance_transforms.Element {
+					for _, instance := range v.Instanced_Mesh_Render_Node.Instance_Transforms.Element {
 						transform := mat4.FromAzTransform(instance)
 						transform = mat4.Multiply(node.Transform, transform)
 						group.Geometries = append(group.Geometries, importer.GeometryAsset{
@@ -243,13 +243,13 @@ func (c *Collector) Entities(glob string) {
 					}
 				case nwt.EncounterComponent:
 					nodeTranform := node.Transform
-					for _, timeline := range v.M_spawntimeline.Element {
-						if len(timeline.M_spawnlocations.Element) == 0 && timeline.M_count > 0 {
+					for _, timeline := range v.M_spawnTimeline.Element {
+						if len(timeline.M_spawnLocations.Element) == 0 && timeline.M_count > 0 {
 							if !node.WalkAsset(timeline.M_aliasAsset) {
 								node.WalkAsset(timeline.M_sliceAsset)
 							}
 						} else {
-							for _, location := range timeline.M_spawnlocations.Element {
+							for _, location := range timeline.M_spawnLocations.Element {
 								entity := game.FindEntityById(node.Slice, location.EntityId.Id)
 								if entity == nil {
 									continue

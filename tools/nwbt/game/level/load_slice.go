@@ -97,7 +97,7 @@ func LoadViewerSlice(assets *game.Assets, file nwfs.File, track TrackSliceAsset)
 					UseVisAreas:            bool(meshNode.Render_Options.UseVisAreas),
 				})
 			case nwt.InstancedMeshComponent:
-				meshNode := v.Instanced_mesh_render_node.BaseClass1
+				meshNode := v.Instanced_Mesh_Render_Node.BaseClass1
 				if game.ShouldIgnoreMeshNode(meshNode) {
 					continue
 				}
@@ -123,7 +123,7 @@ func LoadViewerSlice(assets *game.Assets, file nwfs.File, track TrackSliceAsset)
 				}
 
 				instances := make([]mat4.Data, 0)
-				for _, t := range v.Instanced_mesh_render_node.Instance_transforms.Element {
+				for _, t := range v.Instanced_Mesh_Render_Node.Instance_Transforms.Element {
 					instances = append(instances, mat4.FromAzTransform(t))
 				}
 
@@ -239,10 +239,10 @@ func LoadViewerSlice(assets *game.Assets, file nwfs.File, track TrackSliceAsset)
 						Hint:  asset.File,
 					},
 					Locations:        locations,
-					MinResspawnRange: float32(facet.M_minrespawnrange),
-					MaxRespawnRange:  float32(facet.M_maxrespawnrange),
-					LiveCount:        int(facet.M_livecount),
-					SpawnOnEnable:    bool(facet.M_spawnonenable),
+					MinResspawnRange: float32(facet.M_minRespawnRange),
+					MaxRespawnRange:  float32(facet.M_maxRespawnRange),
+					LiveCount:        int(facet.M_liveCount),
+					SpawnOnEnable:    bool(facet.M_spawnOnEnable),
 					SpawnOnTrigger:   bool(facet.M_spawnOnTrigger),
 				})
 			case nwt.SplineComponent:

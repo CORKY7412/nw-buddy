@@ -90,8 +90,8 @@ func pullSpells(tables []*datasheet.Document, fs nwfs.Archive, outDir string) {
 						if !ok {
 							continue
 						}
-						for _, effect := range facet.M_addstatuseffects.Element {
-							record.AreaStatusEffects = utils.AppendUniqNoZero(record.AreaStatusEffects, string(effect.M_effectid))
+						for _, effect := range facet.M_addStatusEffects.Element {
+							record.AreaStatusEffects = utils.AppendUniqNoZero(record.AreaStatusEffects, string(effect.M_effectId))
 						}
 					}
 				}

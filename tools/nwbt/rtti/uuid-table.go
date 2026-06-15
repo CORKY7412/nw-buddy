@@ -57,6 +57,8 @@ func (it UuidTable) Save(path string) error {
 
 func (it UuidTable) Merge(other UuidTable) {
 	for k, v := range other {
-		it[strings.ToUpper(k)] = v
+		if _, ok := it[strings.ToUpper(k)]; !ok {
+			it[strings.ToUpper(k)] = v
+		}
 	}
 }

@@ -15,6 +15,14 @@ func (it *Type) getCleanName() string {
 	return clean(it.Name)
 }
 
+func (it *Type) getFirstPartOfID() string {
+	parts := strings.Split(it.ID, "-")
+	if len(parts) > 0 {
+		return parts[0]
+	}
+	return it.ID
+}
+
 func (it *Member) getCleanName() string {
 	if it.Name == "" {
 		return fmt.Sprintf("CRC_%v", it.Crc32)
@@ -74,12 +82,19 @@ func (it TypeTable) GenerateCode() string {
 		if elementName := t.getElementTypeName(it); elementName != "" {
 			name = strings.TrimRight(name, "_") + "_" + elementName
 		}
-		// add counter suffix to avoid collisions
-		if count, ok := tracker[name]; ok {
-			tracker[name] = count + 1
-			name = fmt.Sprintf("%v_%v", name, count)
-		} else {
+		nameSuffixed := fmt.Sprintf("%s_%s", name, t.getFirstPartOfID())
+
+		if _, ok := tracker[name]; !ok {
+			// first occurrence of this name, initialize counter
 			tracker[name] = 0
+		} else if count, ok := tracker[nameSuffixed]; !ok {
+			// first occurrence of the name with id suffix, initialize counter
+			name = nameSuffixed
+			tracker[name] = 0
+		} else {
+			// subsequent occurence uses the name with suffix and count suffix
+			tracker[name] = count + 1
+			name = fmt.Sprintf("%s_%d", name, count)
 		}
 		typeNames[t.ID] = name
 	}

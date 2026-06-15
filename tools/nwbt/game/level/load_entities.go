@@ -59,14 +59,14 @@ func LoadEntities(assets *game.Assets, sliceFile string, rootTransform mat4.Data
 				facet := v.BaseClass1.M_serverFacetPtr
 				switch f := facet.(type) {
 				case nwt.AIVariantProviderComponentServerFacet:
-					if f.M_vitalstablerowid != "" {
-						node.ContextProvideIfMissing(ctxVitalsId, string(f.M_vitalstablerowid))
+					if f.M_vitalsTableRowId != "" {
+						node.ContextProvideIfMissing(ctxVitalsId, string(f.M_vitalsTableRowId))
 					}
-					if f.M_vitalscategorytablerowid != "" {
-						node.ContextProvideIfMissing(ctxVitalsCategoryId, string(f.M_vitalscategorytablerowid))
+					if f.M_vitalsCategoryTableRowId != "" {
+						node.ContextProvideIfMissing(ctxVitalsCategoryId, string(f.M_vitalsCategoryTableRowId))
 					}
-					if f.M_vitalslevel != 0 {
-						node.ContextProvideIfMissing(ctxVitalsLevel, int(f.M_vitalslevel))
+					if f.M_vitalsLevel != 0 {
+						node.ContextProvideIfMissing(ctxVitalsLevel, int(f.M_vitalsLevel))
 					}
 					// if f.M_useterritoryleveloverride {
 					//   node.ContextProvideIfMissing(ctxVitalsTerritoryLevel, bool(f.M_useterritoryleveloverride))
@@ -75,8 +75,8 @@ func LoadEntities(assets *game.Assets, sliceFile string, rootTransform mat4.Data
 			case nwt.VitalsComponent:
 				// at this point we can create a vitals instance
 				isVital = true
-				if v.M_rowreference != "" {
-					node.ContextProvideIfMissing(ctxVitalsId, string(v.M_rowreference))
+				if v.M_rowReference != "" {
+					node.ContextProvideIfMissing(ctxVitalsId, string(v.M_rowReference))
 				}
 			case nwt.InstancedMeshComponent:
 				if isEncounterTree {
@@ -84,7 +84,7 @@ func LoadEntities(assets *game.Assets, sliceFile string, rootTransform mat4.Data
 					continue
 				}
 
-				meshNode := v.Instanced_mesh_render_node.BaseClass1
+				meshNode := v.Instanced_Mesh_Render_Node.BaseClass1
 				if game.ShouldIgnoreMeshNode(meshNode) {
 					continue
 				}
@@ -110,7 +110,7 @@ func LoadEntities(assets *game.Assets, sliceFile string, rootTransform mat4.Data
 				}
 
 				model, material = assets.ResolveCgfAndMtl(model, material)
-				for i, instance := range v.Instanced_mesh_render_node.Instance_transforms.Element {
+				for i, instance := range v.Instanced_Mesh_Render_Node.Instance_Transforms.Element {
 					pushEntity(EntityInfo{
 						ID:              fmt.Sprintf("%d", node.Entity.Id.Id),
 						Name:            string(node.Entity.Name),
@@ -256,12 +256,12 @@ func LoadEntities(assets *game.Assets, sliceFile string, rootTransform mat4.Data
 					assets := make([]nwt.AzAsset, 0)
 					assets = utils.AppendUniqNoZero(assets, spawn.M_sliceAsset)
 					assets = utils.AppendUniqNoZero(assets, spawn.M_aliasAsset)
-					if len(spawn.M_spawnlocations.Element) == 0 && spawn.M_count > 0 {
+					if len(spawn.M_spawnLocations.Element) == 0 && spawn.M_count > 0 {
 						for _, asset := range assets {
 							node.WalkAsset(asset)
 						}
 					} else {
-						for _, location := range spawn.M_spawnlocations.Element {
+						for _, location := range spawn.M_spawnLocations.Element {
 							entity := game.FindEntityById(node.Slice, location.EntityId.Id)
 							if entity == nil {
 								continue
@@ -307,7 +307,7 @@ func ResolveVitalSpawnInfo(assets *game.Assets, node *game.SliceNode) *VitalSpaw
 		switch v := component.(type) {
 		case nwt.VitalsComponent:
 			if vitalsID == "" {
-				vitalsID = string(v.M_rowreference)
+				vitalsID = string(v.M_rowReference)
 			}
 
 		case nwt.TagComponent:
@@ -318,15 +318,15 @@ func ResolveVitalSpawnInfo(assets *game.Assets, node *game.SliceNode) *VitalSpaw
 		case nwt.CharacterComponent:
 			//
 		case nwt.ActionListComponent:
-			result.DamageTable = string(v.M_damagetable.Asset.BaseClass1.AssetPath)
-			result.AdbFile = string(v.M_animationdatabase.BaseClass1.AssetPath)
-			for _, tag := range v.M_defaulttags.Element {
+			result.DamageTable = string(v.M_damageTable.Asset.BaseClass1.AssetPath)
+			result.AdbFile = string(v.M_animationDatabase.BaseClass1.AssetPath)
+			for _, tag := range v.M_defaultTags.Element {
 				result.Tags = utils.AppendUniqNoZero(result.Tags, string(tag))
 			}
 		case nwt.StatusEffectsComponent:
 			if it, ok := v.BaseClass1.M_clientFacetPtr.(nwt.StatusEffectsComponentServerFacet); ok {
-				for _, effect := range it.M_initialstatuseffects.Element {
-					result.StatusEffects = utils.AppendUniqNoZero(result.StatusEffects, string(effect.M_effectid))
+				for _, effect := range it.M_initialStatusEffects.Element {
+					result.StatusEffects = utils.AppendUniqNoZero(result.StatusEffects, string(effect.M_effectId))
 				}
 			}
 			facet, ok := v.BaseClass1.M_serverFacetPtr.(nwt.AreaSpawnerComponentServerFacet)

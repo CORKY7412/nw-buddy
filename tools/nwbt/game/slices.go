@@ -224,14 +224,14 @@ func ApplyVariationData(assets *Assets, slice *nwt.SliceComponent) {
 		if v == nil {
 			continue
 		}
-		if v.M_variationtableuniquename == "" || v.M_selectedvariant == "" {
+		if v.M_variationTableUniqueName == "" || v.M_selectedVariant == "" {
 			continue
 		}
-		row := assets.FindTableRow(string(v.M_variationtableuniquename), "VariantID", string(v.M_selectedvariant))
+		row := assets.FindTableRow(string(v.M_variationTableUniqueName), "VariantID", string(v.M_selectedVariant))
 		if row == nil {
 			continue
 		}
-		for _, data := range v.M_variantdata.Element {
+		for _, data := range v.M_variantData.Element {
 			switch data.M_action {
 			case "Change Prefab Spawner Slice":
 				entity := FindEntityById(slice, data.M_entity.EntityId.Id)
@@ -239,7 +239,7 @@ func ApplyVariationData(assets *Assets, slice *nwt.SliceComponent) {
 					continue
 				}
 				MutatePrefabSpawner(entity, func(prefab *nwt.PrefabSpawnerComponent) {
-					value := row.GetString(string(data.M_colname))
+					value := row.GetString(string(data.M_colName))
 					if value == "" {
 						prefab.M_aliasAsset = nwt.AzAsset{}
 						prefab.M_sliceAsset = nwt.AzAsset{}

@@ -58,14 +58,14 @@ func Parse(data []byte) (*Document, error) {
 
 	switch v := res.(type) {
 	case nwt.SerializableWaterQuadtree:
-		switch vv := v.Quadtreenodes.(type) {
+		switch vv := v.QuadtreeNodes.(type) {
 		case nwt.AZStd__vector_WaterNodeData:
 			return &Document{
-				RegionSize:    int(v.Regionsize),
+				RegionSize:    int(v.RegionSize),
 				QuadtreeNodes: vv,
 			}, nil
 		default:
-			return nil, fmt.Errorf("waterqt: quadtreenodes is not nwt.AZStd__vector_WaterNodeData, got %T", v.Quadtreenodes)
+			return nil, fmt.Errorf("waterqt: quadtreenodes is not nwt.AZStd__vector_WaterNodeData, got %T", v.QuadtreeNodes)
 		}
 	default:
 		return nil, fmt.Errorf("waterqt: root object is not SerializableWaterQuadtree, got %T", res)

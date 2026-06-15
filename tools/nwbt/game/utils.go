@@ -359,7 +359,7 @@ func WalkEncounterSpawns(slice *nwt.SliceComponent, refs []nwt.LocalEntityRef) i
 			if encounter == nil {
 				continue
 			}
-			for _, spawn := range encounter.M_spawntimeline.Element {
+			for _, spawn := range encounter.M_spawnTimeline.Element {
 				if !yield(entity, spawn) {
 					return
 				}
@@ -372,8 +372,8 @@ func WalkEncounterSpawns(slice *nwt.SliceComponent, refs []nwt.LocalEntityRef) i
 		}
 	}
 }
-func WalkEncounterObjectives(slice *nwt.SliceComponent, refs []nwt.LocalEntityRef) iter.Seq2[*nwt.AZ__Entity, nwt.UUID_B27B9A2C_895B_5DBE_813D_DD7A16EBE833] {
-	return func(yield func(*nwt.AZ__Entity, nwt.UUID_B27B9A2C_895B_5DBE_813D_DD7A16EBE833) bool) {
+func WalkEncounterObjectives(slice *nwt.SliceComponent, refs []nwt.LocalEntityRef) iter.Seq2[*nwt.AZ__Entity, nwt.AZStd__shared_ptr_B27B9A2C] {
+	return func(yield func(*nwt.AZ__Entity, nwt.AZStd__shared_ptr_B27B9A2C) bool) {
 		for _, ref := range refs {
 			entity := FindEntityById(slice, ref.EntityId.Id)
 			encounter := findEncounterComponent(entity)
