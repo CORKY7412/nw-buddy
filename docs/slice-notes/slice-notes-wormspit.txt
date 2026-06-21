@@ -1,0 +1,68 @@
+16bs_sandworm.capitals.json
+    "sliceName": "CoatGen\\\\513fe13\\worldevent_sandwormglimpse_spawner_master_2370482020.dynamicslice",
+
+coatgen\513fe13\worldevent_sandwormglimpse_spawner_master_2370482020.dynamicslice.json
+    AreaSpawnerComponent
+        m_aliasasset
+            "hint": "sharedassets/genericassets/aliasassets/randomencounter/16bs_brimstonesands/alias_randomencounter_sandworm.aliasasset"
+
+sharedassets/genericassets/aliasassets/randomencounter/16bs_brimstonesands/alias_randomencounter_sandworm.aliasasset
+    slices[0].percent: 100
+    slices[0].slice.hint: "slices/worldevents/brimstonesands/sandwormbreach/enc_sandworm_breacharcevent_01.dynamicslice"
+    slices[1].percent: 100
+    slices[1].slice.hint: "slices/worldevents/brimstonesands/sandwormglimpse/enc_sandworm_glimpseevent_00.dynamicslice"
+
+slices/worldevents/brimstonesands/sandwormbreach/enc_sandworm_breacharcevent_01.dynamicslice
+    EncounterComponent
+        m_spawntimeline[]
+            m_sliceasset
+                "hint": "slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_launcher_burst.dynamicslice"
+
+slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_launcher_burst.dynamicslice
+    ProjectileSpawnerComponent
+        "m_ammoid": "Sandworm_BreachEvent_AcidBallLauncher_Projectile_Burst"
+
+
+Datasheet: javelindata_itemdefinitions_ammo.json
+  {
+   "AmmoID": "Sandworm_BreachEvent_AcidBallLauncher_Projectile_Burst",
+   "AmmoType": "Siege",
+   "DamageModifier": 1,
+   "StaggerDamageModifier": 1,
+   "AmmoPrefabPath": "WorldEvents/BrimstoneSands/SandwormBreach/Projectiles/Sandworm_BreachEvent_AcidBall_Projectile_Burst",
+   "AmmoWhizByTrigger": "Play_Bullet_WizzBys"
+  }
+
+slices/WorldEvents/BrimstoneSands/SandwormBreach/Projectiles/Sandworm_BreachEvent_AcidBall_Projectile_Burst.dynamicslice
+    ProjectileComponent
+        m_serverfacetptr
+            m_spawnonhitasset
+                "hint": "slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_projectile_burst_aoe.dynamicslice"
+
+slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_projectile_burst_aoe.dynamicslice
+    PrefabSpawnerComponent
+        m_sliceasset
+            "hint": "slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_chunk_00.dynamicslice"
+
+slices/worldevents/brimstonesands/sandwormbreach/projectiles/sandworm_breachevent_acidball_chunk_00.dynamicslice
+    PrefabSpawnerComponent
+        m_aliasasset
+            "hint": "sharedassets/genericassets/aliasassets/randomencounter/16bs_brimstonesands/sandwormbreachevent/alias_sandwormbreachevent_ore_lg.aliasasset"
+
+sharedassets/genericassets/aliasassets/randomencounter/16bs_brimstonesands/sandwormbreachevent/alias_sandwormbreachevent_ore_lg.aliasasset.json
+    slices[0].percent: 100
+    slices[0].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_sandstone_single_a_spawn.dynamicslice"
+    slices[1].percent: 100
+    slices[1].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_sandstone_single_a_spawn.dynamicslice"
+    slices[2].percent: 100
+    slices[2].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_sandstone_single_a_spawn.dynamicslice"
+    slices[3].percent: 100
+    slices[3].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_sandstone_single_a_spawn.dynamicslice"
+    slices[4].percent: 100
+    slices[4].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_sandstone_single_a_spawn.dynamicslice"
+    slices[5].percent: 100
+    slices[5].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_brimstone_single_a_spawn.dynamicslice"
+    slices[6].percent: 100
+    slices[6].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_brimstone_single_a_spawn.dynamicslice"
+    slices[7].percent: 100
+    slices[7].slice.hint: "slices/worldevents/brimstonesands/randomencounter/io/io_randomencounter_single_gypsumore_a_spawns.dynamicslice"
