@@ -28,7 +28,7 @@ export default {
     })
     b.number('tooltipDelay')
     b.number('tooltipOffset', { defaultValue: 4 })
-    b.boolean('tooltipSticky')
+    b.bool('tooltipSticky')
     b.select('tooltipPlacement', {
       options: [
         'auto',

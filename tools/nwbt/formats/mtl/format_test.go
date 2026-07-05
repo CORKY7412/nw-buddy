@@ -3,6 +3,7 @@ package mtl_test
 import (
 	"encoding/json"
 	"nw-buddy/tools/formats/mtl"
+	"nw-buddy/tools/utils/math"
 	"os"
 	"testing"
 
@@ -21,6 +22,25 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, 3, doc.Params.Len())
 	assert.Equal(t, "0", doc.Params.Get("SSSIndex"))
 	assert.Equal(t, "0.25,0.25,0.25,0.25", doc.Params.Get("IndirectColor"))
+}
+
+func TestParseDeform(t *testing.T) {
+	data, err := os.ReadFile("sample/jav_prp_cloth_tattered_d.mtl")
+	assert.NoError(t, err)
+
+	doc, err := mtl.Parse(data)
+	assert.NoError(t, err)
+
+	assert.NotNil(t, doc.VertexDeform)
+	assert.Equal(t, 2, doc.VertexDeform.Type)
+	assert.Equal(t, float32(4.0), doc.VertexDeform.DividerX)
+	assert.Equal(t, float32(0.01), doc.VertexDeform.DividerY)
+	assert.Equal(t, math.Float32List{3, 3, 3}, doc.VertexDeform.NoiseScale)
+	assert.Equal(t, 1, doc.VertexDeform.WaveX.Type)
+	assert.Equal(t, float32(0.3), doc.VertexDeform.WaveX.Amp)
+	assert.Equal(t, float32(0), doc.VertexDeform.WaveX.Level)
+	assert.Equal(t, float32(0), doc.VertexDeform.WaveX.Phase)
+	assert.Equal(t, float32(1), doc.VertexDeform.WaveX.Freq)
 }
 
 func TestTextureSerialize(t *testing.T) {

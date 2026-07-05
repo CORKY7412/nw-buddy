@@ -24,7 +24,7 @@ export default {
     arg.select('weaponTag', {
       options: NW_WEAPON_TYPES.map((it) => it.WeaponTag),
     })
-    arg.boolean('disabled')
+    arg.bool('disabled')
   }),
 } satisfies Meta<SkillTreeEditorComponent>
 

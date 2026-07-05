@@ -14,6 +14,7 @@ func (doc *Document) augmentMaterialWithOriginal(gltfMtl *gltf.Material, cgfMat 
 	nwMtl := extensions.ExtNwMtl{}
 	nwMtl.Attributes = cgfMat.MaterialAttrs
 	nwMtl.Params = cgfMat.Params
+	nwMtl.VertexDeform = cgfMat.VertexDeform
 
 	for _, nwTex := range cgfMat.Textures.Texture {
 		gltfTex := doc.LoadOrStoreMtlTexture(&nwTex)

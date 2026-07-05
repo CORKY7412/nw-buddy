@@ -120,7 +120,7 @@ func (dir *LevelDirectory) LoadMissionEntities(assets *game.Assets) []ViewerEnti
 	return slice.Entities
 }
 
-func (dir *LevelDirectory) LoadMissionToD(assets *game.Assets) *TimeOfDay {
+func (dir *LevelDirectory) LoadMission(assets *game.Assets) *mission.Document {
 	file, ok := assets.Archive.LookupBySuffix(dir.PathMissionFile())
 	if !ok || file == nil {
 		return nil
@@ -130,21 +130,5 @@ func (dir *LevelDirectory) LoadMissionToD(assets *game.Assets) *TimeOfDay {
 		slog.Error("mission file not loaded", "level", dir.Name, "error", err)
 		return nil
 	}
-	tod := doc.TimeOfDay
-
-	result := &TimeOfDay{
-		Time:          tod.Time,
-		TimeStart:     tod.TimeStart,
-		TimeEnd:       tod.TimeEnd,
-		TimeAnimSpeed: tod.TimeAnimSpeed,
-	}
-	for _, t := range tod.Variable {
-		result.Variables = append(result.Variables, TimeOfDayVariable{
-			Name:  t.Name,
-			Value: t.Value,
-			Color: t.Color,
-		})
-	}
-
-	return result
+	return doc
 }

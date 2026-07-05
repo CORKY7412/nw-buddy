@@ -46,10 +46,10 @@ func (doc *Document) augmentMaterialWithPbr(material *gltf.Material, cgfMat *mtl
 
 	// material.Extras = ExtrasStore(material.Extras, "mtl", cgfMat)
 
-	mtlDiffuse := mtl.ParamColor(cgfMat.Diffuse)
-	mtlSpecular := mtl.ParamColor(cgfMat.Specular)
+	mtlDiffuse := cgfMat.Diffuse
+	mtlSpecular := cgfMat.Specular
 	// mtlEmissive := mtl.ParamColor(m.Emissive) // HINT: Emissive is not used in NW
-	mtlEmittance := mtl.ParamColor(cgfMat.Emittance)
+	mtlEmittance := cgfMat.Emittance
 	for i := range mtlEmittance {
 		// WTF:
 		// Emittance="-341776551831207702696034304.000000,0.000000,0.000000,0.000000"

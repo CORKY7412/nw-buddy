@@ -10,10 +10,10 @@ import (
 	"net/url"
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/rtti"
-	"nw-buddy/tools/utils"
 	"nw-buddy/tools/utils/env"
 	"nw-buddy/tools/utils/json"
 	"os"
+	"os/exec"
 	"path"
 	"strconv"
 	"time"
@@ -38,6 +38,7 @@ type Flags struct {
 	UuidFile    string
 	TextureSize uint
 	Y_UP        bool
+	ViewerDir   string
 }
 
 var flg Flags
@@ -67,9 +68,10 @@ func init() {
 	Cmd.Flags().UintVar(&flg.TextureSize, "texture-size", 2048, "texture size to use for conversion")
 	Cmd.Flags().StringVar(&flg.Host, "host", env.ToolsHost(), "host to listen on")
 	Cmd.Flags().UintVar(&flg.Port, "port", env.ToolsPort(), "port to listen on")
-	Cmd.Flags().StringVar(&flg.CrcFile, "crc-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-crc.json"), "file with crc hashes. Only used for object-stream conversion")
-	Cmd.Flags().StringVar(&flg.UuidFile, "uuid-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-types.json"), "file with uuid hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flg.CrcFile, "crc-file", "nwt-crc.json", "file with crc hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flg.UuidFile, "uuid-file", "nwt-types.json", "file with uuid hashes. Only used for object-stream conversion")
 	Cmd.Flags().BoolVar(&flg.Y_UP, "yup", false, "whether to convert models to y-up. Only used for model conversion. Use true for three.js or babylon.js preview, false for nw-viewer")
+	Cmd.Flags().StringVar(&flg.ViewerDir, "viewer", "viewer", "The viewer app directory")
 }
 
 var crcTable rtti.CrcTable
@@ -80,30 +82,53 @@ func run(cmd *cobra.Command, args []string) {
 	assets, err := game.InitPackedAssets(flg.GameDir)
 	if err != nil {
 		log.Fatal("assets not initialized", "error", err)
+		return
 	}
-	crcTable = utils.Must(rtti.LoadCrcTable(flg.CrcFile))
-	uuidTable = utils.Must(rtti.LoadUuIdTable(flg.UuidFile))
+
+	crcFile, err := exec.LookPath(flg.CrcFile)
+	if err != nil {
+		slog.Warn("crc file not found", "file", flg.CrcFile, "err", err)
+		return
+	}
+	crcTable, err = rtti.LoadCrcTable(crcFile)
+	if err != nil {
+		log.Fatal("crc table not loaded", "error", err)
+		return
+	}
+
+	uuidFile, err := exec.LookPath(flg.UuidFile)
+	if err != nil {
+		slog.Warn("uuid file not found", "file", flg.UuidFile, "err", err)
+		return
+	}
+	uuidTable, err = rtti.LoadUuIdTable(uuidFile)
+	if err != nil {
+		log.Fatal("uuid table not loaded", "error", err)
+		return
+	}
+
 	r := mux.NewRouter()
 	os.MkdirAll(flg.TempDir, os.ModePerm)
 	os.MkdirAll(flg.CacheDir, os.ModePerm)
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	endpoints := []string{
+		"/health",
+		"/list/{pattern}",
+		"/stats/{filePath}",
+		"/files/{filePath}",
+		"/models/{filePath}",
+		"/assets/{assetId}",
+		"/levels/list.json",
+		"/levels/{coatlicue}/info.json",
+		"/levels/{coatlicue}/{region}/info.json",
+		"/levels/{coatlicue}/{region}/capitals.json",
+		"/levels/{coatlicue}/{region}/heightmap.r16",
+		"/levels/{coatlicue}/{region}/watermap.r16",
+	}
+	r.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
 		serveJson(map[string]any{
 			"name": "NWBT API",
-			"endpoints": []string{
-				"/health",
-				"/list/{pattern}",
-				"/stats/{filePath}",
-				"/files/{filePath}",
-				"/models/{filePath}",
-				"/assets/{assetId}",
-				"/levels/list.json",
-				"/levels/{coatlicue}/info.json",
-				"/levels/{coatlicue}/{region}/info.json",
-				"/levels/{coatlicue}/{region}/capitals.json",
-				"/levels/{coatlicue}/{region}/heightmap.r16",
-				"/levels/{coatlicue}/{region}/watermap.r16",
-			},
+			"endpoints": endpoints,
 		}, w)
 	})
 
@@ -122,6 +147,7 @@ func run(cmd *cobra.Command, args []string) {
 	r.HandleFunc("/assets/{assetId}", GetAssetHandler(assets))
 
 	LevelsRouter(r.PathPrefix("/levels").Subrouter(), assets)
+	r.PathPrefix("/").Handler(spaHandler(flg.ViewerDir, "tools/viewer"))
 
 	h := handlers.CustomLoggingHandler(os.Stdout, r, writeLog)
 	h = handlers.CORS(handlers.AllowedOrigins([]string{"*"}))(h)
@@ -133,9 +159,47 @@ func run(cmd *cobra.Command, args []string) {
 
 	addr := fmt.Sprintf("%s:%d", flg.Host, flg.Port)
 	slog.Info("serving on", "address", addr)
+	slog.Info("browse files at", "nw-buddy", "https://www.nw-buddy.de/pak")
 	log.Fatal(http.ListenAndServe(addr, h))
 }
 
+// spaHandler serves static files from root, falling back to index.html
+// for any path that doesn't match an actual file (SPA client-side routing).
+func spaHandler(roots ...string) http.Handler {
+	var root string
+	for _, r := range roots {
+		if info, err := os.Stat(r); err == nil && info.IsDir() {
+			root = r
+			break
+		}
+	}
+	if root == "" {
+		log.Fatal("viewer assets not found", "checked", roots)
+	}
+	slog.Info("serving viewer from", "dir", root)
+
+	fs := http.Dir(root)
+	fileServer := http.FileServer(fs)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Clean the path to prevent directory traversal
+		upath := path.Clean(r.URL.Path)
+
+		f, err := fs.Open(upath)
+		if err != nil {
+			// No matching file (or it's a directory route like /viewer/foo/bar)
+			// -> serve index.html and let the client router handle it.
+			r2 := new(http.Request)
+			*r2 = *r
+			r2.URL.Path = "/"
+			fileServer.ServeHTTP(w, r2)
+			return
+		}
+		f.Close()
+
+		fileServer.ServeHTTP(w, r)
+	})
+}
 func serveJson(object any, w http.ResponseWriter) {
 	data, err := json.MarshalJSON(object, "", "\t")
 	if err != nil {

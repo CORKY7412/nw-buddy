@@ -18,6 +18,7 @@ import (
 	"nw-buddy/tools/formats/heightmap"
 	"nw-buddy/tools/formats/image"
 	"nw-buddy/tools/formats/loc"
+	"nw-buddy/tools/formats/waterqt"
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/game/level"
 	"nw-buddy/tools/nwfs"
@@ -63,6 +64,8 @@ func convertFile(params convertParams) ([]byte, error) {
 		return convertTif(params)
 	case ".heightmap":
 		return convertHeightmap(params)
+	case ".waterqt":
+		return convertWaterqt(params)
 	case ".cgf", ".skin":
 		return convertCGF(params)
 	case ".caf":
@@ -201,6 +204,36 @@ func convertHeightmap(params convertParams) ([]byte, error) {
 		buf := &bytes.Buffer{}
 		err = png.Encode(buf, img)
 		if err != nil {
+			return nil, err
+		}
+		return buf.Bytes(), nil
+	default:
+		return nil, fmt.Errorf("unsupported target format: %s", target)
+	}
+}
+
+func convertWaterqt(params convertParams) ([]byte, error) {
+
+	file := params.file
+	target := params.target
+
+	switch target {
+	case "", ".waterqt":
+		return file.Read()
+	case ".xml":
+		return convertAny(params)
+	case ".png":
+
+		doc, err := waterqt.Load(file)
+		if err != nil {
+			return nil, err
+		}
+		hm, err := doc.ToHeightmap()
+		if err != nil {
+			return nil, err
+		}
+		buf := &bytes.Buffer{}
+		if err := hm.EncodePNG(buf); err != nil {
 			return nil, err
 		}
 		return buf.Bytes(), nil

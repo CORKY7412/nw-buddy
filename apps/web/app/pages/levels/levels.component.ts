@@ -30,7 +30,8 @@ export interface LevelOption {
 
 @Component({
   selector: 'nwb-levels-page',
-  templateUrl: './levels.component.html',
+  // templateUrl: './levels.component.html',
+  template: ` <iframe [src]=""></iframe> `,
   imports: [
     NwModule,
     CommonModule,

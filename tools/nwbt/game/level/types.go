@@ -1,6 +1,7 @@
 package level
 
 import (
+	"nw-buddy/tools/formats/mission"
 	"nw-buddy/tools/formats/tracts"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti/nwt"
@@ -35,22 +36,22 @@ type Vec3 struct {
 }
 
 type CoatlicueInfo struct {
-	Level              string           `json:"level"`              // related level folder name, may be nested
-	Name               string           `json:"name"`               // coatlicue folder name, never nested
-	RegionSize         int              `json:"regionSize"`         // from [coatlicue]/tracts.json, usually 2048
-	RegionCellSize     int              `json:"regionCellSize"`     // from [coatlicue]/offlineoptions.json,  usually 128
-	EnableChunks       bool             `json:"enableChunks"`       // from [coatlicue]/offlineoptions.json
-	EnableVegetation   bool             `json:"enableVegetation"`   // from [coatlicue]/offlineoptions.json
-	EnableDistribution bool             `json:"enableDistribution"` // from [coatlicue]/offlineoptions.json
-	MountainHeight     float32          `json:"mountainHeight"`     // from [coatlicue]/terrain.json
-	MountainRoughness  float32          `json:"mountainRoughness"`  // from [coatlicue]/terrain.json
-	OceanLevel         float32          `json:"oceanLevel"`         // from [coatlicue]/terrain.json
-	ValleyIntensity    float32          `json:"valleyIntensity"`    // from [coatlicue]/terrain.json
-	Tracts             *tracts.Document `json:"tracts"`             // from [coatlicue]/tracts.json
-	Regions            []RegionLocation `json:"regions"`            // from world.json and playable.json
-	GameModeMaps       []GameModeMap    `json:"gameModeMaps"`       // from datasheets, all maps referencing this level/coatlicue
-	MissionTimeOfDay   *TimeOfDay       `json:"missionTimeOfDay"`   // from [level]/mission_mission0.xml
-	MissionEntities    []ViewerEntity   `json:"missionEntities"`    // from [level]/mission0.entities_xml
+	Level              string            `json:"level"`              // related level folder name, may be nested
+	Name               string            `json:"name"`               // coatlicue folder name, never nested
+	RegionSize         int               `json:"regionSize"`         // from [coatlicue]/tracts.json, usually 2048
+	RegionCellSize     int               `json:"regionCellSize"`     // from [coatlicue]/offlineoptions.json,  usually 128
+	EnableChunks       bool              `json:"enableChunks"`       // from [coatlicue]/offlineoptions.json
+	EnableVegetation   bool              `json:"enableVegetation"`   // from [coatlicue]/offlineoptions.json
+	EnableDistribution bool              `json:"enableDistribution"` // from [coatlicue]/offlineoptions.json
+	MountainHeight     float32           `json:"mountainHeight"`     // from [coatlicue]/terrain.json
+	MountainRoughness  float32           `json:"mountainRoughness"`  // from [coatlicue]/terrain.json
+	OceanLevel         float32           `json:"oceanLevel"`         // from [coatlicue]/terrain.json
+	ValleyIntensity    float32           `json:"valleyIntensity"`    // from [coatlicue]/terrain.json
+	Tracts             *tracts.Document  `json:"tracts"`             // from [coatlicue]/tracts.json
+	Regions            []RegionLocation  `json:"regions"`            // from world.json and playable.json
+	GameModeMaps       []GameModeMap     `json:"gameModeMaps"`       // from datasheets, all maps referencing this level/coatlicue
+	Mission            *mission.Document `json:"mission"`            // from [level]/mission_mission0.xml
+	MissionEntities    []ViewerEntity    `json:"missionEntities"`    // from [level]/mission0.entities_xml
 }
 
 type GameModeMap struct {
@@ -68,20 +69,6 @@ type RegionLocation struct {
 	ID       string `json:"name"`     // folder base name, e.g. "r_+00_+00" (or r_+xx_+yy)
 	Location [2]int `json:"location"` // grid location, e.g. [0,0], [1,0], [2,0] etc. first value is X, second is Y
 	Playable bool   `json:"playable"` // from playable.json
-}
-
-type TimeOfDay struct {
-	Time          float32             `json:"time"`
-	TimeStart     float32             `json:"timeStart"`
-	TimeEnd       float32             `json:"timeEnd"`
-	TimeAnimSpeed float32             `json:"timeAnimSpeed"`
-	Variables     []TimeOfDayVariable `json:"variables"`
-}
-
-type TimeOfDayVariable struct {
-	Name  string `json:"name"`
-	Color string `json:"color"`
-	Value string `json:"value"`
 }
 
 type RegionInfo struct {
@@ -177,6 +164,8 @@ const (
 	PointSpawnerComponentName  = "PointSpawner"
 	PrefabSpawnerComponentName = "PrefabSpawner"
 	AreaSpawnerComponentName   = "AreaSpawner"
+	LightComponentName         = "Light"
+	TimOfDayComponentName      = "TimeOfDay"
 )
 
 type ViewerEntity struct {
@@ -256,4 +245,55 @@ type AssetReference struct {
 	Guid  string `json:"guid"`
 	SubId uint32 `json:"subId"`
 	Hint  string `json:"hint,omitempty"`
+}
+
+type ViewerLightComponent struct {
+	Type  string      `json:"type"` // LightComponent
+	Light ViewerLight `json:"light"`
+}
+
+type ViewerLight struct {
+	Type              string           `json:"type"`
+	Color             [4]nwt.AzFloat32 `json:"color"`
+	SpecMultiplier    float32          `json:"specMultiplier"`
+	DiffuseMultiplier float32          `json:"diffuseMultiplier"`
+	Attenuation       float32          `json:"attenuation"` // point and projector lights only
+	Range             float32          `json:"range"`       // point, area and projector lights
+	FOV               float32          `json:"fov"`         // area and projector lights
+	// type 0: point light
+
+	// type 1: area light
+	AreaWidth  float32 `json:"areaWidth"`
+	AreaHeight float32 `json:"areaHeight"`
+	AreaFOV    float32 `json:"areaFOV"`
+
+	// type 2: projector light
+	ProjectorDistance  float32 `json:"projectorDistance"`
+	ProjectorFOV       float32 `json:"projectorFOV"`
+	ProjectorNearPlane float32 `json:"projectorNearPlane"`
+	// ProjectorTexture          AssetReference
+
+	// type 4: environment probe
+	BoxWidth  float32 `json:"boxWidth"`
+	BoxHeight float32 `json:"boxHeight"`
+	BoxDepth  float32 `json:"boxDepth"`
+
+	ViewDistance           float32 `json:"maxViewDistance,omitempty,omitzero"`
+	ViewDistanceEnabled    bool    `json:"viewDistanceEnabled,omitempty,omitzero"`
+	ViewDistanceMultiplier float32 `json:"viewDistanceMultiplier,omitempty,omitzero"`
+}
+
+type ViewerTimeOfDayComponent struct {
+	Type          string             `json:"type"`
+	Shape         string             `json:"shape"` // box,sphere,cylinder
+	Width         float32            `json:"width,omitempty,omitzero"`
+	Height        float32            `json:"height,omitempty,omitzero"`
+	Depth         float32            `json:"depth,omitempty,omitzero"`
+	Radius        float32            `json:"radius,omitempty,omitzero"`
+	BlendDistance float32            `json:"blendDistance,omitempty,omitzero"`
+	BlendTime     float32            `json:"blendTime,omitempty,omitzero"`
+	Priority      int                `json:"priority,omitempty,omitzero"`
+	Override      float32            `json:"override,omitempty,omitzero"`
+	File          string             `json:"file,omitempty"`
+	Preset        *mission.TimeOfDay `json:"preset,omitempty"`
 }

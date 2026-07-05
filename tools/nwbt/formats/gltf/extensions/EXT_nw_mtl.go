@@ -12,7 +12,8 @@ const (
 )
 
 type ExtNwMtl struct {
-	Attributes mtl.MaterialAttrs   `json:"attrs,omitempty"`
-	Textures   []*gltf.TextureInfo `json:"textures,omitempty"`
-	Params     *mtl.PublicParams   `json:"params,omitempty"`
+	Attributes   mtl.MaterialAttrs   `json:"attrs,omitempty"`
+	Textures     []*gltf.TextureInfo `json:"textures,omitempty"`
+	Params       *mtl.PublicParams   `json:"params,omitempty"`
+	VertexDeform *mtl.VertexDeform   `json:"vertexDeform,omitempty"`
 }

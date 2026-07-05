@@ -66,9 +66,12 @@ func run(ccmd *cobra.Command, args []string) {
 	fmt.Println()
 
 	fmt.Println("Archive check")
-	fs := utils.Must(nwfs.NewPackedArchive(flgGameDir))
-	checkDubplicates(fs)
-	fmt.Println("Done")
+	if fs, err := nwfs.NewPackedArchive(flgGameDir); err != nil {
+		fmt.Printf("  %s✗%s Failed: %s\n", colorRed, colorReset, err)
+	} else {
+		checkDubplicates(fs)
+		fmt.Printf("  %s✓%s Done\n", colorGreen, colorReset)
+	}
 }
 
 func printResults(results []CheckResult) {

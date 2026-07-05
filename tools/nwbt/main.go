@@ -15,13 +15,14 @@ func init() {
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
-			slog.Error("Unexpected error occurred", "error", err)
+			slog.Error("panic occurred", "error", err)
 			debug.PrintStack()
 			os.Exit(1)
 		}
 	}()
 
 	if err := commands.Execute(); err != nil {
-		panic(err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 }

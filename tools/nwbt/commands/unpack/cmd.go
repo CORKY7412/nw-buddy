@@ -11,6 +11,7 @@ import (
 	"nw-buddy/tools/utils/env"
 	"nw-buddy/tools/utils/progress"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 
@@ -75,8 +76,8 @@ func init() {
 	Cmd.Flags().StringVar(&flgFmtDDS, "x-dds", "merge", "transforms .dds files to given format. Possible values: merge, png, webp")
 	Cmd.Flags().StringVar(&flgFmtLuac, "x-luac", "", "transforms .luac files to given format. Possible values: lua")
 
-	Cmd.Flags().StringVar(&flgCrcFile, "crc-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-crc.json"), "file with crc hashes. Only used for object-stream conversion")
-	Cmd.Flags().StringVar(&flgUuidFile, "uuid-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-types.json"), "file with uuid hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flgCrcFile, "crc-file", "nwt-crc.json", "file with crc hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flgUuidFile, "uuid-file", "nwt-types.json", "file with uuid hashes. Only used for object-stream conversion")
 }
 
 func run(ccmd *cobra.Command, args []string) {
@@ -85,8 +86,8 @@ func run(ccmd *cobra.Command, args []string) {
 	}
 
 	if flgFmtObjects != "" {
-		crcTable = utils.Must(rtti.LoadCrcTable(flgCrcFile))
-		uuidTable = utils.Must(rtti.LoadUuIdTable(flgUuidFile))
+		crcTable = utils.Must(rtti.LoadCrcTable(utils.Must(exec.LookPath(flgCrcFile))))
+		uuidTable = utils.Must(rtti.LoadUuIdTable(utils.Must(exec.LookPath(flgUuidFile))))
 	}
 
 	unpackDir := flgUnpackDir

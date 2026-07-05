@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"nw-buddy/tools/formats/catalog"
+	"nw-buddy/tools/formats/mission"
 	"nw-buddy/tools/game"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti/nwt"
@@ -256,7 +257,50 @@ func LoadViewerSlice(assets *game.Assets, file nwfs.File, track TrackSliceAsset)
 			case nwt.HitVolumeComponent:
 				// TODO:
 			case nwt.LightComponent:
-				// TODO:
+				config := v.LightConfiguration
+				light := ViewerLight{
+					Color:             [4]nwt.AzFloat32(config.Color),
+					SpecMultiplier:    float32(config.SpecMultiplier),
+					DiffuseMultiplier: float32(config.DiffuseMultiplier),
+				}
+				switch config.LightType {
+				case 0:
+					{
+						light.Type = "Point"
+						light.Range = float32(config.PointMaxDistance)
+						light.Attenuation = float32(config.PointAttenuationBulbSize)
+					}
+				case 1:
+					{
+						light.Type = "Area"
+						light.Range = float32(config.AreaMaxDistance)
+						// light.Attenuation =
+						light.AreaWidth = float32(config.AreaWidth)
+						light.AreaHeight = float32(config.AreaHeight)
+						light.AreaFOV = float32(config.AreaFOV)
+					}
+				case 2:
+					{
+						light.Type = "Projector"
+						light.Range = float32(config.ProjectorDistance)
+						light.Attenuation = float32(config.ProjectorAttenuationBulbSize)
+						light.ProjectorFOV = float32(config.ProjectorFOV)
+						light.ProjectorNearPlane = float32(config.ProjectorNearPlane)
+						light.ProjectorDistance = float32(config.ProjectorDistance)
+					}
+				case 3:
+					{
+						light.Type = "Probe"
+						light.BoxWidth = float32(config.BoxWidth)
+						light.BoxHeight = float32(config.BoxHeight)
+						light.BoxDepth = float32(config.BoxLength)
+					}
+				}
+				viewerEntity.Components = append(viewerEntity.Components, ViewerLightComponent{
+					Type:  LightComponentName,
+					Light: light,
+				})
+
 			case nwt.MeshMergerComponent:
 				// TODO:
 			case nwt.RiverComponent:
@@ -267,6 +311,55 @@ func LoadViewerSlice(assets *game.Assets, file nwfs.File, track TrackSliceAsset)
 				// TODO:
 			case nwt.VegetationAreaComponent:
 				// TODO:
+			case nwt.TimeOfDayPOIComponent:
+				tod := ViewerTimeOfDayComponent{
+					Type:          TimOfDayComponentName,
+					BlendDistance: float32(v.Configuration.BlendDistance),
+					BlendTime:     float32(v.Configuration.BlendTime),
+					Priority:      int(v.Configuration.Priority),
+					File:          string(v.Configuration.FileName),
+					Override:      float32(v.Configuration.TimeOfDayOverride),
+				}
+
+				for _, cc := range entity.Components.Element {
+					switch vv := cc.(type) {
+					case nwt.BoxShapeComponent:
+						tod.Shape = "box"
+						tod.Width = float32(vv.Configuration.Dimensions[0])
+						tod.Height = float32(vv.Configuration.Dimensions[1])
+						tod.Depth = float32(vv.Configuration.Dimensions[2])
+					case nwt.SphereShapeComponent:
+						tod.Shape = "sphere"
+						tod.Radius = float32(vv.Configuration.Radius)
+					case nwt.CylinderShapeComponent:
+						tod.Shape = "cylinder"
+						tod.Height = float32(vv.Configuration.Height)
+						tod.Radius = float32(vv.Configuration.Radius)
+					case nwt.CapsuleShapeComponent:
+						tod.Shape = "cylinder"
+						tod.Height = float32(vv.Configuration.Height)
+						tod.Radius = float32(vv.Configuration.Radius)
+					case nwt.CompoundShapeComponent:
+						//
+					case nwt.PolygonPrismShapeComponent:
+						//
+					}
+				}
+
+				if tod.Shape == "" {
+					continue
+				}
+
+				file, ok := assets.Archive.Lookup(string(v.Configuration.FileName))
+				if !ok {
+					continue
+				}
+				t, _ := mission.LoadTOD(file)
+				if t != nil {
+					tod.Preset = t
+				}
+
+				viewerEntity.Components = append(viewerEntity.Components, tod)
 			}
 		}
 

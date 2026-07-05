@@ -27,12 +27,14 @@ func (doc *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject HandleObj
 		isHelper := strings.Contains(chunk.Name, "$physics") || strings.HasPrefix(chunk.Name, "$")
 		lod := 0
 
+		shouldSkip := false
 		if isLod && doc.Options.SkipLod {
-			continue
+			shouldSkip = true
 		}
 		if !isLod && isHelper && doc.Options.SkipHelper {
-			continue
+			shouldSkip = true
 		}
+
 		if isLod {
 			lod, _ = strconv.Atoi(lodRegex.FindStringSubmatch(chunk.Name)[1])
 		}
@@ -41,12 +43,17 @@ func (doc *Document) ImportCgfHierarchy(cgfile *cgf.File, handleObject HandleObj
 		if !mat4.IsIdentity(chunk.Transform) {
 			node.Matrix = mat4.ToFloat64(base.Mat4(mat4.Transpose(chunk.Transform)))
 		}
+
 		if chunk.ParentId == -1 {
 			rootNodes = append(rootNodes, node)
 		} else {
 			parent, _ := nodeMap.lookup(chunk.ParentId)
 			parent.Children = append(parent.Children, nodeIndex)
 		}
+		if shouldSkip {
+			continue
+		}
+
 		if object, ok := cgf.FindChunk[cgf.Chunker](cgfile, chunk.ObjectId); ok {
 			handleObject(node, object, chunk.Name, lod)
 		}

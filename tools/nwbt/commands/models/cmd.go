@@ -15,6 +15,7 @@ import (
 	"nw-buddy/tools/utils/math"
 	"nw-buddy/tools/utils/progress"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 
@@ -85,8 +86,8 @@ func init() {
 	Cmd.Flags().BoolVar(&flg.SkipExisting, "skip", false, "Whether to skip existing files")
 	Cmd.Flags().UintVarP(&flg.WorkerCount, "workers", "w", uint(env.PreferredWorkerCount()), "number of workers to use for processing")
 
-	Cmd.Flags().StringVar(&flg.CrcFile, "crc-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-crc.json"), "file with crc hashes. Only used for object-stream conversion")
-	Cmd.Flags().StringVar(&flg.UuidFile, "uuid-file", path.Join(env.WorkDir(), "tools/nwbt/rtti/nwt/nwt-types.json"), "file with uuid hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flg.CrcFile, "crc-file", "nwt-crc.json", "file with crc hashes. Only used for object-stream conversion")
+	Cmd.Flags().StringVar(&flg.UuidFile, "uuid-file", "nwt-types.json", "file with uuid hashes. Only used for object-stream conversion")
 	Cmd.AddCommand(
 		cmdCollectAppearances,
 		cmdCollectCapitals,
@@ -278,14 +279,25 @@ func (c *Collector) ProcessTimelines() {
 	if len(files) == 0 {
 		return
 	}
-	crcTable, err := rtti.LoadCrcTable(flg.CrcFile)
+	crcFile, err := exec.LookPath(flg.CrcFile)
 	if err != nil {
 		slog.Warn("failed to load crc table", "file", flg.CrcFile, "err", err)
 		return
 	}
-	uuidTable, err := rtti.LoadUuIdTable(flg.UuidFile)
+	crcTable, err := rtti.LoadCrcTable(crcFile)
+	if err != nil {
+		slog.Warn("failed to load crc table", "file", crcFile, "err", err)
+		return
+	}
+
+	uuidFile, err := exec.LookPath(flg.UuidFile)
 	if err != nil {
 		slog.Warn("failed to load uuid table", "file", flg.UuidFile, "err", err)
+		return
+	}
+	uuidTable, err := rtti.LoadUuIdTable(uuidFile)
+	if err != nil {
+		slog.Warn("failed to load uuid table", "file", uuidFile, "err", err)
 		return
 	}
 

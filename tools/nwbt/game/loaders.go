@@ -124,7 +124,7 @@ func (it *Assets) LookupFileByAssetIdRef(assetIdRef string) (nwfs.File, error) {
 		return nil, fmt.Errorf("asset ref '%v' does not exist in catalog: %w", assetIdRef, ErrNotFound)
 	}
 
-	return it.lookupFile(asset.File)
+	return it.LookupFile(asset.File)
 }
 
 func (it *Assets) LookupFileByAssetId(id nwt.AssetId) (nwfs.File, error) {
@@ -138,7 +138,7 @@ func (it *Assets) LookupFileByAssetId(id nwt.AssetId) (nwfs.File, error) {
 		return nil, fmt.Errorf("asset id '%v' does not exist in catalog: %w", id, ErrNotFound)
 	}
 
-	return it.lookupFile(asset.File)
+	return it.LookupFile(asset.File)
 }
 
 func (it *Assets) LookupFileByAsset(azAsset nwt.AzAsset) (nwfs.File, error) {
@@ -151,11 +151,11 @@ func (it *Assets) LookupFileByAsset(azAsset nwt.AzAsset) (nwfs.File, error) {
 		return nil, fmt.Errorf("asset '%v' does not exist in catalog: %w", azAsset, ErrNotFound)
 	}
 
-	return it.lookupFile(asset.File)
+	return it.LookupFile(asset.File)
 }
 
 func (c *Assets) LoadCdf(cdfFile string) (*cdf.Document, error) {
-	f, err := c.lookupFile(cdfFile)
+	f, err := c.LookupFile(cdfFile)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func (c *Assets) LoadCdf(cdfFile string) (*cdf.Document, error) {
 }
 
 func (c *Assets) LoadAdb(adbFile string) (*adb.Document, error) {
-	f, err := c.lookupFile(adbFile)
+	f, err := c.LookupFile(adbFile)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func (c *Assets) LoadAdb(adbFile string) (*adb.Document, error) {
 }
 
 func (c *Assets) LoadAnimation(anim importer.AnimationAsset) *cgf.File {
-	f, err := c.lookupFile(anim.File)
+	f, err := c.LookupFile(anim.File)
 	if err != nil {
 		slog.Warn("animation file not found", "file", anim.File)
 		return nil
@@ -195,7 +195,7 @@ func (c *Assets) LoadAnimation(anim importer.AnimationAsset) *cgf.File {
 }
 
 func (c *Assets) LoadGeometry(geometryFile string) (*cgf.File, error) {
-	f, err := c.lookupFile(geometryFile)
+	f, err := c.LookupFile(geometryFile)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (c *Assets) LoadGeometry(geometryFile string) (*cgf.File, error) {
 }
 
 func (c *Assets) LoadMaterial(materialFile string) ([]mtl.Material, error) {
-	f, err := c.lookupFile(materialFile)
+	f, err := c.LookupFile(materialFile)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ func (c *Assets) LoadAsset(mesh importer.GeometryAsset) (*cgf.File, []byte, []mt
 	return model, heap, materials
 }
 
-func (c *Assets) lookupFile(path string) (nwfs.File, error) {
+func (c *Assets) LookupFile(path string) (nwfs.File, error) {
 	file, ok := c.Archive.Lookup(path)
 	if !ok {
 		return nil, fmt.Errorf("file not found in archive: %s: %w", path, ErrNotFound)

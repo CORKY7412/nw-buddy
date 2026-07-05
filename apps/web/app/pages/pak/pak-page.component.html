@@ -19,125 +19,31 @@
           ></span>
           <a [routerLink]="'.'" class="ml-2"> NWBT Pak Browser </a>
         </div>
-
-        @if (tabs()?.length) {
-          <div slot="end" class="join">
-            @for (tab of tabs(); track $index) {
-              <button
-                class="join-item btn btn-ghost"
-                [class.text-primary]="tab.active"
-                [routerLink]="'.'"
-                [queryParams]="{ tab: tab.id }"
-                [queryParamsHandling]="'merge'"
-              >
-                <nwb-icon [icon]="tab.icon" class="w-4 h-4" />
-              </button>
-            }
-          </div>
-        }
       </ion-toolbar>
       <ion-toolbar class="bg-base-200" [style.--min-height]="'0'">
         <nwb-pak-navbar />
       </ion-toolbar>
     </ion-header>
-    @if (source(); as source) {
-      <div class="flex flex-row h-full">
-        @if (outlineContent(); as outline) {
-          <div class="flex flex-col">
-            <nwb-object-tree
-              [items]="outline.items"
-              [adapter]="outline.adapter"
-              [open]="true"
-              class="h-full w-96 flex-fill text-xs"
-              (selected)="handleEntitySelection($event)"
-            >
-              <ng-template [nwbObjectTreeLabel] let-item>
-                {{ item.name }}
-                @if (isEntityInTheWorld(item)) {
-                  <span class="badge badge-xs badge-primary tooltip" data-tip="Has PositionInTheWorld component"></span>
-                }
-                @if (!isEntityRuntimeActive(item)) {
-                  <span class="badge badge-xs badge-error tooltip" data-tip="isRuntimeActive is false"></span>
-                }
-              </ng-template>
-            </nwb-object-tree>
-            @if (entityComponents(); as list) {
-              <div class="flex-none flex flex-col gap-1 bg-base-300 p-1">
-                <label>Components:</label>
-                @for (item of list; track $index) {
-                  <button
-                    class="btn btn-sm bt-ghost justify-start cursor-default"
-                    (click)="handleComponentSelection(item)"
-                  >
-                    {{ item | nwHumanize }}
-                  </button>
-                }
-              </div>
-            }
-          </div>
+    <ion-content>
+      @switch (viewerType()) {
+        @case ('image') {
+          <nwb-pak-preview-image [source]="source()" />
         }
-        <ion-content>
-          @switch (previewType()) {
-            @case ('3d') {
-              <nwb-game-viewer class="ion-page" engine="threejs">
-                <nwb-game-viewer-stats slot="toolbar" />
-                <nwb-game-viewer-model [url]="modelContent()[0].url" [rootUrl]="modelContent()[0].rootUrl" />
-              </nwb-game-viewer>
-            }
-            @case ('txt') {
-              <nwb-code-editor
-                class="ion-page"
-                [nwbMonacoSliceExtension]=""
-                (nwbMonacoAssetCommand)="service.handleMonacoAssetCommand($event)"
-                [ngModel]="textContent.value()"
-                [language]="source.textType"
-                [disabled]="true"
-              />
-            }
-            @case ('img') {
-              <div class="flex items-center justify-center h-full w-full overflow-auto">
-                <img
-                  class="block max-w-[initial]"
-                  [src]="source.baseUrl + source.imagePath"
-                  [style.zoom]="imageZoom()"
-                />
-              </div>
-              <div class="absolute bottom-0 left-0 right-0 flex items-center justify-around">
-                <div class="w-full max-w-xs">
-                  <input
-                    type="range"
-                    min="0.01"
-                    max="4"
-                    value="1"
-                    class="range"
-                    step="0.01"
-                    [(ngModel)]="imageZoom"
-                    (dblclick)="imageZoom.set(1)"
-                  />
-                  <div class="flex justify-between px-2.5 mt-2 text-xs">
-                    <span>|</span>
-                    <span>|</span>
-                    <span>|</span>
-                    <span>|</span>
-                    <span>|</span>
-                  </div>
-                  <div class="flex justify-between px-2.5 mt-2 text-xs">
-                    <span>0</span>
-                    <span>1</span>
-                    <span>2</span>
-                    <span>3</span>
-                    <span>4</span>
-                  </div>
-                </div>
-              </div>
-            }
-          }
-        </ion-content>
-      </div>
-    } @else {
-      <ion-content>
-        <nwb-pak-docs />
-      </ion-content>
-    }
+        @case ('model') {
+          <nwb-pak-preview-model [source]="source()" />
+        }
+        @case ('slice') {
+          <nwb-pak-preview-slice [source]="source()" />
+        }
+        @case ('code') {
+          <nwb-pak-preview-code [source]="source()" />
+        }
+        @default {
+          @if (!source()) {
+            <nwb-pak-docs />
+          } @else {}
+        }
+      }
+    </ion-content>
   </div>
 </ion-split-pane>

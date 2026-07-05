@@ -79,7 +79,7 @@ program
       .object({
         version: z.string(),
         workspace: z.string(),
-        files: z.boolean(),
+        files: z.bool(),
       })
       .parse(data)
 
@@ -125,10 +125,10 @@ program
   .action(async (opts) => {
     const options = z
       .object({
-        force: z.boolean(),
+        force: z.bool(),
         directory: z.string(),
         target: z.string(),
-        dryRun: z.boolean(),
+        dryRun: z.bool(),
       })
       .parse(opts)
     console.info('Uploading models', options)
@@ -182,15 +182,11 @@ program
   })
 
 program.command('upload-tiles').action(async () => {
-
   const dataDir = environment.nwDataDir()
   const tilesDir = path.join(dataDir, 'lyshineui', 'worldtiles')
   const client = createClient()
 
-  const patterns = [
-    path.join(tilesDir, '**/*.webp'),
-    path.join(tilesDir, '**/*.png'),
-  ]
+  const patterns = [path.join(tilesDir, '**/*.webp'), path.join(tilesDir, '**/*.png')]
   const imageFiles = await glob(patterns)
   const files = await glob(patterns).then((list) => {
     return list.map((file) => {

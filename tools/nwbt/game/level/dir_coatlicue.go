@@ -257,8 +257,8 @@ func (dir *CoatlicueDirectory) LoadInfo(assets *game.Assets) *CoatlicueInfo {
 	}
 
 	if hasLevel {
+		result.Mission = level.LoadMission(assets)
 		result.MissionEntities = level.LoadMissionEntities(assets)
-		result.MissionTimeOfDay = level.LoadMissionToD(assets)
 	}
 
 	return result

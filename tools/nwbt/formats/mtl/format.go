@@ -5,6 +5,7 @@ import (
 	"iter"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/utils/maps"
+	"nw-buddy/tools/utils/math"
 	"strconv"
 	"strings"
 
@@ -69,26 +70,27 @@ func (e *Document) Collection() []Material {
 }
 
 type Material struct {
-	XMLName  xml.Name      `xml:"Material" json:"-"`
-	Textures Textures      `xml:"Textures" json:",omitzero"`
-	Params   *PublicParams `xml:"PublicParams" json:",omitzero,omitempty"`
+	XMLName      xml.Name      `xml:"Material" json:"-"`
+	Textures     Textures      `xml:"Textures" json:",omitzero"`
+	Params       *PublicParams `xml:"PublicParams" json:",omitzero,omitempty"`
+	VertexDeform *VertexDeform `xml:"VertexDeform" json:",omitzero,omitempty"`
 	MaterialAttrs
 }
 
 type MaterialAttrs struct {
-	AlphaTest     *float32 `xml:"AlphaTest,attr" json:",omitempty"`
-	CloakAmount   *float32 `xml:"CloakAmount,attr" json:",omitempty"`
-	Diffuse       string   `xml:"Diffuse,attr" json:",omitzero,omitempty"`
-	Emissive      string   `xml:"Emissive,attr" json:",omitzero,omitempty"`
-	Emittance     string   `xml:"Emittance,attr" json:",omitzero,omitempty"`
-	GenMask       string   `xml:"GenMask,attr" json:",omitzero,omitempty"`
-	MtlFlags      *int     `xml:"MtlFlags,attr" json:",omitempty"`
-	Name          string   `xml:"Name,attr" json:",omitzero,omitempty"`
-	Opacity       *float32 `xml:"Opacity,attr" json:",omitempty"`
-	Shader        string   `xml:"Shader,attr" json:",omitzero"`
-	Shininess     *float32 `xml:"Shininess,attr" json:",omitempty"`
-	Specular      string   `xml:"Specular,attr" json:",omitzero,omitempty"`
-	StringGenMask string   `xml:"StringGenMask,attr" json:",omitzero,omitempty"`
+	AlphaTest     *float32         `xml:"AlphaTest,attr" json:",omitempty"`
+	CloakAmount   *float32         `xml:"CloakAmount,attr" json:",omitempty"`
+	Diffuse       math.Float32List `xml:"Diffuse,attr" json:",omitzero,omitempty"`
+	Emissive      math.Float32List `xml:"Emissive,attr" json:",omitzero,omitempty"`
+	Emittance     math.Float32List `xml:"Emittance,attr" json:",omitzero,omitempty"`
+	GenMask       string           `xml:"GenMask,attr" json:",omitzero,omitempty"`
+	MtlFlags      *int             `xml:"MtlFlags,attr" json:",omitempty"`
+	Name          string           `xml:"Name,attr" json:",omitzero,omitempty"`
+	Opacity       *float32         `xml:"Opacity,attr" json:",omitempty"`
+	Shader        string           `xml:"Shader,attr" json:",omitzero"`
+	Shininess     *float32         `xml:"Shininess,attr" json:",omitempty"`
+	Specular      math.Float32List `xml:"Specular,attr" json:",omitzero,omitempty"`
+	StringGenMask string           `xml:"StringGenMask,attr" json:",omitzero,omitempty"`
 }
 
 func (e *Material) IterTextures() iter.Seq[Texture] {
@@ -209,6 +211,24 @@ type SubMaterials struct {
 	Material []Material `xml:"Material" json:",omitzero"`
 }
 
+type VertexDeform struct {
+	XMLName    xml.Name         `xml:"VertexDeform" json:"-"`
+	Type       int              `xml:"Type,attr" json:",omitempty"`
+	DividerX   float32          `xml:"DividerX,attr" json:",omitempty"`
+	DividerY   float32          `xml:"DividerY,attr" json:",omitempty"`
+	NoiseScale math.Float32List `xml:"NoiseScale,attr" json:",omitempty"`
+	WaveX      WaveX            `xml:"WaveX" json:",omitempty"`
+}
+
+type WaveX struct {
+	XMLName xml.Name `xml:"WaveX" json:"-"`
+	Type    int      `xml:"Type,attr" json:""`
+	Amp     float32  `xml:"Amp,attr" json:""`
+	Level   float32  `xml:"Level,attr" json:""`
+	Phase   float32  `xml:"Phase,attr" json:""`
+	Freq    float32  `xml:"Freq,attr" json:""`
+}
+
 type Textures struct {
 	XMLName xml.Name  `xml:"Textures" json:"-"`
 	Texture []Texture `xml:"Texture" json:",omitzero"`
@@ -246,6 +266,23 @@ const (
 	TextureTypeDynamic2D
 	TextureTypeUser
 	TextureTypeNearestCube
+)
+
+type TexGenType int
+
+const (
+	Stream TexGenType = iota
+	World
+	Camera
+)
+
+type TexModRotateType = int
+
+const (
+	TexModRotateNoChange = iota
+	TexModRotateFixed
+	TexModRotateConstant
+	TexModRotateOscillated
 )
 
 type Texture struct {
@@ -312,35 +349,35 @@ const (
 )
 
 type TexMod struct {
-	OffsetU                     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	OffsetV                     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	RotateU                     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	RotateV                     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	RotateW                     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_bTexGenProjected     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_RotateType           *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_TexGenType           *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_UOscillatorAmplitude *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_UOscillatorPhase     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_UOscillatorRate      *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_UOscillatorType      *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_URotateAmplitude     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_URotateCenter        *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_URotatePhase         *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_URotateRate          *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VOscillatorAmplitude *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VOscillatorPhase     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VOscillatorRate      *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VOscillatorType      *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VRotateAmplitude     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VRotateCenter        *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VRotatePhase         *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_VRotateRate          *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_WRotateAmplitude     *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_WRotatePhase         *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TexMod_WRotateRate          *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TileU                       *float32 `xml:",attr" json:",omitzero,omitempty"`
-	TileV                       *float32 `xml:",attr" json:",omitzero,omitempty"`
+	OffsetU                     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	OffsetV                     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	RotateU                     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	RotateV                     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	RotateW                     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_bTexGenProjected     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_RotateType           TexModRotateType `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_TexGenType           TexGenType       `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_UOscillatorAmplitude *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_UOscillatorPhase     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_UOscillatorRate      *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_UOscillatorType      *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_URotateAmplitude     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_URotateCenter        *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_URotatePhase         *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_URotateRate          *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VOscillatorAmplitude *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VOscillatorPhase     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VOscillatorRate      *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VOscillatorType      *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VRotateAmplitude     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VRotateCenter        *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VRotatePhase         *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_VRotateRate          *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_WRotateAmplitude     *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_WRotatePhase         *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TexMod_WRotateRate          *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TileU                       *float32         `xml:",attr" json:",omitzero,omitempty"`
+	TileV                       *float32         `xml:",attr" json:",omitzero,omitempty"`
 }
 
 func ParamColor(color string) []float32 {

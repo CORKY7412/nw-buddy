@@ -17,10 +17,10 @@ import { catchError, interval, map, of, startWith, switchMap } from 'rxjs'
 import { eqCaseInsensitive, rxResourceValue } from '../../utils'
 import { AssetRef, MonacoSliceAssetCommand } from './monaco'
 
-const toImageTypes = ['dds', 'png', 'tif', 'a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', 'heightmap']
-const toModelTypes = ['cgf', 'cdf', 'skin', 'mtl', 'dynamicslice']
-const toLuaTypes = ['luac']
-const toJsonTypes = [
+const toImageTypes = ['dds', 'png', 'tif', 'a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', 'heightmap', 'waterqt']
+const toModelTypes = ['cgf', 'cdf', 'skin'] //, 'mtl', 'dynamicslice']
+export const toLuaTypes = ['luac']
+export const toJsonTypes = [
   'aliasasset',
   'chunks',
   'datasheet',
@@ -60,12 +60,13 @@ const toJsonTypes = [
 
   'collisionfilters',
 ]
-const textTypeMap = {
+export const textTypeMap = {
   json: 'json',
   xml: 'xml',
   txt: 'txt',
   cfg: 'txt',
   ext: 'txt',
+  csv: 'txt',
 
   mtl: 'xml',
   cdf: 'xml',
@@ -83,14 +84,10 @@ const textTypeMap = {
 }
 
 export interface FileSource {
-  baseUrl: string
-
-  path: string
+  base: string
+  file: string
   ext: string
-  textPath?: string
-  textType?: string
-  modelPath?: string
-  imagePath?: string
+  viewer: 'code' | 'image' | 'model' | 'slice'
 }
 
 @Injectable()
@@ -148,28 +145,38 @@ export class PakService {
       ext = tokens.pop()
     }
     const stat: FileSource = {
-      baseUrl: this.nwbtUrl('files/'),
-      path: file,
+      base: this.nwbtUrl('files/'),
+      file: file,
       ext: ext,
+      viewer: null,
     }
-    if (textTypeMap[ext]) {
-      stat.textPath = file
-      stat.textType = textTypeMap[ext]
+    if (ext === 'dynamicslice') {
+      stat.viewer = 'slice'
+    } else if (toImageTypes.includes(ext)) {
+      stat.viewer = 'image'
+    } else if (toModelTypes.includes(ext)) {
+      stat.viewer = 'model'
+    } else if (toLuaTypes.includes(ext) || toJsonTypes.includes(ext) || textTypeMap[ext]) {
+      stat.viewer = 'code'
+    } else {
+      //
     }
-    if (toJsonTypes.includes(ext)) {
-      stat.textPath = `${file}.json`
-      stat.textType = 'json'
-    }
-    if (toLuaTypes.includes(ext)) {
-      stat.textPath = `${file}.lua`
-      stat.textType = 'lua'
-    }
-    if (toModelTypes.includes(ext)) {
-      stat.modelPath = `${file}.glb?cache=0`
-    }
-    if (toImageTypes.includes(ext)) {
-      stat.imagePath = `${file}.png`
-    }
+    // if (textTypeMap[ext]) {
+    //   stat.textPath = file
+    //   stat.textType = textTypeMap[ext]
+    // }
+    // if (toJsonTypes.includes(ext)) {
+    //   stat.textPath = `${file}.json`
+    //   stat.textType = 'json'
+    // }
+    // if (toLuaTypes.includes(ext)) {
+    //   stat.textPath = `${file}.lua`
+    //   stat.textType = 'lua'
+    // }
+    // if (toModelTypes.includes(ext)) {
+    //   stat.modelPath = `${file}.glb?cache=0`
+    // }
+
     return stat
   }
 

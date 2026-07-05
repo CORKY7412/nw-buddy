@@ -22,6 +22,7 @@ type MtlInspector struct {
 
 type MtlShaderInfo struct {
 	count        int
+	attrCount    map[string]int
 	maskCount    map[string]int
 	paramCount   map[string]int
 	paramIsFloat map[string]bool
@@ -30,6 +31,30 @@ type MtlShaderInfo struct {
 	paramIsVec4  map[string]bool
 	mapCount     map[string]int
 	modCount     map[string]int
+}
+
+var mapOrder = []string{
+	"Diffuse",
+	"Bumpmap",
+	"Specular",
+	"Environment",
+	"Detail",
+	"SecondSmoothness",
+	"Heightmap",
+	"Decal",
+	"SubSurface",
+	"Custom",
+	"[1] Custom",
+	"Opacity",
+	"Smoothness",
+	"Emittance",
+	"Occlusion",
+	"Specular2",
+	"[2] Custom",
+	"[3] Custom",
+	"[4] Custom",
+	"[5] Custom",
+	"[5] Smoothness",
 }
 
 func NewMtlInspector() *MtlInspector {
@@ -51,6 +76,7 @@ func (it *MtlInspector) Inspect(assets *game.Assets, file nwfs.File) {
 		shader := strings.ToLower(m.Shader)
 		if it.shader[shader] == nil {
 			it.shader[shader] = &MtlShaderInfo{
+				attrCount:    make(map[string]int),
 				maskCount:    make(map[string]int),
 				paramCount:   make(map[string]int),
 				paramIsFloat: make(map[string]bool),
@@ -114,7 +140,8 @@ func (it *MtlInspector) Print(w io.Writer) {
 	{
 		mapNames := slices.Collect(maps.Keys(it.maps))
 		slices.SortFunc(mapNames, func(a, b string) int {
-			return it.maps[b] - it.maps[a]
+			return slices.Index(mapOrder, a) - slices.Index(mapOrder, b)
+			// return it.maps[b] - it.maps[a]
 		})
 		if len(mapNames) > 0 {
 			fmt.Fprintf(w, "\n")
@@ -203,11 +230,12 @@ func (it *MtlInspector) Print(w io.Writer) {
 
 		mapNames := slices.Collect(maps.Keys(info.mapCount))
 		slices.SortFunc(mapNames, func(a, b string) int {
-			return info.mapCount[b] - info.mapCount[a]
+			return slices.Index(mapOrder, a) - slices.Index(mapOrder, b)
+			// return info.mapCount[b] - info.mapCount[a]
 		})
 		if len(mapNames) > 0 {
 			fmt.Fprintf(w, "\n")
-			fmt.Fprintf(w, "### Maps (%d)\n", len(params))
+			fmt.Fprintf(w, "### Maps (%d)\n", len(mapNames))
 
 			fmt.Fprintf(tw, "| Name\t| Count\t| Mod count\t|\n")
 			fmt.Fprintf(tw, "|---\t|---\t|---\t|\n")

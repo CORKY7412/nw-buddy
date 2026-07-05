@@ -2,6 +2,7 @@ package serve
 
 import (
 	"log/slog"
+	"nw-buddy/tools/formats/mission"
 	"nw-buddy/tools/game/level"
 
 	"github.com/spf13/cobra"
@@ -14,6 +15,8 @@ var CmdTypegen = &cobra.Command{
 	Long:  "",
 	Run:   runTypegen,
 }
+
+type Mission = mission.Document
 
 func runTypegen(cmd *cobra.Command, args []string) {
 	converter := typescriptify.New()
@@ -31,6 +34,7 @@ func runTypegen(cmd *cobra.Command, args []string) {
 	converter.Add(level.RegionCapitalsData{})
 	converter.Add(level.CapitalRuntimeData{})
 	converter.Add(level.ChunkRuntimeData{})
+	converter.Add(Mission{})
 
 	err := converter.ConvertToFile("libs/nw-serve/generated.ts")
 	if err != nil {

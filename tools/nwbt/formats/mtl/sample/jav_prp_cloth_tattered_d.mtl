@@ -1,0 +1,16 @@
+<Material MtlFlags="524290" Shader="Illum" GenMask="2000C2401" StringGenMask="%NORMAL_MAP%EMITTANCE_MAP%ALLOW_SILHOUETTE_POM%SUBSURFACE_SCATTERING%EMISSIVE_DECAL%ALLOW_SPECULAR_ANTIALIASING" SurfaceType="mat_wood" Diffuse="0.49102089,0.49102089,0.49102089,1" Specular="0.012983033,0.012983033,0.012983033,1" Emittance="0.10461649,0.15896086,0.30054381,1" Opacity="1" Shininess="82" AlphaTest="0.28999999" vertModifType="2" LayerAct="1">
+	<Textures>
+		<Texture Map="Emittance" File="objects/crafting/props/decor/cloth/textures/jav_prp_cloth_tattered_a_diff.dds" AssetId="{1CA27000-B58E-55E7-9C08-A195B3D57619}:100000"/>
+		<Texture Map="Smoothness" File="objects/crafting/props/decor/cloth/textures/jav_prp_cloth_tattered_a_ddna.dds" AssetId="{EBCEEC5B-43B6-5EB9-9F2A-FE1B22DC63D5}:0"/>
+		<Texture Map="Bumpmap" File="objects/crafting/props/decor/cloth/textures/jav_prp_cloth_tattered_a_ddna.dds" AssetId="{EBCEEC5B-43B6-5EB9-9F2A-FE1B22DC63D5}:0"/>
+		<Texture Map="Diffuse" File="objects/crafting/props/decor/cloth/textures/jav_prp_cloth_tattered_a_diff.dds" AssetId="{1CA27000-B58E-55E7-9C08-A195B3D57619}:100000"/>
+		<Texture Map="Decal" File="objects/crafting/props/decor/cloth/textures/jav_prp_cloth_folds_vert_a_mask.dds" AssetId="{0A26820D-E84F-56B7-95F8-C76CFB7D2C01}:0">
+			<TexMod TexMod_RotateType="0" TexMod_TexGenType="0" TexMod_bTexGenProjected="0" TileV="0.5" TexMod_VOscillatorType="2" TexMod_VOscillatorRate="-0.80000001" TexMod_VOscillatorPhase="1" TexMod_VOscillatorAmplitude="0.30000001"/>
+		</Texture>
+	</Textures>
+	<VertexDeform Type="2" DividerX="4" DividerY="0.0099999998" NoiseScale="3,3,3">
+		<WaveX Type="1" Amp="0.30000001" Level="0" Phase="0" Freq="1"/>
+	</VertexDeform>
+	<PublicParams EmittanceMapGamma="1" SSSIndex="0" IndirectColor="0.25,0.25,0.25,0.25"/>
+</Material>
+

@@ -23,6 +23,7 @@ var (
 )
 
 func init() {
+	slog.Info("CALLER", "b", b)
 	workDir := WorkDir()
 	envFile := path.Join(workDir, ".env")
 	if _, err := os.Stat(envFile); os.IsNotExist(err) {
@@ -34,6 +35,9 @@ func init() {
 	AppendToPATH(WorkDir())
 	AppendToPATH(path.Join(WorkDir(), "bin"))
 	AppendToPATH(path.Join(WorkDir(), "tools", "bin"))
+	AppendToPATH(path.Join(WorkDir(), "tools", "nwbt", "rtti", "nwt"))
+	AppendToPATH(path.Join(WorkDir(), "viewer"))
+	AppendToPATH(path.Join(WorkDir(), "tools", "viewer"))
 }
 
 func AppendToPATH(p string) {
@@ -43,7 +47,7 @@ func AppendToPATH(p string) {
 
 func PrintStatus() {
 	if envLoadError != nil {
-		slog.Error(fmt.Sprintf("[ENV] filed to load .env file: %v", envLoadError))
+		slog.Error(fmt.Sprintf("[ENV] .env file not found: %v", envLoadError))
 	} else {
 		slog.Info("[ENV] loaded .env file")
 	}

@@ -2,7 +2,10 @@ package mission
 
 import (
 	"encoding/xml"
+	"fmt"
 	"nw-buddy/tools/nwfs"
+	"strconv"
+	"strings"
 )
 
 func Load(file nwfs.File) (*Document, error) {
@@ -19,6 +22,16 @@ func Parse(data []byte) (*Document, error) {
 	return &document, err
 }
 
+func LoadTOD(file nwfs.File) (*TimeOfDay, error) {
+	data, err := file.Read()
+	if err != nil {
+		return nil, err
+	}
+	var tod TimeOfDay
+	err = xml.Unmarshal(data, &tod)
+	return &tod, err
+}
+
 type Document struct {
 	XMLName     xml.Name    `xml:"Mission" json:"-"`
 	Environment Environment `xml:"Environment" json:"environment"`
@@ -29,11 +42,11 @@ type Environment struct {
 	XMLName           xml.Name          `xml:"Environment" json:"-"`
 	Fog               Fog               `xml:"Fog" json:"fog"`
 	Terrain           Terrain           `xml:"Terrain" json:"terrain"`
-	EnvState          EnvState          `xml:"EnvState" json:"env_state"`
+	EnvState          EnvState          `xml:"EnvState" json:"envState"`
 	VolFogShadows     VolFogShadows     `xml:"VolFogShadows" json:"volFogShadows"`
-	CloudShadows      CloudShadows      `xml:"CloudShadows" json:"cloud_shadows"`
+	CloudShadows      CloudShadows      `xml:"CloudShadows" json:"cloudShadows"`
 	ParticleLighting  ParticleLighting  `xml:"ParticleLighting" json:"particleLighting"`
-	SkyBox            SkyBox            `xml:"SkyBox" json:"sky_box"`
+	SkyBox            SkyBox            `xml:"SkyBox" json:"skyBox"`
 	Ocean             Ocean             `xml:"Ocean" json:"ocean"`
 	OceanAnimation    OceanAnimation    `xml:"OceanAnimation" json:"oceanAnimation"`
 	Moon              Moon              `xml:"Moon" json:"moon"`
@@ -53,25 +66,25 @@ type Terrain struct {
 	HeightMapAO               float32  `xml:"HeightMapAO,attr" json:"heightMapAo"`
 }
 type EnvState struct {
-	XMLName                            xml.Name `xml:"EnvState" json:"-"`
-	WindVector                         string   `xml:"WindVector,attr" json:"windVector"`
-	BreezeGeneration                   string   `xml:"BreezeGeneration,attr" json:"breezeGeneration"`
-	BreezeStrength                     string   `xml:"BreezeStrength,attr" json:"breezeStrength"`
-	BreezeMovementSpeed                string   `xml:"BreezeMovementSpeed,attr" json:"breezeMovementSpeed"`
-	BreezeVariation                    string   `xml:"BreezeVariation,attr" json:"breezeVariation"`
-	BreezeLifeTime                     string   `xml:"BreezeLifeTime,attr" json:"breezeLifeTime"`
-	BreezeCount                        string   `xml:"BreezeCount,attr" json:"breezeCount"`
-	BreezeSpawnRadius                  string   `xml:"BreezeSpawnRadius,attr" json:"breezeSpawnRadius"`
-	BreezeSpread                       string   `xml:"BreezeSpread,attr" json:"breezeSpread"`
-	BreezeRadius                       string   `xml:"BreezeRadius,attr" json:"breezeRadius"`
-	ConsoleMergedMeshesPool            string   `xml:"ConsoleMergedMeshesPool,attr" json:"consoleMergedMeshesPool"`
-	ShowTerrainSurface                 string   `xml:"ShowTerrainSurface,attr" json:"showTerrainSurface"`
-	SunShadowsMinSpec                  string   `xml:"SunShadowsMinSpec,attr" json:"sunShadowsMinSpec"`
-	SunShadowsAdditionalCascadeMinSpec string   `xml:"SunShadowsAdditionalCascadeMinSpec,attr" json:"sunShadowsAdditionalCascadeMinSpec"`
-	SunShadowsClipPlaneRange           string   `xml:"SunShadowsClipPlaneRange,attr" json:"sunShadowsClipPlaneRange"`
-	SunShadowsClipPlaneRangeShift      string   `xml:"SunShadowsClipPlaneRangeShift,attr" json:"sunShadowsClipPlaneRangeShift"`
-	UseLayersActivation                string   `xml:"UseLayersActivation,attr" json:"useLayersActivation"`
-	SunLinkedToTOD                     string   `xml:"SunLinkedToTOD,attr" json:"sunLinkedToTod"`
+	XMLName                            xml.Name    `xml:"EnvState" json:"-"`
+	WindVector                         Float32List `xml:"WindVector,attr" json:"windVector"`
+	BreezeGeneration                   float32     `xml:"BreezeGeneration,attr" json:"breezeGeneration"`
+	BreezeStrength                     float32     `xml:"BreezeStrength,attr" json:"breezeStrength"`
+	BreezeMovementSpeed                float32     `xml:"BreezeMovementSpeed,attr" json:"breezeMovementSpeed"`
+	BreezeVariation                    float32     `xml:"BreezeVariation,attr" json:"breezeVariation"`
+	BreezeLifeTime                     float32     `xml:"BreezeLifeTime,attr" json:"breezeLifeTime"`
+	BreezeCount                        float32     `xml:"BreezeCount,attr" json:"breezeCount"`
+	BreezeSpawnRadius                  float32     `xml:"BreezeSpawnRadius,attr" json:"breezeSpawnRadius"`
+	BreezeSpread                       float32     `xml:"BreezeSpread,attr" json:"breezeSpread"`
+	BreezeRadius                       float32     `xml:"BreezeRadius,attr" json:"breezeRadius"`
+	ConsoleMergedMeshesPool            string      `xml:"ConsoleMergedMeshesPool,attr" json:"consoleMergedMeshesPool"`
+	ShowTerrainSurface                 string      `xml:"ShowTerrainSurface,attr" json:"showTerrainSurface"`
+	SunShadowsMinSpec                  string      `xml:"SunShadowsMinSpec,attr" json:"sunShadowsMinSpec"`
+	SunShadowsAdditionalCascadeMinSpec string      `xml:"SunShadowsAdditionalCascadeMinSpec,attr" json:"sunShadowsAdditionalCascadeMinSpec"`
+	SunShadowsClipPlaneRange           string      `xml:"SunShadowsClipPlaneRange,attr" json:"sunShadowsClipPlaneRange"`
+	SunShadowsClipPlaneRangeShift      string      `xml:"SunShadowsClipPlaneRangeShift,attr" json:"sunShadowsClipPlaneRangeShift"`
+	UseLayersActivation                string      `xml:"UseLayersActivation,attr" json:"useLayersActivation"`
+	SunLinkedToTOD                     string      `xml:"SunLinkedToTOD,attr" json:"sunLinkedToTod"`
 }
 type VolFogShadows struct {
 	XMLName         xml.Name `xml:"VolFogShadows" json:"-"`
@@ -82,7 +95,7 @@ type CloudShadows struct {
 	XMLName               xml.Name `xml:"CloudShadows" json:"-"`
 	CloudShadowTexture    string   `xml:"CloudShadowTexture,attr" json:"cloudShadowTexture"`
 	CloudShadowSpeed      string   `xml:"CloudShadowSpeed,attr" json:"cloudShadowSpeed"`
-	CloudShadowTiling     string   `xml:"CloudShadowTiling,attr" json:"cloudShadowTiling"`
+	CloudShadowTiling     float32  `xml:"CloudShadowTiling,attr" json:"cloudShadowTiling"`
 	CloudShadowBrightness float32  `xml:"CloudShadowBrightness,attr" json:"cloudShadowBrightness"`
 	CloudShadowInvert     float32  `xml:"CloudShadowInvert,attr" json:"cloudShadowInvert"`
 }
@@ -116,9 +129,9 @@ type OceanAnimation struct {
 }
 type Moon struct {
 	XMLName   xml.Name `xml:"Moon" json:"-"`
-	Latitude  string   `xml:"Latitude,attr" json:"latitude"`
-	Longitude string   `xml:"Longitude,attr" json:"longitude"`
-	Size      string   `xml:"Size,attr" json:"size"`
+	Latitude  float32  `xml:"Latitude,attr" json:"latitude"`
+	Longitude float32  `xml:"Longitude,attr" json:"longitude"`
+	Size      float32  `xml:"Size,attr" json:"size"`
 	Texture   string   `xml:"Texture,attr" json:"texture"`
 }
 type DynTexSource struct {
@@ -131,17 +144,17 @@ type TotalIllumination struct {
 }
 
 type Lighting struct {
-	XMLName          xml.Name `xml:"Lighting" json:"-"`
-	SunRotation      int      `xml:"SunRotation,attr" json:"sunRotation"`
-	SunHeight        int      `xml:"SunHeight,attr" json:"sunHeight"`
-	Lighting         int      `xml:"Lighting,attr" json:"lighting"`
-	HemiSamplQuality int      `xml:"HemiSamplQuality,attr" json:"hemiSamplQuality"`
-	Longitude        int      `xml:"Longitude,attr" json:"longitude"`
-	DawnTime         int      `xml:"DawnTime,attr" json:"dawnTime"`
-	DawnDuration     int      `xml:"DawnDuration,attr" json:"dawnDuration"`
-	DuskTime         int      `xml:"DuskTime,attr" json:"duskTime"`
-	DuskDuration     int      `xml:"DuskDuration,attr" json:"duskDuration"`
-	SunVector        string   `xml:"SunVector,attr" json:"sunVector"`
+	XMLName          xml.Name    `xml:"Lighting" json:"-"`
+	SunRotation      int         `xml:"SunRotation,attr" json:"sunRotation"`
+	SunHeight        int         `xml:"SunHeight,attr" json:"sunHeight"`
+	Lighting         int         `xml:"Lighting,attr" json:"lighting"`
+	HemiSamplQuality int         `xml:"HemiSamplQuality,attr" json:"hemiSamplQuality"`
+	Longitude        int         `xml:"Longitude,attr" json:"longitude"`
+	DawnTime         int         `xml:"DawnTime,attr" json:"dawnTime"`
+	DawnDuration     int         `xml:"DawnDuration,attr" json:"dawnDuration"`
+	DuskTime         int         `xml:"DuskTime,attr" json:"duskTime"`
+	DuskDuration     int         `xml:"DuskDuration,attr" json:"duskDuration"`
+	SunVector        Float32List `xml:"SunVector,attr" json:"sunVector"`
 }
 
 type TimeOfDay struct {
@@ -153,13 +166,41 @@ type TimeOfDay struct {
 	Variable      []Variable `xml:"Variable" json:"variable"`
 }
 type Variable struct {
-	XMLName xml.Name `xml:"Variable" json:"-"`
-	Name    string   `xml:"Name,attr" json:"name"`
-	Color   string   `xml:"Color,attr" json:"color"`
-	Value   string   `xml:"Value,attr" json:"value"`
-	Spline  Spline   `xml:"Spline" json:"spline"`
+	XMLName xml.Name    `xml:"Variable" json:"-"`
+	Name    string      `xml:"Name,attr" json:"name"`
+	Color   Float32List `xml:"Color,attr" json:"color"`
+	Value   *float32    `xml:"Value,attr" json:"value"`
+	Spline  Spline      `xml:"Spline" json:"spline"`
 }
 type Spline struct {
 	XMLName xml.Name `xml:"Spline" json:"-"`
 	Keys    string   `xml:"Keys,attr" json:"keys"`
+}
+
+type Float32List []float32
+
+func (f *Float32List) UnmarshalXMLAttr(attr xml.Attr) error {
+	parts := strings.Split(attr.Value, ",")
+	out := make(Float32List, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		val, err := strconv.ParseFloat(p, 64)
+		if err != nil {
+			return fmt.Errorf("invalid float %q in attribute %q: %w", p, attr.Value, err)
+		}
+		out = append(out, float32(val))
+	}
+	*f = out
+	return nil
+}
+
+func (f Float32List) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
+	strs := make([]string, len(f))
+	for i, v := range f {
+		strs[i] = strconv.FormatFloat(float64(v), 'g', -1, 64)
+	}
+	return xml.Attr{Name: name, Value: strings.Join(strs, ",")}, nil
 }

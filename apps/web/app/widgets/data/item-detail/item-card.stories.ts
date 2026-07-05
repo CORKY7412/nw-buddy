@@ -27,9 +27,9 @@ export default {
       min: 1,
       max: NW_MAX_CHARACTER_LEVEL,
     })
-    arg.boolean('enableInfoLink')
-    arg.boolean('enableLink')
-    arg.boolean('enableTracker')
+    arg.bool('enableInfoLink')
+    arg.bool('enableLink')
+    arg.bool('enableTracker')
   }),
 } satisfies Meta<ItemCardComponent>
 

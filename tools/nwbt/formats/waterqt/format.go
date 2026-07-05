@@ -25,6 +25,9 @@ package waterqt
 import (
 	"encoding/binary"
 	"fmt"
+	"image"
+	"image/png"
+	"io"
 	"nw-buddy/tools/formats/azcs"
 	"nw-buddy/tools/nwfs"
 	"nw-buddy/tools/rtti"
@@ -111,6 +114,24 @@ func (h *Heightmap) ToFloat16Bytes() []byte {
 		binary.LittleEndian.PutUint16(out[i*2:], bits)
 	}
 	return out
+}
+
+// The returned image references the heightmap's own sample data via the Pix
+// slice, so it is only valid as long as the RegionHeightmap is alive. If you
+// need the image to outlive the heightmap, copy it first.
+func (m *Heightmap) Image() *image.Gray16 {
+	img := image.NewGray16(image.Rect(0, 0, int(m.Size), int(m.Size)))
+	// image.Gray16 stores pixels as big-endian uint16 pairs. Convert from the
+	// native sample slice rather than going through the slow At/Set path.
+  img.Pix = m.ToUint16Bytes()
+	return img
+}
+
+// EncodePNG encodes the heightmap as a 16-bit grayscale PNG into w.
+// The PNG uses source image order (top-left origin). Use SampleTerrainXY
+// for terrain-space access on the raw samples instead.
+func (m *Heightmap) EncodePNG(w io.Writer) error {
+	return png.Encode(w, m.Image())
 }
 
 func (h *Heightmap) Dilate(radius int) {
